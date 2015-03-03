@@ -10,3 +10,15 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+#IDE properties
+.idea
+*.iml
+project.properties
+.settings
+.project
+.classpath
+out/
+# litter
+*humbs.db
+*~
