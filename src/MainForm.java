@@ -3,7 +3,12 @@
  * Пока что примерный набросок
  */
 
+import java.util.Random;
+
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -37,9 +42,28 @@ public class MainForm extends Application {
 		ComboBox exampleCombo = new ComboBox<>();
 		controls.getChildren().addAll(exampleLabel, exampleCombo, exampleButton);
 		GraphicsContext gc = mainView.getGraphicsContext2D();
-		gc.setFill(Color.WHITESMOKE);
-		gc.fillRect(0,0,512,512);
 
 		primaryStage.show();
+
+		Random random = new Random();
+		Thread thread = new Thread() {
+			@Override
+			public void run() {
+				while(true){
+					try{
+						Thread.sleep(100);
+					}catch (Exception e){}
+					Platform.runLater(new Runnable() {
+						@Override
+						public void run() {
+							gc.setFill(Color.rgb(random.nextInt(255), random.nextInt(255), random.nextInt(255)));
+							gc.fillRect(0, 0, 512, 512);
+						}
+					});
+				}
+			}
+		};
+		thread.setDaemon(true);
+		thread.start();
 	}
 }
