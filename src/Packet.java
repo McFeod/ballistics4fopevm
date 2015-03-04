@@ -20,7 +20,7 @@ public class Packet {
 	
 	public void draw(GraphicsContext context, Color color){
 		context.setFill(color);
-		context.fillOval(mPosition.getX(), context.getCanvas().getHeight()-mPosition.getY(), 3, 3);
+		context.fillOval(mPosition.getX(), context.getCanvas().getHeight()-mPosition.getY(), 10, 10); //3 3
 		
 	}
 	public Point2D getSpeed() {

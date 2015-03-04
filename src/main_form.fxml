@@ -1,0 +1,16 @@
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+<!-- окно из левой и правой частей /-->
+<HBox fx:controller="MainForm"
+	  xmlns:fx="http://javafx.com/fxml">
+	<!-- в одной из них - canvas: пока вставляется руками,
+	     т.к. MainView - пользовательский класс с аргументами /-->
+
+	<!-- в другой всё подряд вертикально /-->
+	<VBox styleClass="controlPanel">
+		<Label text="Smth"/>
+		<Button text="Smth2" onAction="#repaintBackground"/>
+	</VBox>
+</HBox>

@@ -10,7 +10,7 @@ public class VisualizationThread extends Thread {
 	public void start(int sleepTime, MainView view){
 		mView = view;
 		mSleepTime = sleepTime;
-		setDaemon(true);
+		setDaemon(true); // lazy & dangerous(for IO) way to stop a thread when closing app
 		start();
 	}
 	@Override
@@ -21,7 +21,7 @@ public class VisualizationThread extends Thread {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			Platform.runLater(mView);
+			Platform.runLater(mView); // way to run submitted Runnable in a JavaFX application thread
 		}
 	}
 }

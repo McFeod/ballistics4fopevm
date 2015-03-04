@@ -8,13 +8,16 @@ import javafx.scene.paint.Color;
  */
 public class MainView extends Canvas implements Runnable {
 	private GraphicsContext mContext;
+	private int sizeX, sizeY;
 	Packet mPacket;
 
 	public MainView(int sizeX, int sizeY){
 		super(sizeX, sizeY);
+		this.sizeX = sizeX;
+		this.sizeY = sizeY;
+
 		mContext = getGraphicsContext2D();
-		mContext.setFill(Color.LIGHTSKYBLUE);
-		mContext.fillRect(0,0,512,512);
+		fillBackground();
 		mPacket = new Packet(new Point2D(0.0, 0.0), new Point2D(1.0, 1.0));
 	}
 	
@@ -27,5 +30,10 @@ public class MainView extends Canvas implements Runnable {
 		mPacket.draw(mContext, Color.WHITESMOKE);
 		mPacket.update(2.0);
 		mPacket.draw(mContext, Color.BLACK);
+	}
+
+	public void fillBackground(){
+		mContext.setFill(Color.LIGHTSKYBLUE);
+		mContext.fillRect(0,0,sizeX,sizeY);
 	}
 }
