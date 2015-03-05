@@ -53,13 +53,7 @@ public class Packet {
 		mSpeed = mSpeed.add(mAcceleration.multiply(mTimeDelta));
 		mPosition = mPosition.add(mSpeed.multiply(mTimeDelta));
 	}
-	
-	public void draw(GraphicsContext context, Color color){
-		context.setFill(color);
-		//TODO подбор адекватного масштабирования
-		context.fillOval(mPosition.getX()/3, context.getCanvas().getHeight()-mPosition.getY()/2, 10, 10); //3 3
-		
-	}
+
 	public Point2D getSpeed() {
 		return mSpeed;
 	}
