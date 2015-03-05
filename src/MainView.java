@@ -15,14 +15,18 @@ public class MainView extends Canvas implements Runnable {
 
 		mContext = getGraphicsContext2D();
 		fillBackground();
-		mPacket = new Packet(new Point2D(0.0, 0.0), new Point2D(1.0, 1.0));
+		mPacket = new Packet(new Point2D(0.0, 0.0), new Point2D(10.0, 10.0), 1.0);
 	}
 
 	@Override
 	public void run() {
 		mPacket.draw(mContext, Color.WHITESMOKE);
-		mPacket.update(2.0);
+		mPacket.update(1.0);
 		mPacket.draw(mContext, Color.BLACK);
+	}
+
+	public Packet getPacket() {
+		return mPacket;
 	}
 
 	public void fillBackground(){

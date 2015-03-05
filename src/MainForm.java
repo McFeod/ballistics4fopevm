@@ -32,7 +32,7 @@ public class MainForm extends Application {
 		primaryStage.show();
 
 		VisualizationThread thread = new VisualizationThread();
-		thread.start(100, mainView);
+		thread.start(50.0, mainView);
 	}
 
 	@FXML
