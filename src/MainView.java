@@ -9,16 +9,12 @@ import java.util.concurrent.BlockingDeque;
  */
 public class MainView extends Canvas implements Runnable {
 	private GraphicsContext mContext;
-	private int sizeX, sizeY;
 	private BlockingDeque<Point2D> curvePoints;
 	private Point2D currentPoint = new Point2D(0,0);
 	Packet mPacket;
 
 	public MainView(int sizeX, int sizeY){
 		super(sizeX, sizeY);
-		this.sizeX = sizeX;
-		this.sizeY = sizeY;
-
 		mContext = getGraphicsContext2D();
 		fillBackground();
 		mPacket = new Packet(new Point2D(0.0, 0.0), new Point2D(0.0, 0.0));
@@ -46,7 +42,7 @@ public class MainView extends Canvas implements Runnable {
 
 	public void fillBackground(){
 		mContext.setFill(Color.LIGHTSKYBLUE);
-		mContext.fillRect(0,0,sizeX,sizeY);
+		mContext.fillRect(0,0,getWidth(),getHeight());
 	}
 
 	public void drawPacket(Point2D position, Color color){
