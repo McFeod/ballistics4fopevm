@@ -13,7 +13,7 @@ public class Packet {
 	private Point2D mAirResistance;
 	private Point2D mCoriolis;
 	private Point2D mGravity;
-	private final Double g = 9.8/50;  //TODO масштаб не позволяет пока что выставить реальное значение
+	private final Double g = 0.2;  //TODO масштаб не позволяет пока что выставить реальное значение
 	private Double mTimeDelta;  // время в секундах между двумя состояниями
 	
 
@@ -57,7 +57,7 @@ public class Packet {
 	public void draw(GraphicsContext context, Color color){
 		context.setFill(color);
 		//TODO подбор адекватного масштабирования
-		context.fillOval(mPosition.getX()/3, context.getCanvas().getHeight()-mPosition.getY()/2, 10, 10);
+		context.fillOval(mPosition.getX()/3, context.getCanvas().getHeight()-mPosition.getY()/2, 10, 10); //3 3
 		
 	}
 	public Point2D getSpeed() {
