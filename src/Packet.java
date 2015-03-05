@@ -23,6 +23,7 @@ public class Packet {
 		context.fillOval(mPosition.getX(), context.getCanvas().getHeight()-mPosition.getY(), 10, 10); //3 3
 		
 	}
+
 	public Point2D getSpeed() {
 		return mSpeed;
 	}
