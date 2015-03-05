@@ -31,6 +31,10 @@ public class Packet {
 		mSpeed = speed;
 	}
 
+	public void changeSpeed(double dX, double dY){
+		mSpeed = mSpeed.add(dX, dY);
+	}
+
 	public Point2D getPosition() {
 		return mPosition;
 	}
