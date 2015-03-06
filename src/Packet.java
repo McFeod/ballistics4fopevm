@@ -1,6 +1,4 @@
 import javafx.geometry.Point2D;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 
 /**
  * Математическая модель снаряда
@@ -13,18 +11,26 @@ public class Packet {
 	private Point2D mAirResistance;
 	private Point2D mCoriolis;
 	private Point2D mGravity;
-	private final Double g = 0.2;  //TODO масштаб не позволяет пока что выставить реальное значение
+	private final Double G = 0.2;  //TODO масштаб не позволяет пока что выставить реальное значение
 	private Double mTimeDelta;  // время в секундах между двумя состояниями
-	
+
+	/**Наименьший прямоугольник, в который может быть вписана траектория полёта
+	* Вычисляется для нужд масштабирования*/
+	private Point2D flightRectangle;
 
 	public Packet(Point2D position, Point2D speed, Double weight) {
-		mSpeed = speed;
+		mSpeed = speed.multiply(1);
 		mPosition = position;
 		mWeight = weight;
 		mAcceleration = new Point2D(0.0, 0.0);
-		mAirResistance = new Point2D(0.0001, 0.0);
+		mAirResistance = new Point2D(0.0000, 0.0); //0.0001
 		mCoriolis = new Point2D(0.0, 0.0);
-		mGravity =  new Point2D(0.0, -mWeight*g);
+		mGravity =  new Point2D(0.0, -mWeight* G);
+
+		double ascentTime = mSpeed.getY() / G;
+		double maxHeightInVacuum = G * Math.pow(ascentTime, 2) / 2;
+		double  distanceInVacuum = mSpeed.getX() * ascentTime * 2;
+		flightRectangle = new Point2D(distanceInVacuum, maxHeightInVacuum);
 	}
 	
 	private void calcResistance(){
@@ -41,17 +47,24 @@ public class Packet {
 
 	/**
 	 * Основной шаг логической части программы
-	 * @param dX - расстояние (в метрах) между двумя состояниями снаряда
+	 * @param dS - расстояние (в метрах) между двумя состояниями снаряда
 	 */
-	public void update(Double dX){
+	public void update(Double dS){
 		calcAcceleration();
 
 		//Жалкая попытка вспомнить физику
 		//TODO обработка особых случаев, например, с делением на ноль
-		mTimeDelta = (Math.sqrt(mSpeed.getX()*mSpeed.getX()+2*mAcceleration.getX()*dX)-mSpeed.getX())/mAcceleration.getX();
+		//Да займётся этой формулой её автор
+		//mTimeDelta = (Math.sqrt(mSpeed.getX()*mSpeed.getX()+2*mAcceleration.getX()*dX)-mSpeed.getX());///mAcceleration.getX();
+		mTimeDelta = dS / mSpeed.magnitude();
 
 		mSpeed = mSpeed.add(mAcceleration.multiply(mTimeDelta));
+
 		mPosition = mPosition.add(mSpeed.multiply(mTimeDelta));
+	}
+
+	public Point2D getFlightRectangle() {
+		return flightRectangle;
 	}
 
 	public Point2D getSpeed() {

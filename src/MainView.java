@@ -12,13 +12,16 @@ public class MainView extends Canvas implements Runnable {
 	Packet mPacket;
 	private BlockingDeque<Point2D> curvePoints;
 	private Point2D currentPoint = new Point2D(0,0);
+	private double scale;
 
 	public MainView(int sizeX, int sizeY){
 		super(sizeX, sizeY);
 
 		mContext = getGraphicsContext2D();
 		fillBackground();
-		mPacket = new Packet(new Point2D(0.0, 0.0), new Point2D(10.0, 10.0), 1.0);
+		mPacket = new Packet(new Point2D(0.0, 0.0), new Point2D(10.0, 20.0), 1.0);
+		Point2D drawingArea = mPacket.getFlightRectangle();
+		scale = Math.max(drawingArea.getX()/sizeX, drawingArea.getY()/sizeY);
 	}
 
 	@Override
@@ -46,8 +49,7 @@ public class MainView extends Canvas implements Runnable {
 
 	public void drawPacket(Point2D position, Color color){
 		mContext.setFill(color);
-		//TODO подбор адекватного масштабирования
-		mContext.fillOval(position.getX()/3, mContext.getCanvas().getHeight()-position.getY()/2, 10, 10); //3 3
+		mContext.fillOval(position.getX()/scale, getHeight()-position.getY()/scale, 10, 10); //3 3
 	}
 	
 	public void fillBackground(){
