@@ -2,11 +2,20 @@
 
 .root{
 	-fx-background: #808080;
-	-fx-spacing: 10;
 }
 
 .control_panel {
 	-fx-spacing: 20;
 	-fx-padding: 10;
 	-fx-alignment: top-center;
+}
+
+.scale{
+	-fx-spacing: 25;
+}
+
+label{
+	-fx-margin:0;
+	-fx-padding:0;
+	-fx-spacing:0;
 }

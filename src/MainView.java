@@ -47,6 +47,10 @@ public class MainView extends Canvas implements Runnable {
 		return mPacket;
 	}
 
+	public double getScale() {
+		return scale;
+	}
+
 	public void drawPacket(Point2D position, Color color){
 		mContext.setFill(color);
 		mContext.fillOval(position.getX()/scale, getHeight()-position.getY()/scale, 10, 10); //3 3
