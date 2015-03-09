@@ -25,9 +25,8 @@ public class VisualizationThread extends Thread {
 			@Override
 			protected Object call() throws Exception{
 
-				while (mView.getPacket().getPosition().getY()>-10){
-					Thread.sleep((long)(mSleepFactor*mView.getPacket().getTimeDelta()));
-					
+				while (mView.getPacket().getPosition().getY()>=0){
+					Thread.sleep((long)(mSleepFactor*mView.getPacket().getTimeDelta()*1000));
 					points.putLast(mView.getPacket().getPosition());
 					mView.getPacket().update(2.0);
 				}

@@ -10,7 +10,12 @@
 	                            styleClass="scale"/>
 	<!-- Место для mainView /-->
 	<VBox styleClass="controlPanel" GridPane.columnIndex="2">
-		<Label text="Smth"/>
+		<Label fx:id="speedXLabel"/>
+		<Label fx:id="speedYLabel"/>
+		<Label fx:id="speedLabel"/>
+		<Label fx:id="xLabel"/>
+		<Label fx:id="yLabel"/>
+		<Label fx:id="timeLabel"/>
 		<Button text="Smth2" onAction="#repaintBackground"/>
 	</VBox>
 </GridPane>
