@@ -11,11 +11,12 @@
 }
 
 .scale{
-	-fx-spacing: 25;
+	/*Если здесь заменить на -fx-background, то работать не будет))*/
+	-fx-background-color: #000000;
 }
 
-label{
-	-fx-margin:0;
-	-fx-padding:0;
-	-fx-spacing:0;
+.scaleLabel{
+	-fx-font-size: 13px;
+	-fx-underline: true;
+	-fx-text-fill:#BBBB00;
 }

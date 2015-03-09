@@ -1,22 +1,16 @@
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Button?>
-<!-- окно из левой и правой частей /-->
 <?import javafx.scene.layout.GridPane?>
 
-<!-- <HBox fx:controller="MainForm"
-	  xmlns:fx="http://javafx.com/fxml"> /-->
-<GridPane fx:controller="MainForm" fx:id="root"
-          xmlns:fx="http://javafx.com/fxml">
-	<VBox fx:id="verticalScale" GridPane.columnIndex="0" styleClass="scale"/>
-	<!-- в одной из них - canvas: пока вставляется руками,
-	     т.к. MainView - пользовательский класс с аргументами /-->
 
-	<!-- в другой всё подряд вертикально /-->
+<GridPane fx:controller="MainForm" fx:id="root"
+                             xmlns:fx="http://javafx.com/fxml">
+	<VBox fx:id="verticalScale" GridPane.columnIndex="0"
+	                            styleClass="scale"/>
+	<!-- Место для mainView /-->
 	<VBox styleClass="controlPanel" GridPane.columnIndex="2">
 		<Label text="Smth"/>
 		<Button text="Smth2" onAction="#repaintBackground"/>
 	</VBox>
 </GridPane>
-<!-- </HBox> /-->
