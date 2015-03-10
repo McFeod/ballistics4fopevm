@@ -47,7 +47,7 @@ public class MainForm extends Application implements Initializable {
 		primaryStage.show();
 
 		VisualizationThread thread = new VisualizationThread();
-		thread.start(1.0, mainView);
+		thread.start(0.3, mainView);
 	}
 
 	/*Теперь в наличии 3 функции инициализации.

@@ -1,6 +1,4 @@
 import javafx.application.Platform;
-import javafx.concurrent.Task;
-import javafx.geometry.Point2D;
 
 /**
  * Поток, в котором раз в mSleepTime мс вызывается mView.run()

@@ -2,6 +2,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 /**
@@ -18,6 +19,11 @@ public class MainView extends Canvas implements Runnable {
 	private Label xLabel;
 	private Label yLabel;
 	private Label timeLabel;
+	
+	//<UPRT>
+	private int r=3, g=2, b=1, stepB=1, stepR=3, stepG=2;
+	private Image mImage;
+	//</UPRT>
 
 	public MainView(int sizeX, int sizeY){
 		super(sizeX, sizeY);
@@ -27,13 +33,32 @@ public class MainView extends Canvas implements Runnable {
 		mPacket = new Packet(new Point2D(0.0, 0.0), new Point2D(100.0, 100.0), 1.0);
 		Point2D drawingArea = mPacket.getFlightRectangle();
 		scale = Math.max(drawingArea.getX()/sizeX, drawingArea.getY()/sizeY);
+		//<UPRT>
+		mImage = new Image("chrome.png");
+		//</UPRT>
 	}
 
 	@Override
 	public void run() {
-		drawPacket(mPacket.getPosition(), Color.WHITESMOKE);
+		//drawPacket(mPacket.getPosition(), Color.WHITESMOKE);
+		//<UPRT>
+		if (b==255 || b==0)
+			stepB=-stepB;
+		if (g>=254 || g<=1)
+			stepG=-stepG;
+		if (r>=253 || r<=2)
+			stepR=-stepR;
+		b += stepB;
+		g += stepG;
+		r += stepR;
+		drawPacket(mPacket.getPosition(), Color.rgb(r, g, b));
+		//</UPRT>
 		mPacket.update(2.0);
-		drawPacket(mPacket.getPosition(), Color.BLACK);
+		//drawPacket(mPacket.getPosition(), Color.BLACK);
+		//<UPRT>
+		mContext.drawImage(mImage, mPacket.getPosition().getX()/scale,
+				getHeight()-mPacket.getPosition().getY()/scale, 10, 10);
+		//</UPRT>
 		refreshObjects();
 	}
 
@@ -69,8 +94,8 @@ public class MainView extends Canvas implements Runnable {
 		speedXLabel.setText(String.format("SpeedX = %.4f м/с", mPacket.getSpeed().getX()));
 		speedYLabel.setText(String.format("SpeedY = %.4f м/с", mPacket.getSpeed().getY()));
 		speedLabel.setText(String.format("Speed = %.4f м/с", mPacket.getSpeed().magnitude()));
-		xLabel.setText(String.format("X = %.4f м/с", mPacket.getPosition().getX()));
-		yLabel.setText(String.format("Y = %.4f м/с", mPacket.getPosition().getY()));
+		xLabel.setText(String.format("X = %.4f м", mPacket.getPosition().getX()));
+		yLabel.setText(String.format("Y = %.4f м", mPacket.getPosition().getY()));
 		timeLabel.setText(String.format("Time = %.3f с", mPacket.getTime()));
 	}
 }
