@@ -13,12 +13,7 @@ public class MainView extends Canvas implements Runnable {
 	Packet mPacket;
 	private double scale;
 
-	private Label speedXLabel;
-	private Label speedYLabel;
-	private Label speedLabel;
-	private Label xLabel;
-	private Label yLabel;
-	private Label timeLabel;
+	private Label speedXLabel, speedYLabel, speedLabel, xLabel, yLabel, timeLabel;
 	
 	//<UPRT>
 	private int r=3, g=2, b=1, stepB=1, stepR=3, stepG=2;
@@ -72,7 +67,7 @@ public class MainView extends Canvas implements Runnable {
 
 	public void drawPacket(Point2D position, Color color){
 		mContext.setFill(color);
-		mContext.fillOval(position.getX()/scale, getHeight()-position.getY()/scale, 10, 10); //3 3
+		mContext.fillOval(position.getX()/scale, getHeight()-position.getY()/scale, 10, 10);
 	}
 	
 	public void fillBackground(){
@@ -89,7 +84,10 @@ public class MainView extends Canvas implements Runnable {
 		this.yLabel = yLabel;
 		this.timeLabel = timeLabel;
 	}
-	
+
+	/**
+	 * Вывод информации о полёте
+	 */
 	private void refreshObjects(){
 		speedXLabel.setText(String.format("SpeedX = %.4f м/с", mPacket.getSpeed().getX()));
 		speedYLabel.setText(String.format("SpeedY = %.4f м/с", mPacket.getSpeed().getY()));
@@ -98,4 +96,5 @@ public class MainView extends Canvas implements Runnable {
 		yLabel.setText(String.format("Y = %.4f м", mPacket.getPosition().getY()));
 		timeLabel.setText(String.format("Time = %.3f с", mPacket.getTime()));
 	}
+	
 }

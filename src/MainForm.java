@@ -24,12 +24,7 @@ public class MainForm extends Application implements Initializable {
 	private static MainView mainView;
 	@FXML private VBox verticalScale;
 	@FXML private HBox horizontalScale;
-	@FXML private Label speedXLabel;
-	@FXML private Label speedYLabel;
-	@FXML private Label speedLabel;
-	@FXML private Label xLabel;
-	@FXML private Label yLabel;
-	@FXML private Label timeLabel;
+	@FXML private Label speedXLabel, speedYLabel, speedLabel, xLabel, yLabel, timeLabel;
 
 	public static void main(String[] args) {
 		launch(args);
@@ -38,7 +33,7 @@ public class MainForm extends Application implements Initializable {
 	@Override
 	public void start(Stage primaryStage) throws Exception{
 
-		GridPane root = FXMLLoader.load(getClass().getResource("main_form.fxml"));
+		root = FXMLLoader.load(getClass().getResource("main_form.fxml"));
 
 		primaryStage.setTitle("Packet fly");
 		Scene scene = new Scene(root, 720, 535);

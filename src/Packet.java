@@ -24,11 +24,12 @@ public class Packet {
 		mPosition = position;
 		mWeight = weight;
 		mAcceleration = new Point2D(0.0, 0.0);
-		mAirResistance = new Point2D(0.0000, 0.0); //0.0001
+		mAirResistance = new Point2D(-0.5, 0.0);
 		mCoriolis = new Point2D(0.0, 0.0);
 		mGravity =  new Point2D(0.0, -mWeight* G);
 		mTime = 0.0;
 
+		//TODO уточнить формулы: при наличии сил сопротивления подгонка под экран не работает
 		double ascentTime = mSpeed.getY() / G;
 		double maxHeightInVacuum = G * Math.pow(ascentTime, 2) / 2;
 		double  distanceInVacuum = mSpeed.getX() * ascentTime * 2;
@@ -36,9 +37,11 @@ public class Packet {
 	}
 	
 	private void calcResistance(){
+		//TODO
 	}
 
 	private void calcCoriolis(){
+		//TODO
 	}
 	
 	private void calcAcceleration(){
@@ -94,4 +97,5 @@ public class Packet {
 	public void setPosition(Point2D position) {
 		mPosition = position;
 	}
+
 }

@@ -24,7 +24,7 @@ public class VisualizationThread extends Thread {
 				e.printStackTrace();
 			}
 			Platform.runLater(mView); // way to run submitted Runnable in a JavaFX application thread
-
 		}
 	}
+	
 }
