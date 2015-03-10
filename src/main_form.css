@@ -13,10 +13,16 @@
 .scale{
 	/*Если здесь заменить на -fx-background, то работать не будет))*/
 	-fx-background-color: #000000;
+	-fx-padding: 0 0 1 0;
 }
 
 .scaleLabel{
 	-fx-font-size: 13px;
 	-fx-underline: true;
+	-fx-text-fill:#BBBB00;
+}
+
+.scaleMark{
+	-fx-font-size: 15px;
 	-fx-text-fill:#BBBB00;
 }

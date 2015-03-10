@@ -11,6 +11,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -22,6 +23,7 @@ public class MainForm extends Application implements Initializable {
 	@FXML private GridPane root;
 	private static MainView mainView;
 	@FXML private VBox verticalScale;
+	@FXML private HBox horizontalScale;
 	@FXML private Label speedXLabel;
 	@FXML private Label speedYLabel;
 	@FXML private Label speedLabel;
@@ -39,7 +41,7 @@ public class MainForm extends Application implements Initializable {
 		GridPane root = FXMLLoader.load(getClass().getResource("main_form.fxml"));
 
 		primaryStage.setTitle("Packet fly");
-		Scene scene = new Scene(root, 720, 512);
+		Scene scene = new Scene(root, 720, 535);
 		primaryStage.setScene(scene);
 		scene.getStylesheets().add("main_form.css");
 		primaryStage.show();
@@ -58,12 +60,13 @@ public class MainForm extends Application implements Initializable {
 
 	@FXML @Override
 	public void initialize(URL location, ResourceBundle resources) {
-		mainView = new MainView(512, 512);
+		mainView = new MainView(512, 512 + 2);
 		mainView.setRefreshableObjects(speedXLabel, speedYLabel, speedLabel, xLabel, yLabel, timeLabel);
 		root.add(mainView, 1, 0);
 		verticalScale.setAlignment(Pos.BASELINE_RIGHT);
 		verticalScale.setSpacing(34);
-		buildScale(verticalScale, mainView.getHeight());
+		buildVerticalScale(verticalScale, mainView.getHeight());
+		buildHorizontalScale(horizontalScale, mainView.getWidth());
 	}
 
 	/*Из start() и initialize() нельзя получить width и height() элементов,
@@ -73,6 +76,7 @@ public class MainForm extends Application implements Initializable {
 	@FXML
 	public void repaintBackground(){
 		System.out.println(verticalScale.getHeight());
+		System.out.println(horizontalScale.getWidth());
 		System.out.println(mainView.getScale());
 		mainView.fillBackground();
 	}
@@ -85,14 +89,32 @@ public class MainForm extends Application implements Initializable {
 	* чтобы расстояния между делениями были по 50.
 	* */
 
-	private void buildScale(Pane pane, double markLimit){
+	private void buildVerticalScale(Pane pane, double markLimit){
 		int scaleMark = (int)Math.round(mainView.getScale()) * 50;
 		int currentMark = scaleMark * (int)(markLimit / 50);
-		while(currentMark > 0){
+		while(currentMark >= 0){
 			Label lbl = new Label(Integer.toString(currentMark));
 			lbl.getStyleClass().add("scaleLabel");
 			pane.getChildren().add(lbl);
 			currentMark-=scaleMark;
+		}
+	}
+
+	private void buildHorizontalScale(Pane pane, double markLimit){
+		int scaleMark = (int)Math.round(mainView.getScale()) * 50;
+		int maxMark = scaleMark * (int)(markLimit / 50);
+		int currentMark = 0;
+		while(currentMark < maxMark){
+			Label line = new Label("|");
+			line.getStyleClass().add("scaleMark");
+			pane.getChildren().add(line);
+
+			Label lbl = new Label(Integer.toString(currentMark));
+			lbl.getStyleClass().add("scaleLabel");
+			lbl.setMinWidth(45);// опять подгон
+			pane.getChildren().add(lbl);
+
+			currentMark+=scaleMark;
 		}
 	}
 }
