@@ -11,8 +11,9 @@ public class Packet {
 	private Point2D mAirResistance;
 	private Point2D mCoriolis;
 	private Point2D mGravity;
-	private final Double G = 0.2;  //TODO масштаб не позволяет пока что выставить реальное значение
+	private final Double G = 9.8;
 	private Double mTimeDelta;  // время в секундах между двумя состояниями
+	private Double mTime; //общее время
 
 	/**Наименьший прямоугольник, в который может быть вписана траектория полёта
 	* Вычисляется для нужд масштабирования*/
@@ -26,6 +27,7 @@ public class Packet {
 		mAirResistance = new Point2D(0.0000, 0.0); //0.0001
 		mCoriolis = new Point2D(0.0, 0.0);
 		mGravity =  new Point2D(0.0, -mWeight* G);
+		mTime = 0.0;
 
 		double ascentTime = mSpeed.getY() / G;
 		double maxHeightInVacuum = G * Math.pow(ascentTime, 2) / 2;
@@ -57,6 +59,7 @@ public class Packet {
 		//Да займётся этой формулой её автор
 		//mTimeDelta = (Math.sqrt(mSpeed.getX()*mSpeed.getX()+2*mAcceleration.getX()*dX)-mSpeed.getX());///mAcceleration.getX();
 		mTimeDelta = dS / mSpeed.magnitude();
+		mTime += mTimeDelta;
 
 		mSpeed = mSpeed.add(mAcceleration.multiply(mTimeDelta));
 
@@ -67,6 +70,7 @@ public class Packet {
 		return flightRectangle;
 	}
 
+
 	public Point2D getSpeed() {
 		return mSpeed;
 	}
@@ -75,6 +79,10 @@ public class Packet {
 		return mTimeDelta;
 	}
 
+	public Double getTime() {
+		return mTime;
+	}
+	
 	public void setSpeed(Point2D speed) {
 		mSpeed = speed;
 	}

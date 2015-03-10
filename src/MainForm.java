@@ -22,6 +22,12 @@ public class MainForm extends Application implements Initializable {
 	@FXML private GridPane root;
 	private static MainView mainView;
 	@FXML private VBox verticalScale;
+	@FXML private Label speedXLabel;
+	@FXML private Label speedYLabel;
+	@FXML private Label speedLabel;
+	@FXML private Label xLabel;
+	@FXML private Label yLabel;
+	@FXML private Label timeLabel;
 
 	public static void main(String[] args) {
 		launch(args);
@@ -33,13 +39,13 @@ public class MainForm extends Application implements Initializable {
 		GridPane root = FXMLLoader.load(getClass().getResource("main_form.fxml"));
 
 		primaryStage.setTitle("Packet fly");
-		Scene scene = new Scene(root, 640, 512);
+		Scene scene = new Scene(root, 720, 512);
 		primaryStage.setScene(scene);
 		scene.getStylesheets().add("main_form.css");
 		primaryStage.show();
 
 		VisualizationThread thread = new VisualizationThread();
-		thread.start(50.0, mainView);
+		thread.start(1.0, mainView);
 	}
 
 	/*Теперь в наличии 3 функции инициализации.
@@ -52,8 +58,9 @@ public class MainForm extends Application implements Initializable {
 
 	@FXML @Override
 	public void initialize(URL location, ResourceBundle resources) {
-		mainView = new MainView(512,512);
-		root.add(mainView,1,0);
+		mainView = new MainView(512, 512);
+		mainView.setRefreshableObjects(speedXLabel, speedYLabel, speedLabel, xLabel, yLabel, timeLabel);
+		root.add(mainView, 1, 0);
 		verticalScale.setAlignment(Pos.BASELINE_RIGHT);
 		verticalScale.setSpacing(34);
 		buildScale(verticalScale, mainView.getHeight());
