@@ -1,5 +1,3 @@
-import java.util.concurrent.BlockingDeque;
-
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -12,8 +10,6 @@ import javafx.scene.paint.Color;
 public class MainView extends Canvas implements Runnable {
 	private GraphicsContext mContext;
 	Packet mPacket;
-	private BlockingDeque<Point2D> curvePoints;
-	private Point2D currentPoint = new Point2D(0,0);
 	private double scale;
 
 	private Label speedXLabel;
@@ -34,23 +30,11 @@ public class MainView extends Canvas implements Runnable {
 	}
 
 	@Override
-	/*public void run() {
-		mPacket.draw(mContext, Color.WHITESMOKE);
+	public void run() {
+		drawPacket(mPacket.getPosition(), Color.WHITESMOKE);
 		mPacket.update(2.0);
-		mPacket.draw(mContext, Color.BLACK);
-	}*/
-	public void run(){
-		try{
-			while(!curvePoints.isEmpty()){
-				drawPacket(currentPoint, Color.WHITESMOKE);
-				currentPoint = curvePoints.takeFirst();
-				drawPacket(currentPoint, Color.BLACK);
-				refreshObjects();
-			}
-		}catch(InterruptedException unimportant){}
-	}
-	public void setCurvePoints(BlockingDeque<Point2D> curvePoints){
-		this.curvePoints = curvePoints;
+		drawPacket(mPacket.getPosition(), Color.BLACK);
+		refreshObjects();
 	}
 
 	public Packet getPacket() {

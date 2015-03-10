@@ -39,7 +39,7 @@ public class MainForm extends Application implements Initializable {
 		GridPane root = FXMLLoader.load(getClass().getResource("main_form.fxml"));
 
 		primaryStage.setTitle("Packet fly");
-		Scene scene = new Scene(root, 700, 512);
+		Scene scene = new Scene(root, 720, 512);
 		primaryStage.setScene(scene);
 		scene.getStylesheets().add("main_form.css");
 		primaryStage.show();

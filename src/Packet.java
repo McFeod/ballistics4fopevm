@@ -70,6 +70,7 @@ public class Packet {
 		return flightRectangle;
 	}
 
+
 	public Point2D getSpeed() {
 		return mSpeed;
 	}
