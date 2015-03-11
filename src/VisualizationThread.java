@@ -12,8 +12,7 @@ public class VisualizationThread extends Thread {
 	private final double DEGREE = Math.PI/180;
 	private double mStartSpeed;
 	private double mAngle1, mAngle2, mAngle;
-	private byte mSignumX, mSignumY;
-	
+
 	public void start(Double sleepFactor, MainView view){
 		mSleepFactor = sleepFactor;
 		mView = view;
@@ -33,30 +32,43 @@ public class VisualizationThread extends Thread {
 		if (mView.isAngleBisectionEnabled()){
 			start:
 			while (Math.abs(mAngle2-mAngle1)>DEGREE){
-				mSignumX = 0;
-				mSignumY = 0;
+				boolean yReached = false;
+				Double gx = mView.getGoal().getX();
+				Double gy = mView.getGoal().getY();
+				Double lastX = 0.0; // 1 точка, в которой достигнута высота цели.
+				Double firstX = 100500.0; // 2 точка, в которой достигнута высота цели. Вряд ли их больше.
+				
 				while (mView.getPacket().getPosition().getY()>=0) {
+					Double px = mView.getPacket().getPosition().getX();
+					Double py = mView.getPacket().getPosition().getY();
+					Double dx = Math.abs(gx-px);
+					Double dy = Math.abs(gy-py);
+
 					try {
 						Thread.sleep((long)(mSleepFactor*mView.getPacket().getTimeDelta()*1000));
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 					Platform.runLater(mView); // way to run submitted Runnable in a JavaFX application thread
-					
-					Double gx = mView.getGoal().getX();
-					Double gy = mView.getGoal().getY();
-					Double px = mView.getPacket().getPosition().getX();
-					Double py = mView.getPacket().getPosition().getY();
-					Double dx = Math.abs(gx-px);
-					Double dy = Math.abs(gy-py);
-					if (Math.sqrt(dx*dx+dy*dy)<mView.getPacket().RADIUS)
-						break start;
-					if (dx<=2)
-						mSignumY = (byte)Math.signum(gy-py);
-					if (dy<=2)
-						mSignumX = (byte)Math.signum(gx-px);
+
+					if (dx<=mView.mPacket.RADIUS) {
+						if (dy <= mView.getPacket().RADIUS) {
+							break start;
+						}
+					}else {
+						if (dy <= mView.getPacket().RADIUS) {
+							if (yReached){
+								lastX = px;
+							}else {
+								yReached = true;
+								firstX = px;
+							}
+						}
+					}
 				}
-				nextAngle();
+				// (цель "под аркой") либо (слева ниже вершины арки, причём угол большой)
+				boolean xOver = (((lastX >= gx)||mAngle>Math.PI/4) && (firstX <= gx)); 
+				nextAngle(yReached&&(xOver));
 			}
 		}else
 			while (mView.getPacket().getPosition().getY()>=0) {
@@ -69,19 +81,11 @@ public class VisualizationThread extends Thread {
 			}
 	}
 	
-	public void nextAngle(){
-		if (mSignumY == 1)//mAngle1 = mAngle;
-			if (mSignumX == 1)
-				mAngle2 = mAngle;
-			else
-				mAngle1 = mAngle;
-		if (mSignumY == -1)
+	public void nextAngle(boolean down){
+		if (down)
 			mAngle2 = mAngle;
-		if (mSignumY == 0)
-			if (mSignumX == 1)
-				mAngle2 = mAngle;
-			else
-				mAngle1 = mAngle;
+		else
+			mAngle1 = mAngle;
 		mAngle = (mAngle1 + mAngle2) / 2;
 		mView.getPacket().setSpeed(new Point2D(Math.cos(mAngle)*mStartSpeed, Math.sin(mAngle)*mStartSpeed));
 		mView.getPacket().resetTime();

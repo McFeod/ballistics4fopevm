@@ -50,7 +50,7 @@ public class MainForm extends Application implements Initializable {
 		mainView.setAngleBisectionEnabled(true);
 		
 		VisualizationThread thread = new VisualizationThread();
-		thread.start(0.3, mainView);
+		thread.start(0.2, mainView);
 	}
 
 	/*Теперь в наличии 3 функции инициализации.
