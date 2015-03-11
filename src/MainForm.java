@@ -4,13 +4,16 @@
  */
 
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -32,6 +35,7 @@ public class MainForm extends Application implements Initializable {
 	@FXML private Label yLabel;
 	@FXML private Label timeLabel;
 	@FXML private Label angleLabel;
+	private boolean isStarted = false;
 
 	public static void main(String[] args) {
 		launch(args);
@@ -42,15 +46,11 @@ public class MainForm extends Application implements Initializable {
 
 		root = FXMLLoader.load(getClass().getResource("main_form.fxml"));
 
-		primaryStage.setTitle("Packet fly");
+		primaryStage.setTitle("Кликни мышкой на поле");
 		Scene scene = new Scene(root, 720, 535);
 		primaryStage.setScene(scene);
 		scene.getStylesheets().add("main_form.css");
 		primaryStage.show();
-		mainView.setAngleBisectionEnabled(true);
-		
-		VisualizationThread thread = new VisualizationThread();
-		thread.start(0.2, mainView);
 	}
 
 	/*Теперь в наличии 3 функции инициализации.
@@ -63,7 +63,7 @@ public class MainForm extends Application implements Initializable {
 
 	@FXML @Override
 	public void initialize(URL location, ResourceBundle resources) {
-		Canvas packetView = new Canvas(512, 512 + 2);		
+		Canvas packetView = new Canvas(512, 512 + 2);
 		mainView = new MainView(packetView, 512, 512 + 2);
 		mainView.setRefreshableObjects(speedXLabel, speedYLabel, speedLabel, xLabel, yLabel, timeLabel,
 				angleLabel);
@@ -73,6 +73,19 @@ public class MainForm extends Application implements Initializable {
 		verticalScale.setSpacing(34);
 		buildVerticalScale(verticalScale, mainView.getHeight());
 		buildHorizontalScale(horizontalScale, mainView.getWidth());
+		packetView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				if (!isStarted) {
+					mainView.setGoal(new Point2D(event.getX() * mainView.getScale(),
+							(mainView.getHeight() - event.getY()) * mainView.getScale()));
+					mainView.setAngleBisectionEnabled(true);
+					VisualizationThread thread = new VisualizationThread();
+					thread.start(0.2, mainView);
+					isStarted = true;
+				}
+			}
+		});
 	}
 
 	/*Из start() и initialize() нельзя получить width и height() элементов,

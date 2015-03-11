@@ -144,5 +144,8 @@ public class MainView extends Canvas implements Runnable {
 		random.nextInt(256);
 		mTailColor = Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256));
 	}
-	
+
+	public void setGoal(Point2D goal) {
+		mGoal = goal;
+	}
 }
