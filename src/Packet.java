@@ -6,14 +6,8 @@ import javafx.geometry.Point2D;
 public class Packet {
 	public static final int RADIUS = 10;
 	private Point2D mPosition;
-	private Point2D mSpeed;
-	private Point2D mAcceleration;
+	private Point2D mSpeed, mAcceleration, mAirResistance, mGravity;
 	private Double mWeight;
-	private Point2D mAirResistance;
-	private Point2D mCoriolis;
-	private Point2D mGravity;
-	private Point2D[] mPrevPositions;
-	private int mPosIndex = 0;
 	private final Double G = 9.8;
 	private Double mTimeDelta;  // время в секундах между двумя состояниями
 	private Double mTime; //общее время
@@ -22,17 +16,14 @@ public class Packet {
 	* Вычисляется для нужд масштабирования*/
 	private Point2D flightRectangle;
 
-	public Packet(Point2D position, Point2D speed, Double weight) {
-		mSpeed = speed.multiply(1);
-		mPosition = position;
+	public Packet(Point2D speed, Double weight) {
+		mSpeed = speed;
+		mPosition = new Point2D(0.0, 0.0);
 		mWeight = weight;
 		mAcceleration = new Point2D(0.0, 0.0);
 		mAirResistance = new Point2D(-0.5, 0.0);
-		mCoriolis = new Point2D(0.0, 0.0);
 		mGravity =  new Point2D(0.0, -mWeight* G);
 		mTime = 0.0;
-
-		mPrevPositions = new Point2D[RADIUS*2];
 
 		//TODO уточнить формулы: при наличии сил сопротивления подгонка под экран не работает
 		double ascentTime = mSpeed.getY() / G;
@@ -44,15 +35,10 @@ public class Packet {
 	private void calcResistance(){
 		//TODO
 	}
-
-	private void calcCoriolis(){
-		//TODO
-	}
 	
 	private void calcAcceleration(){
 		calcResistance();
-		calcCoriolis();
-		mAcceleration = mGravity.add(mAirResistance.add(mCoriolis)).multiply(1.0/mWeight);
+		mAcceleration = mGravity.add(mAirResistance).multiply(1.0/mWeight);
 	}
 
 	/**
@@ -70,7 +56,6 @@ public class Packet {
 		mTime += mTimeDelta;
 
 		mSpeed = mSpeed.add(mAcceleration.multiply(mTimeDelta));
-		mPrevPositions[mPosIndex++%RADIUS] = mPosition;
 		mPosition = mPosition.add(mSpeed.multiply(mTimeDelta));
 	}
 
@@ -103,11 +88,6 @@ public class Packet {
 		mPosition = position;
 	}
 
-	public Point2D[] getPrevPositions() {
-		return mPrevPositions;
-	}
-
-	
 	public void resetTime(){
 		mTime = 0.0;
 	}

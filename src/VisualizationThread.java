@@ -6,7 +6,6 @@ import javafx.geometry.Point2D;
  */
 public class VisualizationThread extends Thread {
 	private Double mSleepFactor;  // соотношение реального времени и моделируемого
-	// TODO сделать такое же для пространства
 	private MainView mView;
 
 	private final double DEGREE = Math.PI/180;
@@ -31,7 +30,7 @@ public class VisualizationThread extends Thread {
 		mView.getPacket().update(1.0);
 		if (mView.isAngleBisectionEnabled()){
 			start:
-			while (Math.abs(mAngle2-mAngle1)>DEGREE){
+			while (Math.abs(mAngle2-mAngle1)>0.5*DEGREE){
 				boolean yReached = false;
 				Double gx = mView.getGoal().getX();
 				Double gy = mView.getGoal().getY();

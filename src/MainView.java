@@ -16,14 +16,7 @@ public class MainView extends Canvas implements Runnable {
 	Packet mPacket;
 	private double scale;
 
-	private Label speedXLabel;
-	private Label speedYLabel;
-	private Label speedLabel;
-	private Label xLabel;
-	private Label yLabel;
-	private Label timeLabel;
-	private Label angleLabel;
-	
+	private Label speedXLabel, speedYLabel, speedLabel, xLabel, yLabel, timeLabel, angleLabel;
 	private boolean isAngleBisectionEnabled = false;
 	private Point2D mGoal;
 	private Color mTailColor;
@@ -31,11 +24,10 @@ public class MainView extends Canvas implements Runnable {
 	public MainView(Canvas canvas, int sizeX, int sizeY){
 		super(sizeX, sizeY);
 
-		mGoal = new Point2D(700, 700);
 		mTopContext = canvas.getGraphicsContext2D();
 		mBottomContext = getGraphicsContext2D();
 		fillBackground();
-		mPacket = new Packet(new Point2D(0.0, 0.0), new Point2D(100.0, 100.0), 1.0);
+		mPacket = new Packet(new Point2D(300.0, 100.0), 1.0);
 		reset();
 		Point2D drawingArea = mPacket.getFlightRectangle();
 		scale = Math.max(drawingArea.getX()/sizeX, drawingArea.getY()/sizeY);
@@ -80,7 +72,10 @@ public class MainView extends Canvas implements Runnable {
 		mBottomContext.fillRect(0,0,getWidth(),getHeight());
 	}
 
-	private void drawTarget() { // мишень
+	/**
+	 * Отрисовка мишени вручную
+	 */
+	private void drawTarget() {
 		mBottomContext.setStroke(Color.RED);
 		mBottomContext.setFill(Color.RED);
 		mBottomContext.strokeOval(mGoal.getX() / scale - mPacket.RADIUS,
