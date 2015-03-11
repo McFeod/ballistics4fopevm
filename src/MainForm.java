@@ -9,6 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -62,10 +63,12 @@ public class MainForm extends Application implements Initializable {
 
 	@FXML @Override
 	public void initialize(URL location, ResourceBundle resources) {
-		mainView = new MainView(512, 512 + 2);
+		Canvas packetView = new Canvas(512, 512 + 2);		
+		mainView = new MainView(packetView, 512, 512 + 2);
 		mainView.setRefreshableObjects(speedXLabel, speedYLabel, speedLabel, xLabel, yLabel, timeLabel,
 				angleLabel);
 		root.add(mainView, 1, 0);
+		root.add(packetView, 1, 0);
 		verticalScale.setAlignment(Pos.BASELINE_RIGHT);
 		verticalScale.setSpacing(34);
 		buildVerticalScale(verticalScale, mainView.getHeight());
