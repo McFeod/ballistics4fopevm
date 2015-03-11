@@ -45,7 +45,7 @@ public class VisualizationThread extends Thread {
 					Double dy = Math.abs(gy-py);
 
 					try {
-						Thread.sleep((long)(mSleepFactor*mView.getPacket().getTimeDelta()*1000));
+						Thread.sleep((long)(mSleepFactor*mView.getPacket().getTimeDelta()*1000)+1);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -88,7 +88,6 @@ public class VisualizationThread extends Thread {
 			mAngle1 = mAngle;
 		mAngle = (mAngle1 + mAngle2) / 2;
 		mView.getPacket().setSpeed(new Point2D(Math.cos(mAngle)*mStartSpeed, Math.sin(mAngle)*mStartSpeed));
-		mView.getPacket().resetTime();
-		mView.getPacket().setPosition(new Point2D(0, 0));
+		mView.reset();
 	}
 }

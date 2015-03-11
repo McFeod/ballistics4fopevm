@@ -2,8 +2,9 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+
+import java.util.Random;
 
 /**
  * Холст с методом отрисовки одного шага
@@ -25,13 +26,7 @@ public class MainView extends Canvas implements Runnable {
 	
 	private boolean isAngleBisectionEnabled = false;
 	private Point2D mGoal;
-	
-	
-	//<UPRT>
-	private int r=3, g=2, b=1, stepB=1, stepR=3, stepG=2;
-	private Image mImagePacket;
-	private Image mImageGoal;
-	//</UPRT>
+	private Color mTailColor;
 
 	public MainView(Canvas canvas, int sizeX, int sizeY){
 		super(sizeX, sizeY);
@@ -41,30 +36,14 @@ public class MainView extends Canvas implements Runnable {
 		mBottomContext = getGraphicsContext2D();
 		fillBackground();
 		mPacket = new Packet(new Point2D(0.0, 0.0), new Point2D(100.0, 100.0), 1.0);
+		reset();
 		Point2D drawingArea = mPacket.getFlightRectangle();
 		scale = Math.max(drawingArea.getX()/sizeX, drawingArea.getY()/sizeY);
-		//<UPRT>
-		mImagePacket = new Image("chrome.png");
-		mImageGoal = new Image("IE.png");
-		//</UPRT>
 	}
 
 	@Override
 	public void run() {
-		//<UPRT>
-		if (b==255 || b==0)
-			stepB=-stepB;
-		if (g>=254 || g<=1)
-			stepG=-stepG;
-		if (r>=253 || r<=2)
-			stepR=-stepR;
-		b += stepB;
-		g += stepG;
-		r += stepR;
-		//</UPRT>
-		drawAll(Color.BLACK, /*Color.WHITESMOKE*/
-				Color.rgb(r, g, b));
-		
+		drawAll(Color.BLACK, mTailColor);
 		refreshObjects();
 	}
 
@@ -80,19 +59,13 @@ public class MainView extends Canvas implements Runnable {
 		plaster();
 		mPacket.update(5.0);
 		drawCircle(mBottomContext, mPacket.getPosition(), tailColor, TAIL_GAGE);
-		//drawCircle(mTopContext, mPacket.getPosition(), packetColor, mPacket.RADIUS);
-
-		//<UPRT>
-		mTopContext.drawImage(mImagePacket, mPacket.getPosition().getX()/scale-mPacket.RADIUS,
-				getHeight()-mPacket.getPosition().getY()/scale-mPacket.RADIUS, mPacket.RADIUS*2, mPacket.RADIUS*2);
-		//</UPRT>
-
+		drawCircle(mTopContext, mPacket.getPosition(), packetColor, mPacket.RADIUS);
 	}
 	
 	private void drawCircle(GraphicsContext context, Point2D position, Color color, int radius){
 		context.setFill(color);
-		context.fillOval((position.getX())/scale-radius,
-				getHeight()-(position.getY())/scale-radius, radius*2, radius*2);
+		context.fillOval((position.getX())/scale-radius/2,
+				getHeight()-(position.getY())/scale-radius/2, radius, radius);
 	}
 	
 	private void plaster(){
@@ -105,6 +78,22 @@ public class MainView extends Canvas implements Runnable {
 	public void fillBackground() {
 		mBottomContext.setFill(BACKGROUND);
 		mBottomContext.fillRect(0,0,getWidth(),getHeight());
+	}
+
+	private void drawTarget() { // мишень
+		mBottomContext.setStroke(Color.RED);
+		mBottomContext.setFill(Color.RED);
+		mBottomContext.strokeOval(mGoal.getX() / scale - mPacket.RADIUS,
+				getHeight() - mGoal.getY() / scale - mPacket.RADIUS, mPacket.RADIUS*2, mPacket.RADIUS*2);
+		mBottomContext.strokeOval(mGoal.getX() / scale - mPacket.RADIUS/2,
+				getHeight() - mGoal.getY() / scale - mPacket.RADIUS/2, mPacket.RADIUS, mPacket.RADIUS);
+		mBottomContext.fillOval(mGoal.getX() / scale - 1,
+				getHeight() - mGoal.getY() / scale - 1, 2, 2);
+		mBottomContext.moveTo(mGoal.getX() / scale, getHeight() - mGoal.getY() / scale - mPacket.RADIUS-2);
+		mBottomContext.lineTo(mGoal.getX() / scale, getHeight() - mGoal.getY() / scale + mPacket.RADIUS+2);
+		mBottomContext.moveTo(mGoal.getX() / scale - mPacket.RADIUS-2, getHeight() - mGoal.getY() / scale);
+		mBottomContext.lineTo(mGoal.getX() / scale + mPacket.RADIUS+2, getHeight() - mGoal.getY() / scale);
+		mBottomContext.stroke();
 	}
 	
 	public void setRefreshableObjects(Label speedXLabel, Label speedYLabel, Label speedLabel,
@@ -139,13 +128,21 @@ public class MainView extends Canvas implements Runnable {
 	public void setAngleBisectionEnabled(boolean value){
 		isAngleBisectionEnabled = value;
 		if (value)
-			if (isAngleBisectionEnabled)
-				mBottomContext.drawImage(mImageGoal, mGoal.getX()/scale-mPacket.RADIUS,
-						getHeight()-mGoal.getY()/scale-mPacket.RADIUS, mPacket.RADIUS*2, mPacket.RADIUS*2);
+			if (isAngleBisectionEnabled){ //todo wtf?
+				drawTarget();
+			}
 	}
 	
 	public Point2D getGoal(){
 		return mGoal;
+	}
+	
+	public void reset(){
+		mPacket.resetTime();
+		mPacket.setPosition(new Point2D(0, 0));
+		Random random = new Random();
+		random.nextInt(256);
+		mTailColor = Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256));
 	}
 	
 }
