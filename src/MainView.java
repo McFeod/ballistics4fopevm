@@ -10,7 +10,8 @@ import javafx.scene.paint.Color;
  */
 public class MainView extends Canvas implements Runnable {
 	public static final Color BACKGROUND = Color.rgb(60, 105, 117);
-	private GraphicsContext mContext;
+	private static final int TAIL_GAGE = 2;
+	private GraphicsContext mTopContext, mBottomContext;
 	Packet mPacket;
 	private double scale;
 
@@ -21,10 +22,10 @@ public class MainView extends Canvas implements Runnable {
 	private Image mImage;
 	//</UPRT>
 
-	public MainView(int sizeX, int sizeY){
+	public MainView(Canvas canvas, int sizeX, int sizeY){
 		super(sizeX, sizeY);
-
-		mContext = getGraphicsContext2D();
+		mTopContext = canvas.getGraphicsContext2D();
+		mBottomContext = getGraphicsContext2D();
 		fillBackground();
 		mPacket = new Packet(new Point2D(0.0, 0.0), new Point2D(100.0, 100.0), 1.0);
 		Point2D drawingArea = mPacket.getFlightRectangle();
@@ -47,9 +48,9 @@ public class MainView extends Canvas implements Runnable {
 		g += stepG;
 		r += stepR;
 		//</UPRT>
-		drawPacket(Color.BLACK, /*Color.WHITESMOKE*/
+		drawAll(Color.BLACK, /*Color.WHITESMOKE*/
 				Color.rgb(r, g, b));
-		mPacket.update(2.0);
+		
 		refreshObjects();
 	}
 
@@ -61,33 +62,35 @@ public class MainView extends Canvas implements Runnable {
 		return scale;
 	}
 
-	public void drawPacket(Color packetColor, Color tailColor){
+	public void drawAll(Color packetColor, Color tailColor){
 		plaster();
-		for(Point2D point: mPacket.getPrevPositions()){
-				if (point!=null)
-				drawCircle(point.add(mPacket.RADIUS, -mPacket.RADIUS), tailColor, 1);
-			}
-		//drawCircle(mPacket.getPosition(), packetColor, mPacket.RADIUS);
+		mPacket.update(5.0);
+		drawCircle(mBottomContext, mPacket.getPosition(), tailColor, TAIL_GAGE);
+		drawCircle(mTopContext, mPacket.getPosition(), packetColor, mPacket.RADIUS);
+		/*
 		//<UPRT>
 		mContext.drawImage(mImage, mPacket.getPosition().getX()/scale,
 				getHeight()-mPacket.getPosition().getY()/scale, mPacket.RADIUS, mPacket.RADIUS);
 		//</UPRT>
+		*/
 	}
 	
-	private void drawCircle(Point2D position, Color color, int radius){
-		mContext.setFill(color);
-		mContext.fillOval(position.getX()/scale, getHeight()-position.getY()/scale, radius, radius);
+	private void drawCircle(GraphicsContext context, Point2D position, Color color, int radius){
+		context.setFill(color);
+		context.fillOval((position.getX())/scale-radius,
+				getHeight()-(position.getY())/scale-radius, radius*2, radius*2);
 	}
 	
 	private void plaster(){
-		//безысходность
-		mContext.clearRect(mPacket.getPosition().getX() / scale, getHeight() - mPacket.getPosition().getY() / scale, mPacket.RADIUS, mPacket.RADIUS);
-		mContext.setFill(BACKGROUND);
-		mContext.fillRect(mPacket.getPosition().getX() / scale-1, getHeight() - mPacket.getPosition().getY() / scale-1, mPacket.RADIUS+2, mPacket.RADIUS+2);
+		mTopContext.clearRect((mPacket.getPosition().getX())/scale-mPacket.RADIUS,
+				getHeight() - (mPacket.getPosition().getY())/scale-mPacket.RADIUS,
+				mPacket.RADIUS*2, mPacket.RADIUS*2);
 	}
+	
+	
 	public void fillBackground() {
-		mContext.setFill(BACKGROUND);
-		mContext.fillRect(0,0,getWidth(),getHeight());
+		mBottomContext.setFill(BACKGROUND);
+		mBottomContext.fillRect(0,0,getWidth(),getHeight());
 	}
 	
 	public void setRefreshableObjects(Label speedXLabel, Label speedYLabel, Label speedLabel,
