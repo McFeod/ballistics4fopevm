@@ -4,6 +4,7 @@ import javafx.geometry.Point2D;
  * Математическая модель снаряда
  */
 public class Packet {
+	public static final int RADIUS = 10;
 	private Point2D mPosition;
 	private Point2D mSpeed;
 	private Point2D mAcceleration;
@@ -11,6 +12,8 @@ public class Packet {
 	private Point2D mAirResistance;
 	private Point2D mCoriolis;
 	private Point2D mGravity;
+	private Point2D[] mPrevPositions;
+	private int mPosIndex = 0;
 	private final Double G = 9.8;
 	private Double mTimeDelta;  // время в секундах между двумя состояниями
 	private Double mTime; //общее время
@@ -28,6 +31,8 @@ public class Packet {
 		mCoriolis = new Point2D(0.0, 0.0);
 		mGravity =  new Point2D(0.0, -mWeight* G);
 		mTime = 0.0;
+
+		mPrevPositions = new Point2D[RADIUS];
 
 		//TODO уточнить формулы: при наличии сил сопротивления подгонка под экран не работает
 		double ascentTime = mSpeed.getY() / G;
@@ -65,7 +70,7 @@ public class Packet {
 		mTime += mTimeDelta;
 
 		mSpeed = mSpeed.add(mAcceleration.multiply(mTimeDelta));
-
+		mPrevPositions[mPosIndex++%RADIUS] = mPosition;
 		mPosition = mPosition.add(mSpeed.multiply(mTimeDelta));
 	}
 
@@ -98,4 +103,7 @@ public class Packet {
 		mPosition = position;
 	}
 
+	public Point2D[] getPrevPositions() {
+		return mPrevPositions;
+	}
 }

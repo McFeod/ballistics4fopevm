@@ -9,6 +9,7 @@ import javafx.scene.paint.Color;
  * Холст с методом отрисовки одного шага
  */
 public class MainView extends Canvas implements Runnable {
+	public static final Color BACKGROUND = Color.rgb(60, 105, 117);
 	private GraphicsContext mContext;
 	Packet mPacket;
 	private double scale;
@@ -35,7 +36,6 @@ public class MainView extends Canvas implements Runnable {
 
 	@Override
 	public void run() {
-		//drawPacket(mPacket.getPosition(), Color.WHITESMOKE);
 		//<UPRT>
 		if (b==255 || b==0)
 			stepB=-stepB;
@@ -46,14 +46,10 @@ public class MainView extends Canvas implements Runnable {
 		b += stepB;
 		g += stepG;
 		r += stepR;
-		drawPacket(mPacket.getPosition(), Color.rgb(r, g, b));
 		//</UPRT>
+		drawPacket(Color.BLACK, /*Color.WHITESMOKE*/
+				Color.rgb(r, g, b));
 		mPacket.update(2.0);
-		//drawPacket(mPacket.getPosition(), Color.BLACK);
-		//<UPRT>
-		mContext.drawImage(mImage, mPacket.getPosition().getX()/scale,
-				getHeight()-mPacket.getPosition().getY()/scale, 10, 10);
-		//</UPRT>
 		refreshObjects();
 	}
 
@@ -65,13 +61,32 @@ public class MainView extends Canvas implements Runnable {
 		return scale;
 	}
 
-	public void drawPacket(Point2D position, Color color){
-		mContext.setFill(color);
-		mContext.fillOval(position.getX()/scale, getHeight()-position.getY()/scale, 10, 10);
+	public void drawPacket(Color packetColor, Color tailColor){
+		plaster();
+		for(Point2D point: mPacket.getPrevPositions()){
+				if (point!=null)
+				drawCircle(point.add(mPacket.RADIUS, -mPacket.RADIUS), tailColor, 1);
+			}
+		//drawCircle(mPacket.getPosition(), packetColor, mPacket.RADIUS);
+		//<UPRT>
+		mContext.drawImage(mImage, mPacket.getPosition().getX()/scale,
+				getHeight()-mPacket.getPosition().getY()/scale, mPacket.RADIUS, mPacket.RADIUS);
+		//</UPRT>
 	}
 	
-	public void fillBackground(){
-		mContext.setFill(Color.LIGHTSKYBLUE);
+	private void drawCircle(Point2D position, Color color, int radius){
+		mContext.setFill(color);
+		mContext.fillOval(position.getX()/scale, getHeight()-position.getY()/scale, radius, radius);
+	}
+	
+	private void plaster(){
+		//безысходность
+		mContext.clearRect(mPacket.getPosition().getX() / scale, getHeight() - mPacket.getPosition().getY() / scale, mPacket.RADIUS, mPacket.RADIUS);
+		mContext.setFill(BACKGROUND);
+		mContext.fillRect(mPacket.getPosition().getX() / scale-1, getHeight() - mPacket.getPosition().getY() / scale-1, mPacket.RADIUS+2, mPacket.RADIUS+2);
+	}
+	public void fillBackground() {
+		mContext.setFill(BACKGROUND);
 		mContext.fillRect(0,0,getWidth(),getHeight());
 	}
 	
