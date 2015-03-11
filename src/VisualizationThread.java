@@ -84,7 +84,7 @@ public class VisualizationThread extends Thread {
 				mAngle1 = mAngle;
 		mAngle = (mAngle1 + mAngle2) / 2;
 		mView.getPacket().setSpeed(new Point2D(Math.cos(mAngle)*mStartSpeed, Math.sin(mAngle)*mStartSpeed));
-		mView.getPacket().mTime = 0.0;
+		mView.getPacket().resetTime();
 		mView.getPacket().setPosition(new Point2D(0, 0));
 	}
 }
