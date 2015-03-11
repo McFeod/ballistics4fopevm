@@ -11,12 +11,13 @@ public class Packet {
 	private final Double G = 9.8;
 	private Double mTimeDelta;  // время в секундах между двумя состояниями
 	private Double mTime; //общее время
+	private Double mSleepFactor;
 
 	/**Наименьший прямоугольник, в который может быть вписана траектория полёта
 	* Вычисляется для нужд масштабирования*/
 	private Point2D flightRectangle;
 
-	public Packet(Point2D speed, Double weight) {
+	public Packet(Point2D speed, Double weight, Double sleepFactor) {
 		mSpeed = speed;
 		mPosition = new Point2D(0.0, 0.0);
 		mWeight = weight;
@@ -24,6 +25,7 @@ public class Packet {
 		mAirResistance = new Point2D(-0.5, 0.0);
 		mGravity =  new Point2D(0.0, -mWeight* G);
 		mTime = 0.0;
+		mSleepFactor = sleepFactor;
 
 		//TODO уточнить формулы: при наличии сил сопротивления подгонка под экран не работает
 		double ascentTime = mSpeed.getY() / G;
@@ -53,7 +55,7 @@ public class Packet {
 		//Да займётся этой формулой её автор
 		//mTimeDelta = (Math.sqrt(mSpeed.getX()*mSpeed.getX()+2*mAcceleration.getX()*dX)-mSpeed.getX());///mAcceleration.getX();
 		mTimeDelta = dS / mSpeed.magnitude();
-		mTime += mTimeDelta;
+		mTime += mTimeDelta*mSleepFactor;
 
 		mSpeed = mSpeed.add(mAcceleration.multiply(mTimeDelta));
 		mPosition = mPosition.add(mSpeed.multiply(mTimeDelta));

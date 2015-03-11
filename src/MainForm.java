@@ -36,6 +36,7 @@ public class MainForm extends Application implements Initializable {
 	@FXML private Label timeLabel;
 	@FXML private Label angleLabel;
 	private boolean isStarted = false;
+	private Double mSleepFactor = 0.1;
 
 	public static void main(String[] args) {
 		launch(args);
@@ -64,7 +65,7 @@ public class MainForm extends Application implements Initializable {
 	@FXML @Override
 	public void initialize(URL location, ResourceBundle resources) {
 		Canvas packetView = new Canvas(512, 512 + 2);
-		mainView = new MainView(packetView, 512, 512 + 2);
+		mainView = new MainView(packetView, 512, 512 + 2, mSleepFactor);
 		mainView.setRefreshableObjects(speedXLabel, speedYLabel, speedLabel, xLabel, yLabel, timeLabel,
 				angleLabel);
 		root.add(mainView, 1, 0);
@@ -81,7 +82,7 @@ public class MainForm extends Application implements Initializable {
 							(mainView.getHeight() - event.getY()) * mainView.getScale()));
 					mainView.setAngleBisectionEnabled(true);
 					VisualizationThread thread = new VisualizationThread();
-					thread.start(0.2, mainView);
+					thread.start(mSleepFactor, mainView);
 					isStarted = true;
 				}
 			}
