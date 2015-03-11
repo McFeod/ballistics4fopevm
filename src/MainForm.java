@@ -24,7 +24,13 @@ public class MainForm extends Application implements Initializable {
 	private static MainView mainView;
 	@FXML private VBox verticalScale;
 	@FXML private HBox horizontalScale;
-	@FXML private Label speedXLabel, speedYLabel, speedLabel, xLabel, yLabel, timeLabel;
+	@FXML private Label speedXLabel;
+	@FXML private Label speedYLabel;
+	@FXML private Label speedLabel;
+	@FXML private Label xLabel;
+	@FXML private Label yLabel;
+	@FXML private Label timeLabel;
+	@FXML private Label angleLabel;
 
 	public static void main(String[] args) {
 		launch(args);
@@ -40,7 +46,8 @@ public class MainForm extends Application implements Initializable {
 		primaryStage.setScene(scene);
 		scene.getStylesheets().add("main_form.css");
 		primaryStage.show();
-
+		mainView.setAngleBisectionEnabled(true);
+		
 		VisualizationThread thread = new VisualizationThread();
 		thread.start(0.3, mainView);
 	}
@@ -56,7 +63,8 @@ public class MainForm extends Application implements Initializable {
 	@FXML @Override
 	public void initialize(URL location, ResourceBundle resources) {
 		mainView = new MainView(512, 512 + 2);
-		mainView.setRefreshableObjects(speedXLabel, speedYLabel, speedLabel, xLabel, yLabel, timeLabel);
+		mainView.setRefreshableObjects(speedXLabel, speedYLabel, speedLabel, xLabel, yLabel, timeLabel,
+				angleLabel);
 		root.add(mainView, 1, 0);
 		verticalScale.setAlignment(Pos.BASELINE_RIGHT);
 		verticalScale.setSpacing(34);

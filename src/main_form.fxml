@@ -16,6 +16,7 @@
 		<Label fx:id="xLabel"/>
 		<Label fx:id="yLabel"/>
 		<Label fx:id="timeLabel"/>
+		<Label fx:id="angleLabel"/>
 		<Button text="Refill" onAction="#repaintBackground"/>
 	</VBox>
 	<!-- Нижний левый угол/-->

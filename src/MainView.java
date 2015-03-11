@@ -14,23 +14,36 @@ public class MainView extends Canvas implements Runnable {
 	Packet mPacket;
 	private double scale;
 
-	private Label speedXLabel, speedYLabel, speedLabel, xLabel, yLabel, timeLabel;
+	private Label speedXLabel;
+	private Label speedYLabel;
+	private Label speedLabel;
+	private Label xLabel;
+	private Label yLabel;
+	private Label timeLabel;
+	private Label angleLabel;
+	
+	private boolean isAngleBisectionEnabled = false;
+	private Point2D mGoal;
+	
 	
 	//<UPRT>
 	private int r=3, g=2, b=1, stepB=1, stepR=3, stepG=2;
-	private Image mImage;
+	private Image mImagePacket;
+	private Image mImageGoal;
 	//</UPRT>
 
 	public MainView(int sizeX, int sizeY){
 		super(sizeX, sizeY);
 
+		mGoal = new Point2D(700, 700);
 		mContext = getGraphicsContext2D();
 		fillBackground();
 		mPacket = new Packet(new Point2D(0.0, 0.0), new Point2D(100.0, 100.0), 1.0);
 		Point2D drawingArea = mPacket.getFlightRectangle();
 		scale = Math.max(drawingArea.getX()/sizeX, drawingArea.getY()/sizeY);
 		//<UPRT>
-		mImage = new Image("chrome.png");
+		mImagePacket = new Image("chrome.png");
+		mImageGoal = new Image("IE.png");
 		//</UPRT>
 	}
 
@@ -65,11 +78,11 @@ public class MainView extends Canvas implements Runnable {
 		plaster();
 		for(Point2D point: mPacket.getPrevPositions()){
 				if (point!=null)
-				drawCircle(point.add(mPacket.RADIUS, -mPacket.RADIUS), tailColor, 1);
+				drawCircle(point.add(mPacket.RADIUS, -mPacket.RADIUS), tailColor, 2);
 			}
 		//drawCircle(mPacket.getPosition(), packetColor, mPacket.RADIUS);
 		//<UPRT>
-		mContext.drawImage(mImage, mPacket.getPosition().getX()/scale,
+		mContext.drawImage(mImagePacket, mPacket.getPosition().getX()/scale,
 				getHeight()-mPacket.getPosition().getY()/scale, mPacket.RADIUS, mPacket.RADIUS);
 		//</UPRT>
 	}
@@ -91,13 +104,14 @@ public class MainView extends Canvas implements Runnable {
 	}
 	
 	public void setRefreshableObjects(Label speedXLabel, Label speedYLabel, Label speedLabel,
-			Label xLabel, Label yLabel, Label timeLabel){
+			Label xLabel, Label yLabel, Label timeLabel, Label angleLabel){
 		this.speedXLabel = speedXLabel;
 		this.speedYLabel = speedYLabel;
 		this.speedLabel = speedLabel;
 		this.xLabel = xLabel;
 		this.yLabel = yLabel;
 		this.timeLabel = timeLabel;
+		this.angleLabel = angleLabel;
 	}
 
 	/**
@@ -110,6 +124,23 @@ public class MainView extends Canvas implements Runnable {
 		xLabel.setText(String.format("X = %.4f м", mPacket.getPosition().getX()));
 		yLabel.setText(String.format("Y = %.4f м", mPacket.getPosition().getY()));
 		timeLabel.setText(String.format("Time = %.3f с", mPacket.getTime()));
+		angleLabel.setText(String.format("Angle = %.4f", 
+				Math.atan(mPacket.getSpeed().getY()/mPacket.getSpeed().getX())*180/Math.PI));
+	}
+	
+	public boolean isAngleBisectionEnabled(){
+		return isAngleBisectionEnabled;
+	}
+	
+	public void setAngleBisectionEnabled(boolean value){
+		isAngleBisectionEnabled = value;
+		if (value)
+			if (isAngleBisectionEnabled)
+				mContext.drawImage(mImageGoal, mGoal.getX()/scale, getHeight()-mGoal.getY()/scale, mPacket.RADIUS, mPacket.RADIUS);
+	}
+	
+	public Point2D getGoal(){
+		return mGoal;
 	}
 	
 }

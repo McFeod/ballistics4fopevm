@@ -32,7 +32,7 @@ public class Packet {
 		mGravity =  new Point2D(0.0, -mWeight* G);
 		mTime = 0.0;
 
-		mPrevPositions = new Point2D[RADIUS];
+		mPrevPositions = new Point2D[RADIUS*2];
 
 		//TODO уточнить формулы: при наличии сил сопротивления подгонка под экран не работает
 		double ascentTime = mSpeed.getY() / G;
@@ -105,5 +105,10 @@ public class Packet {
 
 	public Point2D[] getPrevPositions() {
 		return mPrevPositions;
+	}
+
+	
+	public void resetTime(){
+		mTime = 0.0;
 	}
 }
