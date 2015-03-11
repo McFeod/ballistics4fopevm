@@ -13,7 +13,7 @@ public class Packet {
 	private Point2D mGravity;
 	private final Double G = 9.8;
 	private Double mTimeDelta;  // время в секундах между двумя состояниями
-	private Double mTime; //общее время
+	public Double mTime; //общее время
 
 	/**Наименьший прямоугольник, в который может быть вписана траектория полёта
 	* Вычисляется для нужд масштабирования*/
