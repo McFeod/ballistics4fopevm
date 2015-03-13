@@ -36,7 +36,7 @@ public class VisualizationThread extends Thread {
 				Double gy = mView.getGoal().getY();
 				Double lastX = 0.0; // 1 точка, в которой достигнута высота цели.
 				Double firstX = 100500.0; // 2 точка, в которой достигнута высота цели. Вряд ли их больше.
-				Double lastSpeedTg = 0.0;
+				Double lastSpeedTg = 2.0;
 				
 				while (mView.getPacket().getPosition().getY()>=0) {
 					Double px = mView.getPacket().getPosition().getX();
