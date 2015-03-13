@@ -1,6 +1,9 @@
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
 
+import java.util.ArrayDeque;
+import java.util.Queue;
+
 /**
  * Поток, в котором раз в mSleepTime мс вызывается mView.run()
  */
@@ -11,11 +14,11 @@ public class VisualizationThread extends Thread {
 	private final double DEGREE = Math.PI/180;
 	private double mStartSpeed;
 	private double mAngle1, mAngle2, mAngle;
-
+	private Queue<Choice> mChoices;
 	public void start(Double sleepFactor, MainView view){
 		mSleepFactor = sleepFactor;
 		mView = view;
-		
+		mChoices = new ArrayDeque<>();
 		mStartSpeed = mView.getPacket().getSpeed().magnitude();
 		mAngle1 = 0;
 		mAngle2 = Math.PI/2;
@@ -35,9 +38,8 @@ public class VisualizationThread extends Thread {
 				Double gx = mView.getGoal().getX();
 				Double gy = mView.getGoal().getY();
 				Double lastX = 0.0; // 1 точка, в которой достигнута высота цели.
-				Double firstX = 100500.0; // 2 точка, в которой достигнута высота цели. Вряд ли их больше.
-				Double lastSpeedTg = null;
-				
+				Double firstX = Double.MAX_VALUE; // 2 точка, в которой достигнута высота цели. Вряд ли их больше.
+
 				while (mView.getPacket().getPosition().getY()>=0) {
 					Double px = mView.getPacket().getPosition().getX();
 					Double py = mView.getPacket().getPosition().getY();
@@ -58,7 +60,6 @@ public class VisualizationThread extends Thread {
 					}else {
 						if (dy <= mView.getPacket().RADIUS) {
 							if (yReached){
-								lastSpeedTg = Math.abs(mView.getPacket().getSpeed().getY()/mView.getPacket().getSpeed().getX());
 								lastX = px;
 							}else {
 								yReached = true;
@@ -67,9 +68,30 @@ public class VisualizationThread extends Thread {
 						}
 					}
 				}
-				// (цель "под аркой") либо (слева ниже вершины арки, причём угол большой)
-				boolean xOver = (((lastX >= gx)||(lastSpeedTg!=null)&&(lastSpeedTg>=1)) && (firstX <= gx));
-				nextAngle(yReached&&(xOver));
+				//TODO refactor that
+				if (yReached){
+					if (firstX <= gx) {
+						if (lastX<=gx){
+							boolean down = mAngle >= 45*DEGREE;  // цель правее параболы - неопределённость
+							remember(down);  // выбираем новый угол в зависимости от старого и запоминаем выбор
+							nextAngle(down);
+						} else {
+							nextAngle(true);  // цель "под аркой" - опускаем
+						}
+					} else {
+						nextAngle(false);  // цель левее параболы - поднимаем
+					}
+				} else {
+					nextAngle(false);  // недолёт по y - поднимаем
+				}
+
+				if (!mChoices.isEmpty()&&(Math.abs(mAngle2-mAngle1)<=0.5*DEGREE)){
+					Choice choice = mChoices.poll();
+					mAngle1 = choice.getAngle1();
+					mAngle2 = choice.getAngle2();
+					mAngle = choice.getAngle();
+					nextAngle(choice.isDown());
+				}
 			}
 		}else
 			while (mView.getPacket().getPosition().getY()>=0) {
@@ -90,5 +112,38 @@ public class VisualizationThread extends Thread {
 		mAngle = (mAngle1 + mAngle2) / 2;
 		mView.getPacket().setSpeed(new Point2D(Math.cos(mAngle)*mStartSpeed, Math.sin(mAngle)*mStartSpeed));
 		mView.reset();
+	}
+
+	private void remember(boolean isDown){
+		mChoices.add(new Choice(mAngle1, mAngle2, mAngle, !isDown));
+	}
+
+
+	private class Choice{
+		private Double mAngle1, mAngle2, mAngle;
+		private boolean isDown;
+
+		public Choice(Double angle1, Double angle2, Double angle, boolean isDown) {
+			mAngle1 = angle1;
+			mAngle2 = angle2;
+			mAngle = angle;
+			this.isDown = isDown;
+		}
+
+		public Double getAngle1() {
+			return mAngle1;
+		}
+
+		public Double getAngle2() {
+			return mAngle2;
+		}
+
+		public Double getAngle() {
+			return mAngle;
+		}
+
+		public boolean isDown() {
+			return isDown;
+		}
 	}
 }
