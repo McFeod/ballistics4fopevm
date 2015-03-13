@@ -36,6 +36,7 @@ public class VisualizationThread extends Thread {
 				Double gy = mView.getGoal().getY();
 				Double lastX = 0.0; // 1 точка, в которой достигнута высота цели.
 				Double firstX = 100500.0; // 2 точка, в которой достигнута высота цели. Вряд ли их больше.
+				Double lastSpeedTg = 0.0;
 				
 				while (mView.getPacket().getPosition().getY()>=0) {
 					Double px = mView.getPacket().getPosition().getX();
@@ -51,6 +52,7 @@ public class VisualizationThread extends Thread {
 					Platform.runLater(mView); // way to run submitted Runnable in a JavaFX application thread
 
 					if (dx<=mView.mPacket.RADIUS) {
+						lastSpeedTg = -mView.getPacket().getSpeed().getY()/mView.getPacket().getSpeed().getX();
 						if (dy <= mView.getPacket().RADIUS) {
 							break start;
 						}
@@ -66,7 +68,7 @@ public class VisualizationThread extends Thread {
 					}
 				}
 				// (цель "под аркой") либо (слева ниже вершины арки, причём угол большой)
-				boolean xOver = (((lastX >= gx)||mAngle>Math.PI/4) && (firstX <= gx)); 
+				boolean xOver = (((lastX >= gx)||lastSpeedTg>=1) && (firstX <= gx));
 				nextAngle(yReached&&(xOver));
 			}
 		}else

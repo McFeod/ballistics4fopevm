@@ -27,7 +27,7 @@ public class MainView extends Canvas implements Runnable {
 		mTopContext = canvas.getGraphicsContext2D();
 		mBottomContext = getGraphicsContext2D();
 		fillBackground();
-		mPacket = new Packet(new Point2D(300.0, 100.0), 1.0, sleepFactor);
+		mPacket = new Packet(new Point2D(150.0, 150.0), 1.0, sleepFactor);
 		reset();
 		Point2D drawingArea = mPacket.getFlightRectangle();
 		scale = Math.max(drawingArea.getX()/sizeX, drawingArea.getY()/sizeY);
