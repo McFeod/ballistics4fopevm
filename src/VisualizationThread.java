@@ -1,6 +1,4 @@
 import javafx.application.Platform;
-import javafx.geometry.Point2D;
-
 import java.util.ArrayDeque;
 import java.util.Queue;
 

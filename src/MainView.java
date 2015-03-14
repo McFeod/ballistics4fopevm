@@ -3,9 +3,6 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
-
-import java.util.ArrayDeque;
-import java.util.Queue;
 import java.util.Random;
 
 /**
@@ -15,9 +12,8 @@ public class MainView extends Canvas implements Runnable {
 	public static final Color BACKGROUND = Color.rgb(60, 105, 117);
 	private static final int TAIL_GAGE = 2;
 	private GraphicsContext mTopContext, mBottomContext;
-	Packet mPacket;
+	private Packet mPacket;
 	private double scale;
-	public volatile boolean isReady = false;
 
 	private Label speedXLabel, speedYLabel, speedLabel, xLabel, yLabel, timeLabel, angleLabel;
 	private boolean isAngleBisectionEnabled = false;
@@ -38,9 +34,7 @@ public class MainView extends Canvas implements Runnable {
 	@Override
 	public void run() {
 			drawAll(Color.BLACK, mTailColor);
-			isReady = false;
 			mPacket.update(5.0);
-			isReady = true;
 			refreshObjects();
 	}
 
@@ -139,13 +133,5 @@ public class MainView extends Canvas implements Runnable {
 		Random random = new Random();
 		random.nextInt(256);
 		mTailColor = Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256));
-	}
-
-	public void setGoal(Point2D goal) {
-		mPacket.setTarget(goal);
-	}
-
-	public Point2D getGoal(){
-		return mPacket.getTarget();
 	}
 }

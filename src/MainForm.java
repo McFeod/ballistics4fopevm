@@ -78,7 +78,8 @@ public class MainForm extends Application implements Initializable {
 			@Override
 			public void handle(MouseEvent event) {
 				if (!isStarted) {
-					mainView.setGoal(new Point2D(event.getX() * mainView.getScale(),
+					mainView.getPacket().setTarget(
+							new Point2D(event.getX() * mainView.getScale(),
 							(mainView.getHeight() - event.getY()) * mainView.getScale()));
 					mainView.setAngleBisectionEnabled(true);
 					VisualizationThread thread = new VisualizationThread();

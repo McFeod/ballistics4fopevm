@@ -7,7 +7,7 @@ public class ExecutionMarkers {
 	Double lastX = 0.0; // 1 точка, в которой достигнута высота цели.
 	Double firstX = Double.MAX_VALUE; // 2 точка, в которой достигнута высота цели. Вряд ли их больше.
 
-	public ExecutionMarkers(Point2D target, Point2D pos, double radius) {
+	public ExecutionMarkers(Point2D target, double radius) {
 		mTarget = target;
 		eps = radius;
 	}

@@ -4,7 +4,7 @@ import javafx.geometry.Point2D;
  * Математическая модель снаряда
  */
 public class Packet {
-	public static final double RADIUS = 10.0;
+	public final double RADIUS = 10.0;
 	volatile private Point2D mPosition;
 	volatile private Point2D mSpeed, mAcceleration, mAirResistance, mGravity;
 	private Double mWeight;
@@ -116,7 +116,7 @@ public class Packet {
 	}
 
 	public void resetMarkers(){
-		mMarkers = new ExecutionMarkers(mTarget, mPosition, RADIUS);
+		mMarkers = new ExecutionMarkers(mTarget, RADIUS);
 	}
 
 	public Boolean getSummarize(){

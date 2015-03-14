@@ -1,5 +1,3 @@
-import javafx.geometry.Point2D;
-
 public class AngleChoice {
 	private Double mAngle1, mAngle2, mAngle;
 	private boolean isDown;
