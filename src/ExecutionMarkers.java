@@ -1,11 +1,12 @@
 import javafx.geometry.Point2D;
 
 public class ExecutionMarkers {
-	private boolean yReached = false;
-	Point2D mTarget;
-	Double dx, dy, px, py, eps;
-	Double lastX = 0.0; // 1 точка, в которой достигнута высота цели.
-	Double firstX = Double.MAX_VALUE; // 2 точка, в которой достигнута высота цели. Вряд ли их больше.
+	private boolean yReached = false, isReachable = false;
+	private Point2D mTarget;
+	private Double dx, dy, px, py, eps;
+
+	private Double lastX = 0.0; // 1 точка, в которой достигнута высота цели.
+	private Double firstX = Double.MAX_VALUE; // 2 точка, в которой достигнута высота цели. Вряд ли их больше.
 
 	public ExecutionMarkers(Point2D target, double radius) {
 		mTarget = target;
@@ -38,9 +39,13 @@ public class ExecutionMarkers {
 		if (yReached){
 			if (firstX <= mTarget.getX()) {
 				if (lastX <= mTarget.getX()){
+					if (isReachable){
+						return false; // уже пролетало над целью, а теперь не долетело - поднимаем
+					}
 					return null;  // цель правее параболы - неопределённость
 					// выбираем новый угол в зависимости от старого и запоминаем выбор
 				} else {
+					isReachable = true;
 					return true;  // цель "под аркой" - опускаем
 				}
 			} else {

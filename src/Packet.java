@@ -139,4 +139,8 @@ public class Packet {
 	public boolean inTheAir(){
 		return (mPosition.getY()>=0);
 	}
+
+	public boolean helpToChoose(){
+		return (Math.abs(mSpeed.getY()/(mSpeed.getX()+1e-5)) > 1);
+	}
 }

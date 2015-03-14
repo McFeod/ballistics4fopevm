@@ -9,20 +9,8 @@ public class AngleChoice {
 		this.isDown = isDown;
 	}
 
-	public Double getAngle1() {
-		return mAngle1;
-	}
-
-	public Double getAngle2() {
-		return mAngle2;
-	}
-
 	public Double getAngle() {
 		return mAngle;
-	}
-
-	public boolean isDown() {
-		return isDown;
 	}
 
 	public void next(){
@@ -38,8 +26,8 @@ public class AngleChoice {
 		next();
 	}
 
-	public AngleChoice getAnother(){
-		tryLuck();
+	public AngleChoice getAnother(boolean down){
+		isDown = down;
 		AngleChoice choice = new AngleChoice(mAngle1, mAngle2, mAngle, !isDown);
 		next();
 		choice.next();
@@ -48,10 +36,6 @@ public class AngleChoice {
 
 	public boolean isMatter(){
 		return Math.abs(mAngle2-mAngle1)>0.5*DEGREE;
-	}
-
-	private void tryLuck(){
-		isDown = mAngle >= 45*DEGREE;
 	}
 
 }

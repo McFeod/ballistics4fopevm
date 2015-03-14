@@ -83,7 +83,7 @@ public class MainForm extends Application implements Initializable {
 							(mainView.getHeight() - event.getY()) * mainView.getScale()));
 					mainView.setAngleBisectionEnabled(true);
 					VisualizationThread thread = new VisualizationThread();
-					thread.start(mSleepFactor, mainView);
+					thread.start(mainView);
 					isStarted = true;
 				}
 			}

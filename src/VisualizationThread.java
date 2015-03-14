@@ -6,7 +6,6 @@ import java.util.Queue;
  * Поток, в котором раз в mSleepTime мс вызывается mView.run()
  */
 public class VisualizationThread extends Thread {
-	private Double mSleepFactor;  // соотношение реального времени и моделируемого
 	private MainView mView;
 
 	private AngleChoice mCurrentChoice;
@@ -14,8 +13,7 @@ public class VisualizationThread extends Thread {
 
 	public static boolean targetReached = false;
 
-	public void start(Double sleepFactor, MainView view){
-		mSleepFactor = sleepFactor;
+	public void start(MainView view){
 		mView = view;
 		mChoices = new ArrayDeque<>();
 		mCurrentChoice = new AngleChoice(0.0, Math.PI/2,
@@ -33,26 +31,23 @@ public class VisualizationThread extends Thread {
 			start:
 			while (mCurrentChoice.isMatter()){
 				mView.getPacket().resetMarkers(); // асинхронный момент ещё остался(
-
 				while (mView.getPacket().inTheAir()) {
 					while (!mView.isReady);
 					mView.getPacket().update(5.0);
 					try {
 						Thread.sleep(mView.getPacket().getSleepTime());
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-
-					Platform.runLater(mView); // way to run submitted Runnable in a JavaFX application thread
-
+					} catch (Exception ignore) {}
+					Platform.runLater(mView);
 					if (targetReached){
 						break start;
 					}
 				}
-
+				try{
+					Thread.sleep(200);
+				} catch (Exception ignore){}
 				Boolean result = mView.getPacket().getSummarize();
 				if (result==null){
-					mChoices.add(mCurrentChoice.getAnother());
+					mChoices.add(mCurrentChoice.getAnother(mView.getPacket().helpToChoose()));
 				} else {
 					mCurrentChoice.next(result);
 				}
