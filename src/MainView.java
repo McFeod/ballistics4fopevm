@@ -4,6 +4,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 
+import java.util.ArrayDeque;
+import java.util.Queue;
 import java.util.Random;
 
 /**
@@ -15,10 +17,10 @@ public class MainView extends Canvas implements Runnable {
 	private GraphicsContext mTopContext, mBottomContext;
 	Packet mPacket;
 	private double scale;
+	public volatile boolean isReady = false;
 
 	private Label speedXLabel, speedYLabel, speedLabel, xLabel, yLabel, timeLabel, angleLabel;
 	private boolean isAngleBisectionEnabled = false;
-	private Point2D mGoal;
 	private Color mTailColor;
 
 	public MainView(Canvas canvas, int sizeX, int sizeY, Double sleepFactor){
@@ -27,16 +29,19 @@ public class MainView extends Canvas implements Runnable {
 		mTopContext = canvas.getGraphicsContext2D();
 		mBottomContext = getGraphicsContext2D();
 		fillBackground();
-		mPacket = new Packet(new Point2D(150.0, 150.0), 1.0, sleepFactor);
-		reset();
+		mPacket = new Packet(212.0, 1.0, sleepFactor);
 		Point2D drawingArea = mPacket.getFlightRectangle();
 		scale = Math.max(drawingArea.getX()/sizeX, drawingArea.getY()/sizeY);
+
 	}
 
 	@Override
 	public void run() {
-		drawAll(Color.BLACK, mTailColor);
-		refreshObjects();
+			drawAll(Color.BLACK, mTailColor);
+			isReady = false;
+			mPacket.update(5.0);
+			isReady = true;
+			refreshObjects();
 	}
 
 	public Packet getPacket() {
@@ -49,12 +54,11 @@ public class MainView extends Canvas implements Runnable {
 
 	public void drawAll(Color packetColor, Color tailColor){
 		plaster();
-		mPacket.update(5.0);
 		drawCircle(mBottomContext, mPacket.getPosition(), tailColor, TAIL_GAGE);
 		drawCircle(mTopContext, mPacket.getPosition(), packetColor, mPacket.RADIUS);
 	}
 	
-	private void drawCircle(GraphicsContext context, Point2D position, Color color, int radius){
+	private void drawCircle(GraphicsContext context, Point2D position, Color color, double radius){
 		context.setFill(color);
 		context.fillOval((position.getX())/scale-radius/2,
 				getHeight()-(position.getY())/scale-radius/2, radius, radius);
@@ -78,16 +82,16 @@ public class MainView extends Canvas implements Runnable {
 	private void drawTarget() {
 		mBottomContext.setStroke(Color.RED);
 		mBottomContext.setFill(Color.RED);
-		mBottomContext.strokeOval(mGoal.getX() / scale - mPacket.RADIUS,
-				getHeight() - mGoal.getY() / scale - mPacket.RADIUS, mPacket.RADIUS*2, mPacket.RADIUS*2);
-		mBottomContext.strokeOval(mGoal.getX() / scale - mPacket.RADIUS/2,
-				getHeight() - mGoal.getY() / scale - mPacket.RADIUS/2, mPacket.RADIUS, mPacket.RADIUS);
-		mBottomContext.fillOval(mGoal.getX() / scale - 1,
-				getHeight() - mGoal.getY() / scale - 1, 2, 2);
-		mBottomContext.moveTo(mGoal.getX() / scale, getHeight() - mGoal.getY() / scale - mPacket.RADIUS-2);
-		mBottomContext.lineTo(mGoal.getX() / scale, getHeight() - mGoal.getY() / scale + mPacket.RADIUS+2);
-		mBottomContext.moveTo(mGoal.getX() / scale - mPacket.RADIUS-2, getHeight() - mGoal.getY() / scale);
-		mBottomContext.lineTo(mGoal.getX() / scale + mPacket.RADIUS+2, getHeight() - mGoal.getY() / scale);
+		mBottomContext.strokeOval(mPacket.getTarget().getX() / scale - mPacket.RADIUS,
+				getHeight() - mPacket.getTarget().getY() / scale - mPacket.RADIUS, mPacket.RADIUS*2, mPacket.RADIUS*2);
+		mBottomContext.strokeOval(mPacket.getTarget().getX() / scale - mPacket.RADIUS/2,
+				getHeight() - mPacket.getTarget().getY() / scale - mPacket.RADIUS/2, mPacket.RADIUS, mPacket.RADIUS);
+		mBottomContext.fillOval(mPacket.getTarget().getX() / scale - 1,
+				getHeight() - mPacket.getTarget().getY() / scale - 1, 2, 2);
+		mBottomContext.moveTo(mPacket.getTarget().getX() / scale, getHeight() - mPacket.getTarget().getY() / scale - mPacket.RADIUS-2);
+		mBottomContext.lineTo(mPacket.getTarget().getX() / scale, getHeight() - mPacket.getTarget().getY() / scale + mPacket.RADIUS+2);
+		mBottomContext.moveTo(mPacket.getTarget().getX() / scale - mPacket.RADIUS-2, getHeight() - mPacket.getTarget().getY() / scale);
+		mBottomContext.lineTo(mPacket.getTarget().getX() / scale + mPacket.RADIUS+2, getHeight() - mPacket.getTarget().getY() / scale);
 		mBottomContext.stroke();
 	}
 	
@@ -128,12 +132,9 @@ public class MainView extends Canvas implements Runnable {
 			}
 	}
 	
-	public Point2D getGoal(){
-		return mGoal;
-	}
-	
-	public void reset(){
+	public void reset(Double angle){
 		mPacket.resetTime();
+		mPacket.resetSpeed(angle);
 		mPacket.setPosition(new Point2D(0, 0));
 		Random random = new Random();
 		random.nextInt(256);
@@ -141,6 +142,10 @@ public class MainView extends Canvas implements Runnable {
 	}
 
 	public void setGoal(Point2D goal) {
-		mGoal = goal;
+		mPacket.setTarget(goal);
+	}
+
+	public Point2D getGoal(){
+		return mPacket.getTarget();
 	}
 }
