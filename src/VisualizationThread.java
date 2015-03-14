@@ -34,13 +34,17 @@ public class VisualizationThread extends Thread {
 			while (mCurrentChoice.isMatter()){
 				mView.getPacket().resetMarkers(); // асинхронный момент ещё остался(
 
-				while (mView.getPacket().getPosition().getY()>=0) {
+				while (mView.getPacket().inTheAir()) {
+					while (!mView.isReady);
+					mView.getPacket().update(5.0);
 					try {
-						Thread.sleep((long)(mSleepFactor*mView.getPacket().getTimeDelta()*1000)+1);
+						Thread.sleep(mView.getPacket().getSleepTime());
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
+
 					Platform.runLater(mView); // way to run submitted Runnable in a JavaFX application thread
+
 					if (targetReached){
 						break start;
 					}
@@ -59,9 +63,9 @@ public class VisualizationThread extends Thread {
 				mView.reset(mCurrentChoice.getAngle());
 			}
 		}else
-			while (mView.getPacket().getPosition().getY()>=0) {
+			while (mView.getPacket().inTheAir()) {
 				try {
-					Thread.sleep((long)(mSleepFactor*mView.getPacket().getTimeDelta()*1000));
+					Thread.sleep(mView.getPacket().getSleepTime());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

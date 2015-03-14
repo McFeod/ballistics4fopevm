@@ -14,10 +14,11 @@ public class MainView extends Canvas implements Runnable {
 	private GraphicsContext mTopContext, mBottomContext;
 	private Packet mPacket;
 	private double scale;
-
+	public volatile boolean isReady = true;
 	private Label speedXLabel, speedYLabel, speedLabel, xLabel, yLabel, timeLabel, angleLabel;
 	private boolean isAngleBisectionEnabled = false;
 	private Color mTailColor;
+	private Point2D mCurrentPoint;
 
 	public MainView(Canvas canvas, int sizeX, int sizeY, Double sleepFactor){
 		super(sizeX, sizeY);
@@ -33,9 +34,11 @@ public class MainView extends Canvas implements Runnable {
 
 	@Override
 	public void run() {
+			isReady = false;
+			mCurrentPoint = mPacket.getPosition();
 			drawAll(Color.BLACK, mTailColor);
-			mPacket.update(5.0);
 			refreshObjects();
+			isReady = true;
 	}
 
 	public Packet getPacket() {
@@ -48,8 +51,8 @@ public class MainView extends Canvas implements Runnable {
 
 	public void drawAll(Color packetColor, Color tailColor){
 		plaster();
-		drawCircle(mBottomContext, mPacket.getPosition(), tailColor, TAIL_GAGE);
-		drawCircle(mTopContext, mPacket.getPosition(), packetColor, mPacket.RADIUS);
+		drawCircle(mBottomContext, mCurrentPoint, tailColor, TAIL_GAGE);
+		drawCircle(mTopContext, mCurrentPoint, packetColor, mPacket.RADIUS);
 	}
 	
 	private void drawCircle(GraphicsContext context, Point2D position, Color color, double radius){
@@ -59,8 +62,8 @@ public class MainView extends Canvas implements Runnable {
 	}
 	
 	private void plaster(){
-		mTopContext.clearRect((mPacket.getPosition().getX())/scale-mPacket.RADIUS,
-				getHeight() - (mPacket.getPosition().getY())/scale-mPacket.RADIUS,
+		mTopContext.clearRect((mCurrentPoint.getX())/scale-mPacket.RADIUS,
+				getHeight() - (mCurrentPoint.getY())/scale-mPacket.RADIUS,
 				mPacket.RADIUS*2, mPacket.RADIUS*2);
 	}
 	
@@ -107,8 +110,8 @@ public class MainView extends Canvas implements Runnable {
 		speedXLabel.setText(String.format("SpeedX = %.4f м/с", mPacket.getSpeed().getX()));
 		speedYLabel.setText(String.format("SpeedY = %.4f м/с", mPacket.getSpeed().getY()));
 		speedLabel.setText(String.format("Speed = %.4f м/с", mPacket.getSpeed().magnitude()));
-		xLabel.setText(String.format("X = %.4f м", mPacket.getPosition().getX()));
-		yLabel.setText(String.format("Y = %.4f м", mPacket.getPosition().getY()));
+		xLabel.setText(String.format("X = %.4f м", mCurrentPoint.getX()));
+		yLabel.setText(String.format("Y = %.4f м", mCurrentPoint.getY()));
 		timeLabel.setText(String.format("Time = %.3f с", mPacket.getTime()));
 		angleLabel.setText(String.format("Angle = %.4f", 
 				Math.atan(mPacket.getSpeed().getY()/mPacket.getSpeed().getX())*180/Math.PI));
@@ -134,4 +137,5 @@ public class MainView extends Canvas implements Runnable {
 		random.nextInt(256);
 		mTailColor = Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256));
 	}
+
 }

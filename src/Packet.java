@@ -1,5 +1,8 @@
 import javafx.geometry.Point2D;
 
+import java.util.ArrayDeque;
+import java.util.Queue;
+
 /**
  * Математическая модель снаряда
  */
@@ -9,12 +12,14 @@ public class Packet {
 	volatile private Point2D mSpeed, mAcceleration, mAirResistance, mGravity;
 	private Double mWeight;
 	private final Double G = 9.8;
-	private Double mTimeDelta;  // время в секундах между двумя состояниями
+	private Double mTimeDelta = 0.0;  // время в секундах между двумя состояниями
 	private Double mTime; //общее время
 	private Double mSleepFactor;
 	private Double mStartSpeed;
 	private Point2D mTarget;
 	private ExecutionMarkers mMarkers;
+	private Queue<Point2D> mLastPositions;
+	private Queue<Double> mLastDeltas;
 
 	/**Наименьший прямоугольник, в который может быть вписана траектория полёта
 	* Вычисляется для нужд масштабирования*/
@@ -30,6 +35,8 @@ public class Packet {
 		mGravity =  new Point2D(0.0, -mWeight* G);
 		mTime = 0.0;
 		mSleepFactor = sleepFactor;
+		mLastDeltas = new ArrayDeque<>();
+		mLastPositions = new ArrayDeque<>();
 
 		//TODO уточнить формулы: при наличии сил сопротивления подгонка под экран не работает
 		double ascentTime = mStartSpeed/Math.sqrt(2)/G; //mSpeed.getY() / G;
@@ -58,10 +65,12 @@ public class Packet {
 		//TODO обработка особых случаев, например, с делением на ноль
 		//Да займётся этой формулой её автор
 		//mTimeDelta = (Math.sqrt(mSpeed.getX()*mSpeed.getX()+2*mAcceleration.getX()*dX)-mSpeed.getX());///mAcceleration.getX();
+		mLastDeltas.add(mTimeDelta);
 		mTimeDelta = dS / mSpeed.magnitude();
 		mTime += mTimeDelta*mSleepFactor;
 
 		mSpeed = mSpeed.add(mAcceleration.multiply(mTimeDelta));
+		mLastPositions.add(mPosition);
 		mPosition = mPosition.add(mSpeed.multiply(mTimeDelta));
 
 		mMarkers.refresh(mPosition);
@@ -71,13 +80,8 @@ public class Packet {
 		return flightRectangle;
 	}
 
-
 	public Point2D getSpeed() {
 		return mSpeed;
-	}
-
-	public Double getTimeDelta() {
-		return mTimeDelta;
 	}
 
 	public Double getTime() {
@@ -88,8 +92,11 @@ public class Packet {
 		mSpeed = speed;
 	}
 
+	@Deprecated
 	public Point2D getPosition() {
-		return mPosition;
+		if (mLastPositions.isEmpty())
+			return mPosition;
+		return mLastPositions.poll();
 	}
 
 	public void setPosition(Point2D position) {
@@ -123,4 +130,13 @@ public class Packet {
 		return mMarkers.summarize();
 	}
 
+	public long getSleepTime(){
+		if (mLastDeltas.isEmpty())
+			return 1;
+		return (long)(mSleepFactor*mLastDeltas.poll()*1000)+1;
+	}
+
+	public boolean inTheAir(){
+		return (mPosition.getY()>=0);
+	}
 }
