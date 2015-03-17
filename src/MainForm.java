@@ -97,6 +97,9 @@ public class MainForm extends Application implements Initializable {
 
 	private void buildScales(){
 		int scaleMark = (int)Math.round(mainView.getScale()) * 50;
+		if(scaleMark == 0){
+			scaleMark = (int)Math.round(mainView.getScale() * 10) * 5;
+		}
 		horizontalScale.setMax(scaleMark * (int)(mainView.getWidth() / 50));
 		horizontalScale.setMajorTickUnit(scaleMark);
 		verticalScale.setMax(scaleMark * (int)(mainView.getWidth() / 100));
