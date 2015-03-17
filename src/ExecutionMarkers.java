@@ -35,6 +35,11 @@ public class ExecutionMarkers {
 		}
 	}
 
+	public void reset(){
+		yReached = false;
+		lastX = 0.0;
+		firstX = Double.MAX_VALUE;
+	}
 	public Boolean summarize(){
 		if (yReached){
 			if (firstX <= mTarget.getX()) {

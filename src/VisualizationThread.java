@@ -25,7 +25,7 @@ public class VisualizationThread extends Thread {
 	
 	@Override
 	public void run() {
-		mView.getPacket().resetMarkers();
+		mView.getPacket().setupMarkers();
 		mView.getPacket().update(1.0);
 		if (mView.isAngleBisectionEnabled()){
 			start:

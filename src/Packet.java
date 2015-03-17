@@ -149,8 +149,12 @@ public class Packet {
 				Math.sin(Math.atan(target.getY() / target.getX()))*mStartSpeed);
 	}
 
-	public void resetMarkers(){
+	public void setupMarkers(){
 		mMarkers = new ExecutionMarkers(mTarget, RADIUS_PIX);
+	}
+
+	public void resetMarkers(){
+		mMarkers.reset();
 	}
 
 	public Boolean getSummarize(){

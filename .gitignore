@@ -14,6 +14,7 @@ hs_err_pid*
 #IDE properties
 .idea
 *.iml
+META-INF
 project.properties
 .settings
 .project
