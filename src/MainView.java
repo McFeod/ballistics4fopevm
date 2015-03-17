@@ -26,7 +26,7 @@ public class MainView extends Canvas implements Runnable {
 		mTopContext = canvas.getGraphicsContext2D();
 		mBottomContext = getGraphicsContext2D();
 		fillBackground();
-		mPacket = new Packet(212.0, 1.0, sleepFactor);
+		mPacket = new Packet(212.0, sleepFactor);
 		Point2D drawingArea = mPacket.getFlightRectangle();
 		scale = Math.max(drawingArea.getX()/sizeX, drawingArea.getY()/sizeY);
 
@@ -52,7 +52,7 @@ public class MainView extends Canvas implements Runnable {
 	public void drawAll(Color packetColor, Color tailColor){
 		plaster();
 		drawCircle(mBottomContext, mCurrentPoint, tailColor, TAIL_GAGE);
-		drawCircle(mTopContext, mCurrentPoint, packetColor, mPacket.RADIUS);
+		drawCircle(mTopContext, mCurrentPoint, packetColor, mPacket.RADIUS_PIX);
 	}
 	
 	private void drawCircle(GraphicsContext context, Point2D position, Color color, double radius){
@@ -62,9 +62,9 @@ public class MainView extends Canvas implements Runnable {
 	}
 	
 	private void plaster(){
-		mTopContext.clearRect((mCurrentPoint.getX())/scale-mPacket.RADIUS,
-				getHeight() - (mCurrentPoint.getY())/scale-mPacket.RADIUS,
-				mPacket.RADIUS*2, mPacket.RADIUS*2);
+		mTopContext.clearRect((mCurrentPoint.getX())/scale-mPacket.RADIUS_PIX,
+				getHeight() - (mCurrentPoint.getY())/scale-mPacket.RADIUS_PIX,
+				mPacket.RADIUS_PIX*2, mPacket.RADIUS_PIX*2);
 	}
 	
 	
@@ -79,16 +79,16 @@ public class MainView extends Canvas implements Runnable {
 	private void drawTarget() {
 		mBottomContext.setStroke(Color.RED);
 		mBottomContext.setFill(Color.RED);
-		mBottomContext.strokeOval(mPacket.getTarget().getX() / scale - mPacket.RADIUS,
-				getHeight() - mPacket.getTarget().getY() / scale - mPacket.RADIUS, mPacket.RADIUS*2, mPacket.RADIUS*2);
-		mBottomContext.strokeOval(mPacket.getTarget().getX() / scale - mPacket.RADIUS/2,
-				getHeight() - mPacket.getTarget().getY() / scale - mPacket.RADIUS/2, mPacket.RADIUS, mPacket.RADIUS);
+		mBottomContext.strokeOval(mPacket.getTarget().getX() / scale - mPacket.RADIUS_PIX,
+				getHeight() - mPacket.getTarget().getY() / scale - mPacket.RADIUS_PIX, mPacket.RADIUS_PIX*2, mPacket.RADIUS_PIX*2);
+		mBottomContext.strokeOval(mPacket.getTarget().getX() / scale - mPacket.RADIUS_PIX/2,
+				getHeight() - mPacket.getTarget().getY() / scale - mPacket.RADIUS_PIX/2, mPacket.RADIUS_PIX, mPacket.RADIUS_PIX);
 		mBottomContext.fillOval(mPacket.getTarget().getX() / scale - 1,
 				getHeight() - mPacket.getTarget().getY() / scale - 1, 2, 2);
-		mBottomContext.moveTo(mPacket.getTarget().getX() / scale, getHeight() - mPacket.getTarget().getY() / scale - mPacket.RADIUS-2);
-		mBottomContext.lineTo(mPacket.getTarget().getX() / scale, getHeight() - mPacket.getTarget().getY() / scale + mPacket.RADIUS+2);
-		mBottomContext.moveTo(mPacket.getTarget().getX() / scale - mPacket.RADIUS-2, getHeight() - mPacket.getTarget().getY() / scale);
-		mBottomContext.lineTo(mPacket.getTarget().getX() / scale + mPacket.RADIUS+2, getHeight() - mPacket.getTarget().getY() / scale);
+		mBottomContext.moveTo(mPacket.getTarget().getX() / scale, getHeight() - mPacket.getTarget().getY() / scale - mPacket.RADIUS_PIX-2);
+		mBottomContext.lineTo(mPacket.getTarget().getX() / scale, getHeight() - mPacket.getTarget().getY() / scale + mPacket.RADIUS_PIX+2);
+		mBottomContext.moveTo(mPacket.getTarget().getX() / scale - mPacket.RADIUS_PIX-2, getHeight() - mPacket.getTarget().getY() / scale);
+		mBottomContext.lineTo(mPacket.getTarget().getX() / scale + mPacket.RADIUS_PIX+2, getHeight() - mPacket.getTarget().getY() / scale);
 		mBottomContext.stroke();
 	}
 	

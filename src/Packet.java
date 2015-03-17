@@ -7,11 +7,20 @@ import java.util.Queue;
  * Математическая модель снаряда
  */
 public class Packet {
-	public final double RADIUS = 10.0;
+	public final double G = 9.8;
+	public final double RADIUS_PIX = 10.0; //радиус шара в пикселях
+	public final double RADIUS = 1; //Радиус шара в метрах
+	public final double L = 0.0065; //просто константа
+	public final double R = 8.314; //еще одна константа
+	public final double T0 = 288.15; //температура на уровне моря
+	public final double P0 = 101325; //Давление на уровне моря
+	public final double M = 0.029; //молярная масса воздуха
+	public final double Cf = 0.47; //Коэффициент для вычисления сопротивления воздуха
+	public final double S = RADIUS * RADIUS * Math.PI; //Площадь сечения шара
+	public double weight = 32000.0;
+	
 	volatile private Point2D mPosition;
-	volatile private Point2D mSpeed, mAcceleration, mAirResistance, mGravity;
-	private Double mWeight;
-	private final Double G = 9.8;
+	volatile private Point2D mSpeed, mAcceleration, mAirResistance, mGravity, mWindResistance;
 	private Double mTimeDelta = 0.0;  // время в секундах между двумя состояниями
 	private Double mTime; //общее время
 	private Double mSleepFactor;
@@ -25,14 +34,14 @@ public class Packet {
 	* Вычисляется для нужд масштабирования*/
 	private Point2D flightRectangle;
 
-	public Packet(Double speed, Double weight, Double sleepFactor) {
+	public Packet(Double speed, Double sleepFactor) {
 		mStartSpeed = speed;
 
 		mPosition = new Point2D(0.0, 0.0);
-		mWeight = weight;
 		mAcceleration = new Point2D(0.0, 0.0);
 		mAirResistance = new Point2D(0.0, 0.0);
-		mGravity =  new Point2D(0.0, -mWeight* G);
+		mWindResistance = new Point2D(0.0, 0.0);
+		mGravity =  new Point2D(0.0, -weight* G);
 		mTime = 0.0;
 		mSleepFactor = sleepFactor;
 		mLastDeltas = new ArrayDeque<>();
@@ -46,12 +55,17 @@ public class Packet {
 	}
 	
 	private void calcResistance(){
-		//TODO
+		double t = T0 - mPosition.getY()*L;
+		double p = P0 * Math.pow(1-L*mPosition.getY()/T0, G*M/R/L);
+		double thickness = p*M/R/t;
+		mAirResistance = new Point2D(-1*Cf*thickness*getSpeed().getX()*getSpeed().getX()/2*S,
+				-1*Cf*thickness*getSpeed().getY()*getSpeed().getY()/2*S);
 	}
+
 	
 	private void calcAcceleration(){
 		calcResistance();
-		mAcceleration = mGravity.add(mAirResistance).multiply(1.0/mWeight);
+		mAcceleration = mGravity.add(mAirResistance.add(mWindResistance)).multiply(1.0/weight);
 	}
 
 	/**
@@ -122,7 +136,7 @@ public class Packet {
 	}
 
 	public void resetMarkers(){
-		mMarkers = new ExecutionMarkers(mTarget, RADIUS);
+		mMarkers = new ExecutionMarkers(mTarget, RADIUS_PIX);
 	}
 
 	public Boolean getSummarize(){
