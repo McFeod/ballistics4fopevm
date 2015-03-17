@@ -28,8 +28,8 @@ public class MainView extends Canvas implements Runnable {
 		fillBackground();
 		mPacket = new Packet(212.0, sleepFactor);
 		Point2D drawingArea = mPacket.getFlightRectangle();
-		scale = Math.max(drawingArea.getX()/sizeX, drawingArea.getY()/sizeY);
-
+		scale = Math.max(drawingArea.getX()/sizeX, drawingArea.getY()/sizeY)
+		        * Math.pow(1.05 - mPacket.getStartSpeed() / 2000.0, 1 / mPacket.RADIUS);// * Math.sqrt(mPacket.RADIUS);
 	}
 
 	@Override
