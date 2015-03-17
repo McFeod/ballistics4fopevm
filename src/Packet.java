@@ -44,9 +44,26 @@ public class Packet {
 		double  distanceInVacuum = mStartSpeed/Math.sqrt(2) * ascentTime * 2;//mSpeed.getX() * ascentTime * 2;
 		flightRectangle = new Point2D(distanceInVacuum, maxHeightInVacuum);
 	}
-	
+
 	private void calcResistance(){
-		//TODO
+/*
+		double   L = 0.0065,
+				R = 8.314,
+				T0 = 288.15,
+				M = 0.029;
+
+		double   Cf = 0.47, //Коэффициент для вычисления сопротивления воздуха
+				Thickness = 1.225,//Плотность воздуха
+				Temp = 288.15,//Температура воздуха
+				Rad = 0.01,//Радиус шара метрах
+				S = Rad*Rad*3.14,//Площадь сечения шара
+				P = 101325;//Давление
+		Temp = Temp - mPosition.getY()*L;
+		P = P*Math.pow(1-L*mPosition.getY()/T0,G*M/R/L);
+		Thickness = P*M/R/Temp;
+		mAirResistance = mAirResistance.add(-1*mAirResistance.getX(),-1*mAirResistance.getY());
+		mAirResistance = mAirResistance.add(-1*Cf*Thickness*getSpeed().getX()*getSpeed().getX()/2*S,-1*Cf*Thickness*getSpeed().getY()*getSpeed().getY()/2*S);
+*/
 	}
 	
 	private void calcAcceleration(){
