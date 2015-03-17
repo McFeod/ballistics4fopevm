@@ -13,6 +13,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -26,8 +27,8 @@ public class MainForm extends Application implements Initializable {
 
 	@FXML private GridPane root;
 	private static MainView mainView;
-	@FXML private VBox verticalScale;
-	@FXML private HBox horizontalScale;
+	@FXML private Slider verticalScale;
+	@FXML private Slider horizontalScale;
 	@FXML private Label speedXLabel;
 	@FXML private Label speedYLabel;
 	@FXML private Label speedLabel;
@@ -48,7 +49,7 @@ public class MainForm extends Application implements Initializable {
 		root = FXMLLoader.load(getClass().getResource("main_form.fxml"));
 
 		primaryStage.setTitle("Кликни мышкой на поле");
-		Scene scene = new Scene(root, 720, 535);
+		Scene scene = new Scene(root);
 		primaryStage.setScene(scene);
 		scene.getStylesheets().add("main_form.css");
 		primaryStage.show();
@@ -67,13 +68,11 @@ public class MainForm extends Application implements Initializable {
 		Canvas packetView = new Canvas(512, 512 + 2);
 		mainView = new MainView(packetView, 512, 512 + 2, mSleepFactor);
 		mainView.setRefreshableObjects(speedXLabel, speedYLabel, speedLabel, xLabel, yLabel, timeLabel,
-				angleLabel);
+				angleLabel, horizontalScale, verticalScale);
 		root.add(mainView, 1, 0);
 		root.add(packetView, 1, 0);
-		verticalScale.setAlignment(Pos.BASELINE_RIGHT);
-		verticalScale.setSpacing(34);
-		buildVerticalScale(verticalScale, mainView.getHeight());
-		buildHorizontalScale(horizontalScale, mainView.getWidth());
+		buildScale(verticalScale, mainView.getHeight());
+		buildScale(horizontalScale, mainView.getWidth());
 		packetView.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
@@ -102,40 +101,9 @@ public class MainForm extends Application implements Initializable {
 		mainView.fillBackground();
 	}
 
-	/*Между label-ами внутри vbox остаются зазоры, которые не удаётся отключить.
-	* Зависимость высоты зазора от высоты шрифта:
-	* Шрифт   10   13   15   20   25   30
-	* Зазор    4    3    4    5    7    6
-	* Т.к. алгебра здесь бессильна, подогнал шрифт и spacing таким образом,
-	* чтобы расстояния между делениями были по 50.
-	* */
-
-	private void buildVerticalScale(Pane pane, double markLimit){
+	private void buildScale(Slider scale, double markLimit){
 		int scaleMark = (int)Math.round(mainView.getScale()) * 50;
-		int currentMark = scaleMark * (int)(markLimit / 50);
-		while(currentMark >= 0){
-			Label lbl = new Label(Integer.toString(currentMark));
-			lbl.getStyleClass().add("scaleLabel");
-			pane.getChildren().add(lbl);
-			currentMark-=scaleMark;
-		}
-	}
-
-	private void buildHorizontalScale(Pane pane, double markLimit){
-		int scaleMark = (int)Math.round(mainView.getScale()) * 50;
-		int maxMark = scaleMark * (int)(markLimit / 50);
-		int currentMark = 0;
-		while(currentMark < maxMark){
-			Label line = new Label("|");
-			line.getStyleClass().add("scaleMark");
-			pane.getChildren().add(line);
-
-			Label lbl = new Label(Integer.toString(currentMark));
-			lbl.getStyleClass().add("scaleLabel");
-			lbl.setMinWidth(45);// опять подгон
-			pane.getChildren().add(lbl);
-
-			currentMark+=scaleMark;
-		}
+		scale.setMax(scaleMark * (int)(markLimit / 50));
+		scale.setMajorTickUnit(scaleMark);
 	}
 }

@@ -2,6 +2,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.paint.Color;
 import java.util.Random;
 
@@ -15,6 +16,7 @@ public class MainView extends Canvas implements Runnable {
 	private Packet mPacket;
 	private double scale;
 	public volatile boolean isReady = true;
+	private Slider vSlider, hSlider;
 	private Label speedXLabel, speedYLabel, speedLabel, xLabel, yLabel, timeLabel, angleLabel;
 	private boolean isAngleBisectionEnabled = false;
 	private Color mTailColor;
@@ -70,7 +72,7 @@ public class MainView extends Canvas implements Runnable {
 	
 	public void fillBackground() {
 		mBottomContext.setFill(BACKGROUND);
-		mBottomContext.fillRect(0,0,getWidth(),getHeight());
+		mBottomContext.fillRect(0, 0, getWidth(), getHeight());
 	}
 
 	/**
@@ -93,7 +95,8 @@ public class MainView extends Canvas implements Runnable {
 	}
 	
 	public void setRefreshableObjects(Label speedXLabel, Label speedYLabel, Label speedLabel,
-			Label xLabel, Label yLabel, Label timeLabel, Label angleLabel){
+			Label xLabel, Label yLabel, Label timeLabel, Label angleLabel,
+			Slider hScale, Slider vScale){
 		this.speedXLabel = speedXLabel;
 		this.speedYLabel = speedYLabel;
 		this.speedLabel = speedLabel;
@@ -101,6 +104,8 @@ public class MainView extends Canvas implements Runnable {
 		this.yLabel = yLabel;
 		this.timeLabel = timeLabel;
 		this.angleLabel = angleLabel;
+		this.hSlider = hScale;
+		this.vSlider = vScale;
 	}
 
 	/**
@@ -115,6 +120,8 @@ public class MainView extends Canvas implements Runnable {
 		timeLabel.setText(String.format("Time = %.3f с", mPacket.getTime()));
 		angleLabel.setText(String.format("Angle = %.4f", 
 				Math.atan(mPacket.getSpeed().getY()/mPacket.getSpeed().getX())*180/Math.PI));
+		vSlider.setValue(mCurrentPoint.getY());
+		hSlider.setValue(mCurrentPoint.getX());
 	}
 	
 	public boolean isAngleBisectionEnabled(){
