@@ -20,6 +20,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
+import javafx.util.converter.DoubleStringConverter;
+import javafx.util.converter.FormatStringConverter;
+
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -73,7 +77,7 @@ public class MainForm extends Application implements Initializable {
 				if (!isStarted) {
 					mainView.getPacket().setTarget(
 							new Point2D(event.getX() * mainView.getScale(),
-							(mainView.getHeight() - event.getY()) * mainView.getScale()));
+									(mainView.getHeight() - event.getY()) * mainView.getScale()));
 					mainView.setAngleBisectionEnabled(true);
 					VisualizationThread thread = new VisualizationThread();
 					thread.start(mainView);
@@ -96,10 +100,24 @@ public class MainForm extends Application implements Initializable {
 	}
 
 	private void buildScales(){
-		int scaleMark = (int)Math.round(mainView.getScale()) * 50;
-		horizontalScale.setMax(scaleMark * (int)(mainView.getWidth() / 50));
+		double scaleMark = (mainView.getScale()) * 50;
+		horizontalScale.setMax(scaleMark * (mainView.getWidth() / 50));
 		horizontalScale.setMajorTickUnit(scaleMark);
-		verticalScale.setMax(scaleMark * (int)(mainView.getWidth() / 100));
+		verticalScale.setMax(scaleMark * (mainView.getWidth() / 100));
 		verticalScale.setMajorTickUnit(scaleMark);
+		StringConverter converter = new StringConverter<Double>() {
+			@Override
+			public String toString(Double object) {
+				int n = ((int) Math.round(object)/50)*50;
+				return String.valueOf(n);
+			}
+
+			@Override
+			public Double fromString(String string) {
+				return null;
+			}
+		};
+		verticalScale.setLabelFormatter(converter);
+		horizontalScale.setLabelFormatter(converter);
 	}
 }

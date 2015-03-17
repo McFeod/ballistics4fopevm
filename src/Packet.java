@@ -104,6 +104,10 @@ public class Packet {
 		return flightRectangle;
 	}
 
+	public Double getStartSpeed() {
+		return mStartSpeed;
+	}
+
 	public Point2D getSpeed() {
 		return mSpeed;
 	}
