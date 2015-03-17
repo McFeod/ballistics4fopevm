@@ -62,15 +62,15 @@ public class Packet {
 		double p = P0 * Math.pow(1-L*mPosition.getY()/T0, G*M/R/L);
 		double thickness = p*M/R/t;
 		//сопротивление воздуха
-		mAirResistance = new Point2D(-1*Cf*thickness*getSpeed().getX()*getSpeed().getX()/2*S,
-				-1*Cf*thickness*getSpeed().getY()*getSpeed().getY()/2*S);
+		mAirResistance = new Point2D(-1*Cf*thickness*mSpeed.getX()*mSpeed.getX()/2*S,
+				-1*Cf*thickness*mSpeed.getY()*mSpeed.getY()/2*S);
 		//сопротивление ветра по формуле F=0.5*r*V^2*S r-плотность воздуха, V-скорость ветра
 		Point2D temp = new Point2D(0.5*thickness*mWindResistance.getX()*mWindResistance.getX()*S,
 				0.5*thickness*mWindResistance.getY()*mWindResistance.getY()*S);
 		//проверка знака у ветра
 		temp = new Point2D(mWindResistance.getX()<0 ? -temp.getX() : temp.getX(),
 				mWindResistance.getY()<0 ? -temp.getY() : temp.getY());
-		mAirResistance.add(temp);
+		mAirResistance = mAirResistance.add(temp);
 	}
 	
 	private void calcAcceleration(){
