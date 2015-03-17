@@ -108,8 +108,7 @@ public class Packet {
 	}
 
 	public void resetSpeed(Double angle){
-		Double v = mSpeed.magnitude();
-		setSpeed(new Point2D(Math.cos(angle)*v, Math.sin(angle)*v));
+		setSpeed(new Point2D(Math.cos(angle)*mStartSpeed, Math.sin(angle)*mStartSpeed));
 	}
 
 	public Point2D getTarget() {
