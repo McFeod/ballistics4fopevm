@@ -68,7 +68,7 @@ public class MainForm extends Application implements Initializable {
 		Canvas packetView = new Canvas(512, 512 + 2);
 		mainView = new MainView(packetView, 512, 512 + 2, mSleepFactor);
 		mainView.setRefreshableObjects(speedXLabel, speedYLabel, speedLabel, xLabel, yLabel, timeLabel,
-				angleLabel);
+				angleLabel, horizontalScale, verticalScale);
 		root.add(mainView, 1, 0);
 		root.add(packetView, 1, 0);
 		buildScale(verticalScale, mainView.getHeight());
