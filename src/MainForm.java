@@ -65,14 +65,13 @@ public class MainForm extends Application implements Initializable {
 
 	@FXML @Override
 	public void initialize(URL location, ResourceBundle resources) {
-		Canvas packetView = new Canvas(512, 512 + 2);
-		mainView = new MainView(packetView, 512, 512 + 2, mSleepFactor);
+		Canvas packetView = new Canvas(1024, 512);
+		mainView = new MainView(packetView, 1024, 512, mSleepFactor);
 		mainView.setRefreshableObjects(speedXLabel, speedYLabel, speedLabel, xLabel, yLabel, timeLabel,
 				angleLabel, horizontalScale, verticalScale);
 		root.add(mainView, 1, 0);
 		root.add(packetView, 1, 0);
-		buildScale(verticalScale, mainView.getHeight());
-		buildScale(horizontalScale, mainView.getWidth());
+		buildScales();
 		packetView.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
@@ -101,9 +100,11 @@ public class MainForm extends Application implements Initializable {
 		mainView.fillBackground();
 	}
 
-	private void buildScale(Slider scale, double markLimit){
+	private void buildScales(){
 		int scaleMark = (int)Math.round(mainView.getScale()) * 50;
-		scale.setMax(scaleMark * (int)(markLimit / 50));
-		scale.setMajorTickUnit(scaleMark);
+		horizontalScale.setMax(scaleMark * (int)(mainView.getWidth() / 50));
+		horizontalScale.setMajorTickUnit(scaleMark);
+		verticalScale.setMax(scaleMark * (int)(mainView.getWidth() / 100));
+		verticalScale.setMajorTickUnit(scaleMark);
 	}
 }
