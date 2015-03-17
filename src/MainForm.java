@@ -29,13 +29,8 @@ public class MainForm extends Application implements Initializable {
 	private static MainView mainView;
 	@FXML private Slider verticalScale;
 	@FXML private Slider horizontalScale;
-	@FXML private Label speedXLabel;
-	@FXML private Label speedYLabel;
-	@FXML private Label speedLabel;
-	@FXML private Label xLabel;
-	@FXML private Label yLabel;
-	@FXML private Label timeLabel;
-	@FXML private Label angleLabel;
+	@FXML private Label infoLabel;
+	@FXML private Label nameLabel;
 	private boolean isStarted = false;
 	private Double mSleepFactor = 0.01;
 
@@ -67,11 +62,11 @@ public class MainForm extends Application implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		Canvas packetView = new Canvas(1024, 512);
 		mainView = new MainView(packetView, 1024, 512, mSleepFactor);
-		mainView.setRefreshableObjects(speedXLabel, speedYLabel, speedLabel, xLabel, yLabel, timeLabel,
-				angleLabel, horizontalScale, verticalScale);
+		mainView.setRefreshableObjects(infoLabel, horizontalScale, verticalScale);
 		root.add(mainView, 1, 0);
 		root.add(packetView, 1, 0);
 		buildScales();
+		nameLabel.setText("SpeedX\nSpeedY\nSpeed\nX\nY\nAngle");
 		packetView.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {

@@ -17,7 +17,7 @@ public class MainView extends Canvas implements Runnable {
 	private double scale;
 	public volatile boolean isReady = true;
 	private Slider vSlider, hSlider;
-	private Label speedXLabel, speedYLabel, speedLabel, xLabel, yLabel, timeLabel, angleLabel;
+	private Label infoLabel;
 	private boolean isAngleBisectionEnabled = false;
 	private Color mTailColor;
 	private Point2D mCurrentPoint;
@@ -94,16 +94,9 @@ public class MainView extends Canvas implements Runnable {
 		mBottomContext.stroke();
 	}
 	
-	public void setRefreshableObjects(Label speedXLabel, Label speedYLabel, Label speedLabel,
-			Label xLabel, Label yLabel, Label timeLabel, Label angleLabel,
+	public void setRefreshableObjects(Label infoLabel,
 			Slider hScale, Slider vScale){
-		this.speedXLabel = speedXLabel;
-		this.speedYLabel = speedYLabel;
-		this.speedLabel = speedLabel;
-		this.xLabel = xLabel;
-		this.yLabel = yLabel;
-		this.timeLabel = timeLabel;
-		this.angleLabel = angleLabel;
+		this.infoLabel = infoLabel;
 		this.hSlider = hScale;
 		this.vSlider = vScale;
 	}
@@ -112,14 +105,22 @@ public class MainView extends Canvas implements Runnable {
 	 * Вывод информации о полёте
 	 */
 	private void refreshObjects(){
-		speedXLabel.setText(String.format("SpeedX = %.4f м/с", mPacket.getSpeed().getX()));
-		speedYLabel.setText(String.format("SpeedY = %.4f м/с", mPacket.getSpeed().getY()));
-		speedLabel.setText(String.format("Speed = %.4f м/с", mPacket.getSpeed().magnitude()));
-		xLabel.setText(String.format("X = %.4f м", mCurrentPoint.getX()));
-		yLabel.setText(String.format("Y = %.4f м", mCurrentPoint.getY()));
-		timeLabel.setText(String.format("Time = %.3f с", mPacket.getTime()));
-		angleLabel.setText(String.format("Angle = %.4f", 
-				Math.atan(mPacket.getSpeed().getY()/mPacket.getSpeed().getX())*180/Math.PI));
+		infoLabel.setText(String.format(String.format(
+				"%s\n%s\n%s\n%s\n%s\n%s\n",
+					"%.4f м/с",
+					"%.4f м/с",
+					"%.4f м/с",
+					"%.4f м",
+					"%.4f м",
+					"%.3f с",
+					"%.4f"),
+					mPacket.getSpeed().getX(), mPacket.getSpeed().getY(),
+					mPacket.getSpeed().magnitude(),
+					mCurrentPoint.getX(),
+					mCurrentPoint.getY(),
+					mPacket.getTime(),
+					Math.atan(mPacket.getSpeed().getY()/mPacket.getSpeed().getX())*180/Math.PI)
+				);
 		vSlider.setValue(mCurrentPoint.getY());
 		hSlider.setValue(mCurrentPoint.getX());
 	}
