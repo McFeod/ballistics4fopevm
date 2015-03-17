@@ -108,7 +108,7 @@ public class MainForm extends Application implements Initializable {
 		StringConverter converter = new StringConverter<Double>() {
 			@Override
 			public String toString(Double object) {
-				int n = ((int) Math.round(object)/50)*50;
+				int n = ((int) Math.round(object)/10)*10;
 				return String.valueOf(n);
 			}
 
