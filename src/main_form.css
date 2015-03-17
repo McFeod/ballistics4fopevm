@@ -1,28 +1,61 @@
 @CHARSET "UTF-8";
 
 .root{
-	-fx-background: #808080;
+	-fx-padding: 10 0 0 0;
+	-fx-background: #303030;
 }
+
+.label{
+	-fx-wrap-text: true;
+	-fx-padding: 10;
+}
+
 
 .control_panel {
 	-fx-spacing: 20;
 	-fx-padding: 10;
-	-fx-alignment: top-center;
 }
 
-.scale{
-	/*Если здесь заменить на -fx-background, то работать не будет))*/
-	-fx-background-color: #000000;
-	-fx-padding: 0 0 1 0;
+.vertical_scale{
+	-fx-padding: -63 -48 -63 -64;
+	-fx-orientation: vertical;
 }
 
-.scaleLabel{
-	-fx-font-size: 13px;
-	-fx-underline: true;
-	-fx-text-fill:#BBBB00;
+.horizontal_scale{
+
+	-fx-padding: -48 -47 -24 -47;
+	-fx-orientation: horizontal;
 }
 
-.scaleMark{
-	-fx-font-size: 15px;
-	-fx-text-fill:#BBBB00;
+.vertical_scale, .horizontal_scale {
+	-fx-show-tick-labels: true;
+	-fx-show-tick-marks: true;
+	-fx-snap-to-ticks: true;
+}
+
+.vertical_scale .track, .horizontal_scale .track {
+	-fx-background-color: #00000000;
+}
+
+.vertical_scale .thumb{
+	-fx-padding: 64;
+	-fx-background-color: #00000000,
+			linear-gradient(to bottom, #00000000 49%, white 50%, #00000000 51%);
+}
+.horizontal_scale .thumb{
+	-fx-padding: 48;
+	-fx-background-color: #00000000,
+			linear-gradient(to right, #00000000 49%, white 50%, #00000000 51%);
+}
+
+.vertical_scale .axis, .horizontal_scale .axis {
+	-fx-tick-label-fill: #DFDF00;
+}
+
+.vertical_scale .axis .axis-tick-mark,
+.vertical_scale .axis .axis-minor-tick-mark,
+.horizontal_scale .axis .axis-tick-mark,
+.horizontal_scale .axis .axis-minor-tick-mark {
+	-fx-fill: null;
+	-fx-stroke: #485F88;
 }

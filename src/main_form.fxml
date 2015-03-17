@@ -1,38 +1,21 @@
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
 
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
 <GridPane fx:controller="MainForm" fx:id="root"
-                             xmlns:fx="http://javafx.com/fxml">
-	<VBox fx:id="verticalScale" GridPane.columnIndex="0"
-	                            styleClass="scale"/>
-	<!-- Место для mainView /-->
-	<VBox styleClass="controlPanel" GridPane.columnIndex="2">
-		<Label fx:id="speedXLabel"/>
-		<Label fx:id="speedYLabel"/>
-		<Label fx:id="speedLabel"/>
-		<Label fx:id="xLabel"/>
-		<Label fx:id="yLabel"/>
-		<Label fx:id="timeLabel"/>
-		<Label fx:id="angleLabel"/>
-		<Button text="Refill" onAction="#repaintBackground"/>
-	</VBox>
-	<!-- Нижний левый угол/-->
-	<HBox GridPane.columnIndex="0"
-	      GridPane.rowIndex="1"
-	      style="-fx-background-color: #bbbb00;">      <!-- Невидимый жёлтый прямоугольник/-->
-		<HBox style ="-fx-background-color: #000000;"> <!-- Пустота левее нуля  /-->
-			<Label text="  "/>
-		</HBox>                            <!-- Отступ 0.6 играет роль нижнего подчёркивания/-->
-		<HBox style ="-fx-background-color: #000000; -fx-background-insets: 0.6 0 0 0;">
-			<Label text="      "/>
+          xmlns:fx="http://javafx.com/fxml">
+	<VBox prefWidth="200" alignment="CENTER">
+		<HBox GridPane.columnIndex="0" GridPane.rowIndex="0" prefHeight="200">
+			<Label fx:id="nameLabel"/>
+			<Label fx:id="infoLabel"/>
 		</HBox>
-	</HBox>
-	<HBox fx:id="horizontalScale" GridPane.columnIndex="1"
-	                              GridPane.rowIndex="1"
-	                              styleClass="scale">
-		<!-- <Label text="───" styleClass="scaleMark"/> /-->
-	</HBox>
+		<Button text="Refill" GridPane.columnIndex="0" GridPane.rowIndex="1"
+		        onAction="#repaintBackground"/>
+	</VBox>
+	<Slider fx:id="horizontalScale" GridPane.columnIndex="1" styleClass="horizontal_scale"
+			 GridPane.rowIndex="1"/>
+	<Slider fx:id="verticalScale" GridPane.columnIndex="2" styleClass="vertical_scale"/>
 </GridPane>
