@@ -106,7 +106,7 @@ public class MainView extends Canvas implements Runnable {
 	 */
 	private void refreshObjects(){
 		infoLabel.setText(String.format(String.format(
-				"%s\n%s\n%s\n%s\n%s\n%s\n",
+				"%s\n%s\n%s\n%s\n%s\n%s\n%s",
 					"%.4f м/с",
 					"%.4f м/с",
 					"%.4f м/с",
@@ -114,7 +114,8 @@ public class MainView extends Canvas implements Runnable {
 					"%.4f м",
 					"%.3f с",
 					"%.4f"),
-					mPacket.getSpeed().getX(), mPacket.getSpeed().getY(),
+					mPacket.getSpeed().getX(),
+					mPacket.getSpeed().getY(),
 					mPacket.getSpeed().magnitude(),
 					mCurrentPoint.getX(),
 					mCurrentPoint.getY(),
