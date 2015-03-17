@@ -66,7 +66,7 @@ public class MainForm extends Application implements Initializable {
 		root.add(mainView, 1, 0);
 		root.add(packetView, 1, 0);
 		buildScales();
-		nameLabel.setText("SpeedX\nSpeedY\nSpeed\nX\nY\nAngle");
+		nameLabel.setText("SpeedX\nSpeedY\nSpeed\nX\nY\nTime\nAngle");
 		packetView.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
