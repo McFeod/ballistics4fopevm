@@ -23,7 +23,7 @@ public class Packet {
 	public final double Cf = 0.47; //коэффициент для вычисления сопротивления воздуха
 	
 	volatile private Point2D mPosition;
-	volatile private Point2D mSpeed, mAcceleration, mAirResistance, mGravity, mWindResistance;
+	volatile private Point2D mSpeed, mAcceleration, mAirResistance, mGravity, mWindSpeed;
 	private Double mTimeDelta = 0.0;  // время в секундах между двумя состояниями
 	private Double mTime; //общее время
 	private Double mSleepFactor;
@@ -43,7 +43,7 @@ public class Packet {
 		mPosition = new Point2D(0.0, 0.0);
 		mAcceleration = new Point2D(0.0, 0.0);
 		mAirResistance = new Point2D(0.0, 0.0);
-		mWindResistance = new Point2D(-10.6, 0.0);
+		mWindSpeed = new Point2D( 1000.6, 0.0);
 		mGravity =  new Point2D(0.0, -WEIGHT* G);
 		mTime = 0.0;
 		mSleepFactor = sleepFactor;
@@ -61,16 +61,12 @@ public class Packet {
 		double t = T0 - mPosition.getY()*L;
 		double p = P0 * Math.pow(1-L*mPosition.getY()/T0, G*M/R/L);
 		double thickness = p*M/R/t;
+		Point2D speed = mSpeed.add(mWindSpeed);
 		//сопротивление воздуха
-		mAirResistance = new Point2D(-1*Cf*thickness*mSpeed.getX()*mSpeed.getX()/2*S,
-				-1*Cf*thickness*mSpeed.getY()*mSpeed.getY()/2*S);
-		//сопротивление ветра по формуле F=0.5*r*V^2*S r-плотность воздуха, V-скорость ветра
-		Point2D temp = new Point2D(0.5*thickness*mWindResistance.getX()*mWindResistance.getX()*S,
-				0.5*thickness*mWindResistance.getY()*mWindResistance.getY()*S);
-		//проверка знака у ветра
-		temp = new Point2D(mWindResistance.getX()<0 ? -temp.getX() : temp.getX(),
-				mWindResistance.getY()<0 ? -temp.getY() : temp.getY());
-		mAirResistance = mAirResistance.add(temp);
+		mAirResistance = new Point2D(Cf*thickness*speed.getX()*speed.getX()/2*S,
+				Cf*thickness*speed.getY()*speed.getY()/2*S);
+		mAirResistance = new Point2D(speed.getX()<0 ? -mAirResistance.getX() : mAirResistance.getX(),
+						speed.getY()<0 ? -mAirResistance.getY() : mAirResistance.getY());
 	}
 	
 	private void calcAcceleration(){
@@ -91,7 +87,7 @@ public class Packet {
 		//mTimeDelta = (Math.sqrt(mSpeed.getX()*mSpeed.getX()+2*mAcceleration.getX()*dX)-mSpeed.getX());///mAcceleration.getX();
 		mLastDeltas.add(mTimeDelta);
 		mTimeDelta = dS / mSpeed.magnitude();
-		mTime += mTimeDelta*mSleepFactor;
+		mTime += mTimeDelta;
 
 		mSpeed = mSpeed.add(mAcceleration.multiply(mTimeDelta));
 		mLastPositions.add(mPosition);

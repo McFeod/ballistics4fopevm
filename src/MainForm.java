@@ -36,7 +36,7 @@ public class MainForm extends Application implements Initializable {
 	@FXML private Label infoLabel;
 	@FXML private Label nameLabel;
 	private boolean isStarted = false;
-	private Double mSleepFactor = 0.01;
+	private Double mSleepFactor = 0.1;
 
 	public static void main(String[] args) {
 		launch(args);
