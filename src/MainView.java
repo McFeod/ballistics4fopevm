@@ -16,7 +16,6 @@ public class MainView extends Canvas implements Runnable {
 	private GraphicsContext mTopContext, mBottomContext;
 	private Packet mPacket;
 	private double scale;
-	public volatile boolean isReady = true;
 	private Slider vSlider, hSlider;
 	private Label infoLabel;
 	private boolean isAngleBisectionEnabled = false;
@@ -52,6 +51,7 @@ public class MainView extends Canvas implements Runnable {
 	public void reset(Double angle){
 		mPacket.resetTime();
 		mPacket.resetSpeed(angle);
+		mPacket.resetMarkers();
 		mPacket.setPosition(new Point2D(0, 0));
 		Random random = new Random();
 		random.nextInt(256);
@@ -60,13 +60,11 @@ public class MainView extends Canvas implements Runnable {
 
 	@Override
 	public void run() {
-		isReady = false;
 		plaster();
 		mCurrentPoint = mPacket.getPosition();
 		drawCircle(mBottomContext, mCurrentPoint, mTailColor, TAIL_GAGE);
 		drawCircle(mTopContext, mCurrentPoint, Color.BLACK, PACKET_GAGE);
 		refreshObjects();
-		isReady = true;
 	}
 
 	public void setAngleBisectionEnabled(boolean value){
@@ -89,6 +87,7 @@ public class MainView extends Canvas implements Runnable {
 		Point2D drawingArea = mPacket.getFlightRectangle();
 		scale = Math.max(drawingArea.getX()/getWidth(), drawingArea.getY()/getHeight());
 		mSleepFactor = 0.1/scale;
+		packet.setupMarkers(Math.min(PACKET_GAGE * scale, PACKET_GAGE));
 	}
 
 	private void drawCircle(GraphicsContext context, Point2D position, Color color, double radius){
@@ -149,9 +148,5 @@ public class MainView extends Canvas implements Runnable {
 
 	public long getSleepTime(){
 		return (long)(mSleepFactor*mPacket.getLastDelta()*1000)+1;
-	}
-
-	public Double getmSleepFactor() {
-		return mSleepFactor;
 	}
 }

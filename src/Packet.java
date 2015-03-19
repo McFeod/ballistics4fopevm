@@ -44,8 +44,8 @@ public class Packet {
 		mWindSpeed = new Point2D(-20.0, 0.0);
 		mGravity =  new Point2D(0.0, -WEIGHT* G);
 		mTime = 0.0;
-		mLastDeltas = new ArrayDeque<Double>();
-		mLastPositions = new ArrayDeque<Point2D>();
+		mLastDeltas = new ArrayDeque<>();
+		mLastPositions = new ArrayDeque<>();
 
 		//TODO уточнить формулы: при наличии сил сопротивления подгонка под экран не работает
 		double ascentTime = mStartSpeed/Math.sqrt(2)/G; //mSpeed.getY() / G;
@@ -70,30 +70,13 @@ public class Packet {
 		calcAirResistance();
 		mAcceleration = mGravity.add(mAirResistance).multiply(1.0/WEIGHT);
 	}
-	/**
-	 * Основной шаг логической части программы
-	 * @param dS - расстояние (в метрах) между двумя состояниями снаряда
-	 */
-	public void update(Double dS){
-		calcAcceleration();
-
-		mLastDeltas.add(mTimeDelta);
-		mTimeDelta = dS / mSpeed.magnitude();
-		mTime += mTimeDelta;
-
-		mSpeed = mSpeed.add(mAcceleration.multiply(mTimeDelta));
-		mLastPositions.add(mPosition);
-		mPosition = mPosition.add(mSpeed.multiply(mTimeDelta));
-
-		mMarkers.refresh(mPosition);
-	}
 
 	public Point2D getFlightRectangle() {
 		return flightRectangle;
 	}
 
 	@Deprecated
-	public Point2D getPosition() {
+	public synchronized Point2D getPosition() {
 		if (mLastPositions.isEmpty())
 			return mPosition;
 		return mLastPositions.poll();
@@ -103,10 +86,6 @@ public class Packet {
 		if (mLastDeltas.isEmpty())
 			return 0.0;
 		return mLastDeltas.poll();
-	}
-
-	public Double getStartSpeed() {
-		return mStartSpeed;
 	}
 
 	public Point2D getSpeed() {
@@ -159,5 +138,21 @@ public class Packet {
 		mMarkers = new ExecutionMarkers(mTarget, hitRadius);
 	}
 
+	/**
+	 * Основной шаг логической части программы
+	 * @param dS - расстояние (в метрах) между двумя состояниями снаряда
+	 */
+	public synchronized void update(Double dS){
+		calcAcceleration();
 
+		mLastDeltas.add(mTimeDelta);
+		mTimeDelta = dS / mSpeed.magnitude();
+		mTime += mTimeDelta;
+
+		mSpeed = mSpeed.add(mAcceleration.multiply(mTimeDelta));
+		mLastPositions.add(mPosition);
+		mPosition = mPosition.add(mSpeed.multiply(mTimeDelta));
+
+		mMarkers.refresh(mPosition);
+	}
 }

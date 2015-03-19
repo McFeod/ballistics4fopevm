@@ -13,27 +13,27 @@ public class VisualizationThread extends Thread {
 
 	public static boolean targetReached = false;
 
+	private final double DEGREE = Math.PI/180;
 	public void start(MainView view){
 		mView = view;
 		mChoices = new ArrayDeque<>();
 		mCurrentChoice = new AngleChoice(0.0, Math.PI/2,
 				Math.atan(mView.getPacket().getSpeed().getY()/mView.getPacket().getSpeed().getX())
-				,true);
+				,true, DEGREE/mView.getScale());
 		setDaemon(true); // lazy & dangerous(for IO) way to stop a thread when closing app
 		start();
 	}
 	
 	@Override
 	public void run() {
-		double updateStep = 5.0;// 2.0 * mView.getScale();
-		mView.getPacket().setupMarkers(mView.PACKET_GAGE);
+		double updateStep = 5.0;
+		mView.getPacket().setupMarkers(MainView.PACKET_GAGE);
 		mView.getPacket().update(1.0);
 		if (mView.isAngleBisectionEnabled()){
 			start:
 			while (mCurrentChoice.isMatter()){
 				mView.getPacket().resetMarkers();
 				while (mView.getPacket().inTheAir()) {
-					while (!mView.isReady); //volatile же
 					mView.getPacket().update(updateStep);
 					try {
 						Thread.sleep(mView.getSleepTime());
