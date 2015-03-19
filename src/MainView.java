@@ -11,7 +11,7 @@ import java.util.Random;
  */
 public class MainView extends Canvas implements Runnable {
 	public static final Color BACKGROUND = Color.rgb(60, 105, 117);
-	private static final int PACKET_GAGE = 10;
+	public static final double PACKET_GAGE = 10;
 	private static final int TAIL_GAGE = 2;
 	private GraphicsContext mTopContext, mBottomContext;
 	private Packet mPacket;
@@ -21,8 +21,7 @@ public class MainView extends Canvas implements Runnable {
 	private Label infoLabel;
 	private boolean isAngleBisectionEnabled = false;
 	private Color mTailColor;
-
-	private Point2D mCurrentPoint = new Point2D(0,0);
+	private Point2D mCurrentPoint = new Point2D(0.0, 0.0);
 
 	public MainView(Canvas canvas, int sizeX, int sizeY, Double sleepFactor){
 		super(sizeX, sizeY);
@@ -30,7 +29,7 @@ public class MainView extends Canvas implements Runnable {
 		mTopContext = canvas.getGraphicsContext2D();
 		mBottomContext =     getGraphicsContext2D();
 		fillBackground();
-		setPacket(new Packet(50.0, sleepFactor));
+		setPacket(new Packet(212.0, sleepFactor));
 	}
 
 	public void fillBackground() {
@@ -53,7 +52,6 @@ public class MainView extends Canvas implements Runnable {
 	public void reset(Double angle){
 		mPacket.resetTime();
 		mPacket.resetSpeed(angle);
-		mPacket.resetMarkers();
 		mPacket.setPosition(new Point2D(0, 0));
 		Random random = new Random();
 		random.nextInt(256);
@@ -90,8 +88,6 @@ public class MainView extends Canvas implements Runnable {
 		this.mPacket = packet;
 		Point2D drawingArea = mPacket.getFlightRectangle();
 		scale = Math.max(drawingArea.getX()/getWidth(), drawingArea.getY()/getHeight());
-		System.out.println(scale);
-		packet.setupMarkers(Math.min(PACKET_GAGE * scale, PACKET_GAGE));
 	}
 
 	private void drawCircle(GraphicsContext context, Point2D position, Color color, double radius){

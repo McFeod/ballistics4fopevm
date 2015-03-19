@@ -26,13 +26,14 @@ public class VisualizationThread extends Thread {
 	@Override
 	public void run() {
 		double updateStep = 2.0 * mView.getScale();
+		mView.getPacket().setupMarkers(mView.PACKET_GAGE);
 		mView.getPacket().update(1.0);
 		if (mView.isAngleBisectionEnabled()){
 			start:
 			while (mCurrentChoice.isMatter()){
-				//mView.getPacket().resetMarkers(); // асинхронный момент ещё остался(
+				mView.getPacket().resetMarkers();
 				while (mView.getPacket().inTheAir()) {
-					//while (!mView.isReady); volatile же
+					while (!mView.isReady); //volatile же
 					mView.getPacket().update(updateStep);
 					try {
 						Thread.sleep(mView.getPacket().getSleepTime());

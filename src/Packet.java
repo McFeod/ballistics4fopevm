@@ -8,7 +8,6 @@ import java.util.Queue;
  */
 public class Packet {
 	//характеристика шара
-	//public final double RADIUS_PIX = 10.0; //радиус шара в пикселях
 	public final double RADIUS = 1.0; //радиус шара в метрах
 	public final double S = RADIUS * RADIUS * Math.PI; //площадь сечения шара
 	public final double DENSITY = 7800; //плотность шара
@@ -73,13 +72,30 @@ public class Packet {
 		calcAirResistance();
 		mAcceleration = mGravity.add(mAirResistance).multiply(1.0/WEIGHT);
 	}
+	/**
+	 * Основной шаг логической части программы
+	 * @param dS - расстояние (в метрах) между двумя состояниями снаряда
+	 */
+	public void update(Double dS){
+		calcAcceleration();
+
+		mLastDeltas.add(mTimeDelta);
+		mTimeDelta = dS / mSpeed.magnitude();
+		mTime += mTimeDelta;
+
+		mSpeed = mSpeed.add(mAcceleration.multiply(mTimeDelta));
+		mLastPositions.add(mPosition);
+		mPosition = mPosition.add(mSpeed.multiply(mTimeDelta));
+
+		mMarkers.refresh(mPosition);
+	}
 
 	public Point2D getFlightRectangle() {
 		return flightRectangle;
 	}
 
 	@Deprecated
-	public synchronized Point2D getPosition() {
+	public Point2D getPosition() {
 		if (mLastPositions.isEmpty())
 			return mPosition;
 		return mLastPositions.poll();
@@ -137,7 +153,6 @@ public class Packet {
 
 	public void setTarget(Point2D target) {
 		mTarget = target;
-		mMarkers.setTarget(target);
 		mSpeed = new Point2D(Math.cos(Math.atan(target.getY()/target.getX()))*mStartSpeed,
 				Math.sin(Math.atan(target.getY() / target.getX()))*mStartSpeed);
 	}
@@ -146,25 +161,5 @@ public class Packet {
 		mMarkers = new ExecutionMarkers(mTarget, hitRadius);
 	}
 
-	/**
-	 * Основной шаг логической части программы
-	 * @param dS - расстояние (в метрах) между двумя состояниями снаряда
-	 */
-	public synchronized void update(Double dS){
-		calcAcceleration();
 
-		//Жалкая попытка вспомнить физику
-		//TODO обработка особых случаев, например, с делением на ноль
-		//Да займётся этой формулой её автор
-		//mTimeDelta = (Math.sqrt(mSpeed.getX()*mSpeed.getX()+2*mAcceleration.getX()*dX)-mSpeed.getX());///mAcceleration.getX();
-		mLastDeltas.add(mTimeDelta);
-		mTimeDelta = dS / mSpeed.magnitude();
-		mTime += mTimeDelta;
-
-		mSpeed = mSpeed.add(mAcceleration.multiply(mTimeDelta));
-		mLastPositions.add(mPosition);
-		mPosition = mPosition.add(mSpeed.multiply(mTimeDelta));
-
-		mMarkers.refresh(mPosition);
-	}
 }

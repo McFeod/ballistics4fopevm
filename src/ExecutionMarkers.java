@@ -40,11 +40,6 @@ public class ExecutionMarkers {
 		lastX = 0.0;
 		firstX = Double.MAX_VALUE;
 	}
-
-	public void setTarget(Point2D target) {
-		this.mTarget = target;
-	}
-
 	public Boolean summarize(){
 		if (yReached){
 			if (firstX <= mTarget.getX()) {
