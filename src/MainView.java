@@ -11,6 +11,7 @@ import java.util.Random;
  */
 public class MainView extends Canvas implements Runnable {
 	public static final Color BACKGROUND = Color.rgb(60, 105, 117);
+	private static final int PACKET_GAGE = 10;
 	private static final int TAIL_GAGE = 2;
 	private GraphicsContext mTopContext, mBottomContext;
 	private Packet mPacket;
@@ -20,7 +21,8 @@ public class MainView extends Canvas implements Runnable {
 	private Label infoLabel;
 	private boolean isAngleBisectionEnabled = false;
 	private Color mTailColor;
-	private Point2D mCurrentPoint;
+
+	private Point2D mCurrentPoint = new Point2D(0,0);
 
 	public MainView(Canvas canvas, int sizeX, int sizeY, Double sleepFactor){
 		super(sizeX, sizeY);
@@ -28,13 +30,7 @@ public class MainView extends Canvas implements Runnable {
 		mTopContext = canvas.getGraphicsContext2D();
 		mBottomContext =     getGraphicsContext2D();
 		fillBackground();
-		setPacket(new Packet(212.0, sleepFactor));
-	}
-
-	public void drawAll(Color packetColor, Color tailColor){
-		plaster();
-		drawCircle(mBottomContext, mCurrentPoint, tailColor, TAIL_GAGE);
-		drawCircle(mTopContext, mCurrentPoint, packetColor, mPacket.RADIUS_PIX);
+		setPacket(new Packet(50.0, sleepFactor));
 	}
 
 	public void fillBackground() {
@@ -57,6 +53,7 @@ public class MainView extends Canvas implements Runnable {
 	public void reset(Double angle){
 		mPacket.resetTime();
 		mPacket.resetSpeed(angle);
+		mPacket.resetMarkers();
 		mPacket.setPosition(new Point2D(0, 0));
 		Random random = new Random();
 		random.nextInt(256);
@@ -66,8 +63,10 @@ public class MainView extends Canvas implements Runnable {
 	@Override
 	public void run() {
 		isReady = false;
+		plaster();
 		mCurrentPoint = mPacket.getPosition();
-		drawAll(Color.BLACK, mTailColor);
+		drawCircle(mBottomContext, mCurrentPoint, mTailColor, TAIL_GAGE);
+		drawCircle(mTopContext, mCurrentPoint, Color.BLACK, PACKET_GAGE);
 		refreshObjects();
 		isReady = true;
 	}
@@ -91,6 +90,8 @@ public class MainView extends Canvas implements Runnable {
 		this.mPacket = packet;
 		Point2D drawingArea = mPacket.getFlightRectangle();
 		scale = Math.max(drawingArea.getX()/getWidth(), drawingArea.getY()/getHeight());
+		System.out.println(scale);
+		packet.setupMarkers(Math.min(PACKET_GAGE * scale, PACKET_GAGE));
 	}
 
 	private void drawCircle(GraphicsContext context, Point2D position, Color color, double radius){
@@ -105,23 +106,23 @@ public class MainView extends Canvas implements Runnable {
 	private void drawTarget() {
 		mBottomContext.setStroke(Color.RED);
 		mBottomContext.setFill(Color.RED);
-		mBottomContext.strokeOval(mPacket.getTarget().getX() / scale - mPacket.RADIUS_PIX,
-				getHeight() - mPacket.getTarget().getY() / scale - mPacket.RADIUS_PIX, mPacket.RADIUS_PIX*2, mPacket.RADIUS_PIX*2);
-		mBottomContext.strokeOval(mPacket.getTarget().getX() / scale - mPacket.RADIUS_PIX/2,
-				getHeight() - mPacket.getTarget().getY() / scale - mPacket.RADIUS_PIX/2, mPacket.RADIUS_PIX, mPacket.RADIUS_PIX);
+		mBottomContext.strokeOval(mPacket.getTarget().getX() / scale - PACKET_GAGE,
+				getHeight() - mPacket.getTarget().getY() / scale - PACKET_GAGE, PACKET_GAGE*2, PACKET_GAGE*2);
+		mBottomContext.strokeOval(mPacket.getTarget().getX() / scale - PACKET_GAGE/2,
+				getHeight() - mPacket.getTarget().getY() / scale - PACKET_GAGE/2, PACKET_GAGE, PACKET_GAGE);
 		mBottomContext.fillOval(mPacket.getTarget().getX() / scale - 1,
 				getHeight() - mPacket.getTarget().getY() / scale - 1, 2, 2);
-		mBottomContext.moveTo(mPacket.getTarget().getX() / scale, getHeight() - mPacket.getTarget().getY() / scale - mPacket.RADIUS_PIX-2);
-		mBottomContext.lineTo(mPacket.getTarget().getX() / scale, getHeight() - mPacket.getTarget().getY() / scale + mPacket.RADIUS_PIX+2);
-		mBottomContext.moveTo(mPacket.getTarget().getX() / scale - mPacket.RADIUS_PIX-2, getHeight() - mPacket.getTarget().getY() / scale);
-		mBottomContext.lineTo(mPacket.getTarget().getX() / scale + mPacket.RADIUS_PIX+2, getHeight() - mPacket.getTarget().getY() / scale);
+		mBottomContext.moveTo(mPacket.getTarget().getX() / scale, getHeight() - mPacket.getTarget().getY() / scale - PACKET_GAGE-2);
+		mBottomContext.lineTo(mPacket.getTarget().getX() / scale, getHeight() - mPacket.getTarget().getY() / scale + PACKET_GAGE+2);
+		mBottomContext.moveTo(mPacket.getTarget().getX() / scale - PACKET_GAGE-2, getHeight() - mPacket.getTarget().getY() / scale);
+		mBottomContext.lineTo(mPacket.getTarget().getX() / scale + PACKET_GAGE+2, getHeight() - mPacket.getTarget().getY() / scale);
 		mBottomContext.stroke();
 	}
 
 	private void plaster(){
-		mTopContext.clearRect((mCurrentPoint.getX())/scale-mPacket.RADIUS_PIX,
-				getHeight() - (mCurrentPoint.getY())/scale-mPacket.RADIUS_PIX,
-				mPacket.RADIUS_PIX*2, mPacket.RADIUS_PIX*2);
+		mTopContext.clearRect((mCurrentPoint.getX())/scale-PACKET_GAGE,
+				getHeight() - (mCurrentPoint.getY())/scale-PACKET_GAGE,
+				PACKET_GAGE*2, PACKET_GAGE*2);
 	}
 
 	/**

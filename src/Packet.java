@@ -8,7 +8,7 @@ import java.util.Queue;
  */
 public class Packet {
 	//характеристика шара
-	public final double RADIUS_PIX = 10.0; //радиус шара в пикселях
+	//public final double RADIUS_PIX = 10.0; //радиус шара в пикселях
 	public final double RADIUS = 1.0; //радиус шара в метрах
 	public final double S = RADIUS * RADIUS * Math.PI; //площадь сечения шара
 	public final double DENSITY = 7800; //плотность шара
@@ -47,8 +47,8 @@ public class Packet {
 		mGravity =  new Point2D(0.0, -WEIGHT* G);
 		mTime = 0.0;
 		mSleepFactor = sleepFactor;
-		mLastDeltas = new ArrayDeque<>();
-		mLastPositions = new ArrayDeque<>();
+		mLastDeltas = new ArrayDeque<Double>();
+		mLastPositions = new ArrayDeque<Point2D>();
 
 		//TODO уточнить формулы: при наличии сил сопротивления подгонка под экран не работает
 		double ascentTime = mStartSpeed/Math.sqrt(2)/G; //mSpeed.getY() / G;
@@ -74,11 +74,83 @@ public class Packet {
 		mAcceleration = mGravity.add(mAirResistance).multiply(1.0/WEIGHT);
 	}
 
+	public Point2D getFlightRectangle() {
+		return flightRectangle;
+	}
+
+	@Deprecated
+	public synchronized Point2D getPosition() {
+		if (mLastPositions.isEmpty())
+			return mPosition;
+		return mLastPositions.poll();
+	}
+
+	public long getSleepTime(){
+		if (mLastDeltas.isEmpty())
+			return 1;
+		return (long)(mSleepFactor*mLastDeltas.poll()*1000)+1;
+	}
+
+	public Double getStartSpeed() {
+		return mStartSpeed;
+	}
+
+	public Point2D getSpeed() {
+		return mSpeed;
+	}
+
+	public Boolean getSummarize(){
+		return mMarkers.summarize();
+	}
+
+	public Point2D getTarget() {
+		return mTarget;
+	}
+
+	public Double getTime() {
+		return mTime;
+	}
+
+	public boolean helpToChoose(){
+		return (Math.abs(mSpeed.getY()/(mSpeed.getX()+1e-5)) > 1);
+	}
+
+	public boolean inTheAir(){
+		return (mPosition.getY()>=0);
+	}
+
+	public void resetMarkers(){
+		mMarkers.reset();
+	}
+
+	public void resetSpeed(Double angle){
+		mSpeed = new Point2D(Math.cos(angle)*mStartSpeed, Math.sin(angle)*mStartSpeed);
+	}
+
+	public void resetTime(){
+		mTime = 0.0;
+	}
+
+	public void setPosition(Point2D position) {
+		mPosition = position;
+	}
+
+	public void setTarget(Point2D target) {
+		mTarget = target;
+		mMarkers.setTarget(target);
+		mSpeed = new Point2D(Math.cos(Math.atan(target.getY()/target.getX()))*mStartSpeed,
+				Math.sin(Math.atan(target.getY() / target.getX()))*mStartSpeed);
+	}
+
+	public void setupMarkers(Double hitRadius){
+		mMarkers = new ExecutionMarkers(mTarget, hitRadius);
+	}
+
 	/**
 	 * Основной шаг логической части программы
 	 * @param dS - расстояние (в метрах) между двумя состояниями снаряда
 	 */
-	public void update(Double dS){
+	public synchronized void update(Double dS){
 		calcAcceleration();
 
 		//Жалкая попытка вспомнить физику
@@ -94,80 +166,5 @@ public class Packet {
 		mPosition = mPosition.add(mSpeed.multiply(mTimeDelta));
 
 		mMarkers.refresh(mPosition);
-	}
-
-	public Point2D getFlightRectangle() {
-		return flightRectangle;
-	}
-
-	public Double getStartSpeed() {
-		return mStartSpeed;
-	}
-
-	public Point2D getSpeed() {
-		return mSpeed;
-	}
-
-	public Double getTime() {
-		return mTime;
-	}
-	
-	public void setSpeed(Point2D speed) {
-		mSpeed = speed;
-	}
-
-	@Deprecated
-	public Point2D getPosition() {
-		if (mLastPositions.isEmpty())
-			return mPosition;
-		return mLastPositions.poll();
-	}
-
-	public void setPosition(Point2D position) {
-		mPosition = position;
-	}
-
-	public void resetTime(){
-		mTime = 0.0;
-	}
-
-	public void resetSpeed(Double angle){
-		setSpeed(new Point2D(Math.cos(angle)*mStartSpeed, Math.sin(angle)*mStartSpeed));
-	}
-
-	public Point2D getTarget() {
-		return mTarget;
-	}
-
-	public void setTarget(Point2D target) {
-		mTarget = target;
-		mSpeed = new Point2D(Math.cos(Math.atan(target.getY()/target.getX()))*mStartSpeed,
-				Math.sin(Math.atan(target.getY() / target.getX()))*mStartSpeed);
-	}
-
-	public void setupMarkers(){
-		mMarkers = new ExecutionMarkers(mTarget, RADIUS_PIX);
-	}
-
-	public void resetMarkers(){
-		mMarkers.reset();
-	}
-
-	public Boolean getSummarize(){
-		return mMarkers.summarize();
-	}
-
-	public long getSleepTime(){
-		if (mLastDeltas.isEmpty())
-			return 1;
-		return (long)(mSleepFactor*mLastDeltas.poll()*1000)+1;
-	}
-
-	public boolean inTheAir(){
-		return (mPosition.getY()>=0);
-	}
-
-	public boolean helpToChoose(){
-		return (Math.abs(mSpeed.getY()/(mSpeed.getX()+1e-5)) > 1);
 	}
 }
