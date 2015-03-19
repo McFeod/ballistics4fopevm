@@ -22,14 +22,14 @@ public class MainView extends Canvas implements Runnable {
 	private boolean isAngleBisectionEnabled = false;
 	private Color mTailColor;
 	private Point2D mCurrentPoint = new Point2D(0.0, 0.0);
+	private Double mSleepFactor;
 
-	public MainView(Canvas canvas, int sizeX, int sizeY, Double sleepFactor){
+	public MainView(Canvas canvas, int sizeX, int sizeY){
 		super(sizeX, sizeY);
-
 		mTopContext = canvas.getGraphicsContext2D();
 		mBottomContext =     getGraphicsContext2D();
 		fillBackground();
-		setPacket(new Packet(212.0, sleepFactor));
+		setPacket(new Packet(212.0));
 	}
 
 	public void fillBackground() {
@@ -88,6 +88,7 @@ public class MainView extends Canvas implements Runnable {
 		this.mPacket = packet;
 		Point2D drawingArea = mPacket.getFlightRectangle();
 		scale = Math.max(drawingArea.getX()/getWidth(), drawingArea.getY()/getHeight());
+		mSleepFactor = 0.1/scale;
 	}
 
 	private void drawCircle(GraphicsContext context, Point2D position, Color color, double radius){
@@ -144,5 +145,13 @@ public class MainView extends Canvas implements Runnable {
 				);
 		vSlider.setValue(mCurrentPoint.getY());
 		hSlider.setValue(mCurrentPoint.getX());
+	}
+
+	public long getSleepTime(){
+		return (long)(mSleepFactor*mPacket.getLastDelta()*1000)+1;
+	}
+
+	public Double getmSleepFactor() {
+		return mSleepFactor;
 	}
 }

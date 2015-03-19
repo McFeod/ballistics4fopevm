@@ -25,7 +25,7 @@ public class VisualizationThread extends Thread {
 	
 	@Override
 	public void run() {
-		double updateStep = 2.0 * mView.getScale();
+		double updateStep = 5.0;// 2.0 * mView.getScale();
 		mView.getPacket().setupMarkers(mView.PACKET_GAGE);
 		mView.getPacket().update(1.0);
 		if (mView.isAngleBisectionEnabled()){
@@ -36,7 +36,7 @@ public class VisualizationThread extends Thread {
 					while (!mView.isReady); //volatile же
 					mView.getPacket().update(updateStep);
 					try {
-						Thread.sleep(mView.getPacket().getSleepTime());
+						Thread.sleep(mView.getSleepTime());
 					} catch (Exception ignore) {}
 					Platform.runLater(mView);
 					if (targetReached){
@@ -61,7 +61,7 @@ public class VisualizationThread extends Thread {
 		}else
 			while (mView.getPacket().inTheAir()) {
 				try {
-					Thread.sleep(mView.getPacket().getSleepTime());
+					Thread.sleep(mView.getSleepTime());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

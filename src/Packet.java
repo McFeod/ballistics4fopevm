@@ -25,7 +25,6 @@ public class Packet {
 	volatile private Point2D mSpeed, mAcceleration, mAirResistance, mGravity, mWindSpeed;
 	private Double mTimeDelta = 0.0;  // время в секундах между двумя состояниями
 	private Double mTime; //общее время
-	private Double mSleepFactor;
 	private Double mStartSpeed;
 	private Point2D mTarget;
 	private ExecutionMarkers mMarkers;
@@ -36,7 +35,7 @@ public class Packet {
 	* Вычисляется для нужд масштабирования*/
 	private Point2D flightRectangle;
 
-	public Packet(Double speed, Double sleepFactor) {
+	public Packet(Double speed) {
 		mStartSpeed = speed;
 
 		mPosition = new Point2D(0.0, 0.0);
@@ -45,7 +44,6 @@ public class Packet {
 		mWindSpeed = new Point2D(-20.0, 0.0);
 		mGravity =  new Point2D(0.0, -WEIGHT* G);
 		mTime = 0.0;
-		mSleepFactor = sleepFactor;
 		mLastDeltas = new ArrayDeque<Double>();
 		mLastPositions = new ArrayDeque<Point2D>();
 
@@ -101,10 +99,10 @@ public class Packet {
 		return mLastPositions.poll();
 	}
 
-	public long getSleepTime(){
+	public Double getLastDelta(){
 		if (mLastDeltas.isEmpty())
-			return 1;
-		return (long)(mSleepFactor*mLastDeltas.poll()*1000)+1;
+			return 0.0;
+		return mLastDeltas.poll();
 	}
 
 	public Double getStartSpeed() {

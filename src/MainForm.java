@@ -29,7 +29,6 @@ public class MainForm extends Application implements Initializable {
 	@FXML private Label nameLabel;
 	@FXML private Slider speedSlider;
 	@FXML private Label selectedSpeed;
-	private Double mSleepFactor = 0.1;
 
 	public static void main(String[] args) {
 		launch(args);
@@ -58,7 +57,7 @@ public class MainForm extends Application implements Initializable {
 	@FXML @Override
 	public void initialize(URL location, ResourceBundle resources) {
 		Canvas packetView = new Canvas(1024, 512);
-		mainView = new MainView(packetView, 1024, 512, mSleepFactor);
+		mainView = new MainView(packetView, 1024, 512);
 		mainView.setRefreshableObjects(infoLabel, horizontalScale, verticalScale);
 		root.add(mainView, 1, 0);
 		root.add(packetView, 1, 0);
@@ -83,7 +82,7 @@ public class MainForm extends Application implements Initializable {
 		});
 
 		speedSlider.valueProperty().addListener((observable, oldV, newV) -> {
-			mainView.setPacket(new Packet(newV.doubleValue(), mSleepFactor));
+			mainView.setPacket(new Packet(newV.doubleValue()));
 			buildScales();
 		});
 		selectedSpeed.textProperty().bind(speedSlider.valueProperty().asString());
