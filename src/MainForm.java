@@ -9,21 +9,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.util.StringConverter;
-import javafx.util.converter.DoubleStringConverter;
-import javafx.util.converter.FormatStringConverter;
-
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -35,7 +27,8 @@ public class MainForm extends Application implements Initializable {
 	@FXML private Slider horizontalScale;
 	@FXML private Label infoLabel;
 	@FXML private Label nameLabel;
-	private boolean isStarted = false;
+	@FXML private Slider speedSlider;
+	@FXML private Label selectedSpeed;
 	private Double mSleepFactor = 0.1;
 
 	public static void main(String[] args) {
@@ -71,20 +64,29 @@ public class MainForm extends Application implements Initializable {
 		root.add(packetView, 1, 0);
 		buildScales();
 		nameLabel.setText("SpeedX\nSpeedY\nSpeed\nX\nY\nTime\nAngle");
+
 		packetView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			private boolean isStarted = false;
 			@Override
 			public void handle(MouseEvent event) {
 				if (!isStarted) {
+					speedSlider.setDisable(true);
 					mainView.getPacket().setTarget(
-							new Point2D(event.getX() * mainView.getScale(),
-									(mainView.getHeight() - event.getY()) * mainView.getScale()));
+							new Point2D(event.getX(),
+									mainView.getHeight() - event.getY())
+									.multiply(mainView.getScale()));
 					mainView.setAngleBisectionEnabled(true);
-					VisualizationThread thread = new VisualizationThread();
-					thread.start(mainView);
+					new VisualizationThread().start(mainView);
 					isStarted = true;
 				}
 			}
 		});
+
+		speedSlider.valueProperty().addListener((observable, oldV, newV) -> {
+			mainView.setPacket(new Packet(newV.doubleValue(), mSleepFactor));
+			buildScales();
+		});
+		selectedSpeed.textProperty().bind(speedSlider.valueProperty().asString());
 	}
 
 	/*Из start() и initialize() нельзя получить width и height() элементов,
@@ -99,12 +101,30 @@ public class MainForm extends Application implements Initializable {
 		mainView.fillBackground();
 	}
 
+	private void buildScale(Slider scale, double scaleSize, double interval){;
+		double markNumber = Math.floor(scaleSize / interval);
+		double maxMark = scaleSize * mainView.getScale();
+
+		// Last digit "2" means how mush significant digits after first
+		// we want to keep in maxTick.
+		// For usual ticks we keep (this number + 2) significant digits.
+		double pow10 = Math.pow(10, (Math.floor(Math.log10(maxMark)) - 1));
+		double beautyMark = Math.round(maxMark / pow10) * pow10;
+		scale.setMax(beautyMark);
+		scale.setMajorTickUnit(beautyMark / markNumber);
+	}
+
 	private void buildScales(){
-		double scaleMark = (mainView.getScale()) * 50;
+		buildScale(horizontalScale, mainView.getWidth(),  50);
+		buildScale(verticalScale,   mainView.getHeight(), 50);
+
+		/*double scaleMark = (mainView.getScale()) * 50;
 		horizontalScale.setMax(scaleMark * (mainView.getWidth() / 50));
 		horizontalScale.setMajorTickUnit(scaleMark);
 		verticalScale.setMax(scaleMark * (mainView.getWidth() / 100));
 		verticalScale.setMajorTickUnit(scaleMark);
+
+		// Красивая шкала с одинаковыми цифрами для малых скоростей
 		StringConverter converter = new StringConverter<Double>() {
 			@Override
 			public String toString(Double object) {
@@ -118,6 +138,6 @@ public class MainForm extends Application implements Initializable {
 			}
 		};
 		verticalScale.setLabelFormatter(converter);
-		horizontalScale.setLabelFormatter(converter);
+		horizontalScale.setLabelFormatter(converter);*/
 	}
 }

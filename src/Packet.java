@@ -43,7 +43,7 @@ public class Packet {
 		mPosition = new Point2D(0.0, 0.0);
 		mAcceleration = new Point2D(0.0, 0.0);
 		mAirResistance = new Point2D(0.0, 0.0);
-		mWindSpeed = new Point2D( 1000.6, 0.0);
+		mWindSpeed = new Point2D(5.0, 0.0);
 		mGravity =  new Point2D(0.0, -WEIGHT* G);
 		mTime = 0.0;
 		mSleepFactor = sleepFactor;

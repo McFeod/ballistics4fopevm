@@ -26,21 +26,20 @@ public class MainView extends Canvas implements Runnable {
 		super(sizeX, sizeY);
 
 		mTopContext = canvas.getGraphicsContext2D();
-		mBottomContext = getGraphicsContext2D();
+		mBottomContext =     getGraphicsContext2D();
 		fillBackground();
-		mPacket = new Packet(212.0, sleepFactor);
-		Point2D drawingArea = mPacket.getFlightRectangle();
-		scale = Math.max(drawingArea.getX()/sizeX, drawingArea.getY()/sizeY);
-
+		setPacket(new Packet(212.0, sleepFactor));
 	}
 
-	@Override
-	public void run() {
-			isReady = false;
-			mCurrentPoint = mPacket.getPosition();
-			drawAll(Color.BLACK, mTailColor);
-			refreshObjects();
-			isReady = true;
+	public void drawAll(Color packetColor, Color tailColor){
+		plaster();
+		drawCircle(mBottomContext, mCurrentPoint, tailColor, TAIL_GAGE);
+		drawCircle(mTopContext, mCurrentPoint, packetColor, mPacket.RADIUS_PIX);
+	}
+
+	public void fillBackground() {
+		mBottomContext.setFill(BACKGROUND);
+		mBottomContext.fillRect(0, 0, getWidth(), getHeight());
 	}
 
 	public Packet getPacket() {
@@ -51,28 +50,53 @@ public class MainView extends Canvas implements Runnable {
 		return scale;
 	}
 
-	public void drawAll(Color packetColor, Color tailColor){
-		plaster();
-		drawCircle(mBottomContext, mCurrentPoint, tailColor, TAIL_GAGE);
-		drawCircle(mTopContext, mCurrentPoint, packetColor, mPacket.RADIUS_PIX);
+	public boolean isAngleBisectionEnabled(){
+		return isAngleBisectionEnabled;
 	}
-	
+
+	public void reset(Double angle){
+		mPacket.resetTime();
+		mPacket.resetSpeed(angle);
+		mPacket.setPosition(new Point2D(0, 0));
+		Random random = new Random();
+		random.nextInt(256);
+		mTailColor = Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256));
+	}
+
+	@Override
+	public void run() {
+		isReady = false;
+		mCurrentPoint = mPacket.getPosition();
+		drawAll(Color.BLACK, mTailColor);
+		refreshObjects();
+		isReady = true;
+	}
+
+	public void setAngleBisectionEnabled(boolean value){
+		isAngleBisectionEnabled = value;
+		if (value)
+			if (isAngleBisectionEnabled){ //todo wtf?
+				drawTarget();
+			}
+	}
+
+	public void setRefreshableObjects(Label infoLabel,
+	                                  Slider hScale, Slider vScale){
+		this.infoLabel = infoLabel;
+		this.hSlider = hScale;
+		this.vSlider = vScale;
+	}
+
+	public void setPacket(Packet packet) {
+		this.mPacket = packet;
+		Point2D drawingArea = mPacket.getFlightRectangle();
+		scale = Math.max(drawingArea.getX()/getWidth(), drawingArea.getY()/getHeight());
+	}
+
 	private void drawCircle(GraphicsContext context, Point2D position, Color color, double radius){
 		context.setFill(color);
 		context.fillOval((position.getX())/scale-radius/2,
 				getHeight()-(position.getY())/scale-radius/2, radius, radius);
-	}
-	
-	private void plaster(){
-		mTopContext.clearRect((mCurrentPoint.getX())/scale-mPacket.RADIUS_PIX,
-				getHeight() - (mCurrentPoint.getY())/scale-mPacket.RADIUS_PIX,
-				mPacket.RADIUS_PIX*2, mPacket.RADIUS_PIX*2);
-	}
-	
-	
-	public void fillBackground() {
-		mBottomContext.setFill(BACKGROUND);
-		mBottomContext.fillRect(0, 0, getWidth(), getHeight());
 	}
 
 	/**
@@ -93,12 +117,11 @@ public class MainView extends Canvas implements Runnable {
 		mBottomContext.lineTo(mPacket.getTarget().getX() / scale + mPacket.RADIUS_PIX+2, getHeight() - mPacket.getTarget().getY() / scale);
 		mBottomContext.stroke();
 	}
-	
-	public void setRefreshableObjects(Label infoLabel,
-			Slider hScale, Slider vScale){
-		this.infoLabel = infoLabel;
-		this.hSlider = hScale;
-		this.vSlider = vScale;
+
+	private void plaster(){
+		mTopContext.clearRect((mCurrentPoint.getX())/scale-mPacket.RADIUS_PIX,
+				getHeight() - (mCurrentPoint.getY())/scale-mPacket.RADIUS_PIX,
+				mPacket.RADIUS_PIX*2, mPacket.RADIUS_PIX*2);
 	}
 
 	/**
@@ -125,26 +148,4 @@ public class MainView extends Canvas implements Runnable {
 		vSlider.setValue(mCurrentPoint.getY());
 		hSlider.setValue(mCurrentPoint.getX());
 	}
-	
-	public boolean isAngleBisectionEnabled(){
-		return isAngleBisectionEnabled;
-	}
-	
-	public void setAngleBisectionEnabled(boolean value){
-		isAngleBisectionEnabled = value;
-		if (value)
-			if (isAngleBisectionEnabled){ //todo wtf?
-				drawTarget();
-			}
-	}
-	
-	public void reset(Double angle){
-		mPacket.resetTime();
-		mPacket.resetSpeed(angle);
-		mPacket.setPosition(new Point2D(0, 0));
-		Random random = new Random();
-		random.nextInt(256);
-		mTailColor = Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256));
-	}
-
 }
