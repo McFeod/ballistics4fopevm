@@ -43,7 +43,7 @@ public class Packet {
 		mPosition = new Point2D(0.0, 0.0);
 		mAcceleration = new Point2D(0.0, 0.0);
 		mAirResistance = new Point2D(0.0, 0.0);
-		mWindSpeed = new Point2D(5.0, 0.0);
+		mWindSpeed = new Point2D(-20.0, 0.0);
 		mGravity =  new Point2D(0.0, -WEIGHT* G);
 		mTime = 0.0;
 		mSleepFactor = sleepFactor;
@@ -53,7 +53,7 @@ public class Packet {
 		//TODO уточнить формулы: при наличии сил сопротивления подгонка под экран не работает
 		double ascentTime = mStartSpeed/Math.sqrt(2)/G; //mSpeed.getY() / G;
 		double maxHeightInVacuum = G * Math.pow(ascentTime, 2) / 2;
-		double  distanceInVacuum = mStartSpeed/Math.sqrt(2) * ascentTime * 2;//mSpeed.getX() * ascentTime * 2;
+		double distanceInVacuum = mStartSpeed/Math.sqrt(2) * ascentTime * 2;//mSpeed.getX() * ascentTime * 2;
 		flightRectangle = new Point2D(distanceInVacuum, maxHeightInVacuum);
 	}
 	
@@ -61,12 +61,12 @@ public class Packet {
 		double t = T0 - mPosition.getY()*L;
 		double p = P0 * Math.pow(1-L*mPosition.getY()/T0, G*M/R/L);
 		double thickness = p*M/R/t;
-		Point2D speed = mSpeed.add(mWindSpeed);
 		//сопротивление воздуха
-		mAirResistance = new Point2D(Cf*thickness*speed.getX()*speed.getX()/2*S,
-				Cf*thickness*speed.getY()*speed.getY()/2*S);
-		mAirResistance = new Point2D(speed.getX()<0 ? -mAirResistance.getX() : mAirResistance.getX(),
-						speed.getY()<0 ? -mAirResistance.getY() : mAirResistance.getY());
+		mAirResistance = mSpeed.normalize().multiply(-Cf*thickness*mSpeed.magnitude()*mSpeed.magnitude()/2*S);
+		//ветер
+		//todo найти адекватную инфу по нему
+		mAirResistance = mAirResistance.add(mWindSpeed.normalize().multiply(
+				mWindSpeed.magnitude()*mWindSpeed.magnitude()*0.5*S*thickness));
 	}
 	
 	private void calcAcceleration(){
