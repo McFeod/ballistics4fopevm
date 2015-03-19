@@ -20,6 +20,6 @@
 
 <путь к jvm>/jdk1.8.x_xx/jre/lib/ext/jfxrt.jar
 
-для openjdk:
+для openjdk (пакет libopenjfx-java):
 
-<поставлю - посмотрю - скажу)))>
+/usr/share/java/openjfx/jre/lib/ext/jfxrt.jar
