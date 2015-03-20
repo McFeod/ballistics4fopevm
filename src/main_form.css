@@ -10,10 +10,23 @@
 	-fx-padding: 10;
 }
 
-
-.control_panel {
+.control_panel{
 	-fx-spacing: 20;
-	-fx-padding: 10;
+}
+
+.speed_slider{
+	-fx-preferred-height: 500;
+	-fx-major-tick-unit: 300;
+	-fx-minor-tick-count: 3;
+	-fx-show-tick-marks: true;
+	-fx-show-tick-labels: true;
+	-fx-orientation: vertical;
+}
+
+.speed_slider .axis .axis-tick-mark,
+.speed_slider .axis .axis-minor-tick-mark{
+	-fx-fill: null;
+	-fx-stroke: yellow;
 }
 
 .vertical_scale{
@@ -22,7 +35,6 @@
 }
 
 .horizontal_scale{
-
 	-fx-padding: -48 -47 -24 -47;
 	-fx-orientation: horizontal;
 }

@@ -6,18 +6,23 @@
 <?import javafx.scene.layout.HBox?>
 
 <GridPane fx:controller="MainForm" fx:id="root"
-          xmlns:fx="http://javafx.com/fxml">
-	<VBox prefWidth="200" alignment="CENTER">
-		<HBox GridPane.columnIndex="0" GridPane.rowIndex="0" prefHeight="200">
+          xmlns:fx="http://javafx.com/fxml" alignment="CENTER" >
+	<VBox prefWidth="200" alignment="CENTER" styleClass="control_panel">
+		<HBox GridPane.columnIndex="0" GridPane.rowIndex="0">
 			<Label fx:id="nameLabel"/>
 			<Label fx:id="infoLabel"/>
 		</HBox>
+		<HBox alignment="CENTER">
+			<Label fx:id="selectedSpeed" prefWidth="100"/>
+			<Slider fx:id="speedSlider" min="100" max="1000" value="212"
+					prefHeight="200"
+					styleClass="speed_slider"/>
+		</HBox>
 		<Button text="Refill" GridPane.columnIndex="0" GridPane.rowIndex="1"
-		        onAction="#repaintBackground"/>
-		<Slider fx:id="speedSlider" min="5" max="1000" value="210"/>
-		<Label fx:id="selectedSpeed" style="-fx-font-color: yellow;"/>
+				onAction="#repaintBackground"/>
+
 	</VBox>
 	<Slider fx:id="horizontalScale" GridPane.columnIndex="1" styleClass="horizontal_scale"
 			 GridPane.rowIndex="1"/>
-	<Slider fx:id="verticalScale" GridPane.columnIndex="2" styleClass="vertical_scale"/>
+	<Slider fx:id="verticalScale" GridPane.columnIndex="2" styleClass="vertical_scale" prefWidth="50"/>
 </GridPane>

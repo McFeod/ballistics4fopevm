@@ -23,7 +23,7 @@ public class MainView extends Canvas implements Runnable {
 	private Point2D mCurrentPoint = new Point2D(0.0, 0.0);
 	private Double mSleepFactor;
 
-	public MainView(Canvas canvas, int sizeX, int sizeY){
+	public MainView(Canvas canvas, double sizeX, double sizeY){
 		super(sizeX, sizeY);
 		mTopContext = canvas.getGraphicsContext2D();
 		mBottomContext =     getGraphicsContext2D();

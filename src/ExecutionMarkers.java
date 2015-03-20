@@ -19,7 +19,7 @@ public class ExecutionMarkers {
 		dx = Math.abs(mTarget.getX()-px);
 		dy = Math.abs(mTarget.getY()-py);
 
-		if (dx<=eps) {
+		if (dx<=eps/2) {
 			if (dy <= eps) {
 				VisualizationThread.targetReached = true;
 			}

@@ -4,13 +4,17 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
+
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -38,6 +42,7 @@ public class MainForm extends Application implements Initializable {
 		primaryStage.setScene(scene);
 		scene.getStylesheets().add("main_form.css");
 		primaryStage.show();
+		primaryStage.setFullScreen(true);
 	}
 
 	/*Теперь в наличии 3 функции инициализации.
@@ -50,8 +55,10 @@ public class MainForm extends Application implements Initializable {
 
 	@FXML @Override
 	public void initialize(URL location, ResourceBundle resources) {
-		Canvas packetView = new Canvas(1024, 512);
-		mainView = new MainView(packetView, 1024, 512);
+		double canvasWidth = Screen.getPrimary().getVisualBounds().getWidth() - 250;
+		double canvasHeight = canvasWidth/2;
+		Canvas packetView = new Canvas(canvasWidth, canvasHeight);
+		mainView = new MainView(packetView, canvasWidth, canvasHeight);
 		mainView.setRefreshableObjects(infoLabel, horizontalScale, verticalScale);
 		root.add(mainView, 1, 0);
 		root.add(packetView, 1, 0);
@@ -79,7 +86,7 @@ public class MainForm extends Application implements Initializable {
 			mainView.setPacket(new Packet(newV.doubleValue()));
 			buildScales();
 		});
-		selectedSpeed.textProperty().bind(speedSlider.valueProperty().asString());
+		selectedSpeed.textProperty().bind(speedSlider.valueProperty().asString("Speed:\n%.2f"));
 	}
 
 	/*Из start() и initialize() нельзя получить width и height() элементов,
@@ -106,6 +113,19 @@ public class MainForm extends Application implements Initializable {
 		scale.setMax(beautyMark);
 		scale.setMajorTickUnit(beautyMark / markNumber);
 		scale.setDisable(true);
+		// Пришлось это вернуть, т.к. при размерах поля, отличных от 1024*512 всё очень плохо
+		StringConverter converter = new StringConverter<Double>() {
+			@Override
+			public String toString(Double object) {
+				int n = ((int) Math.round(object/5)*5);
+				return String.valueOf(n);
+			}
+			@Override
+			public Double fromString(String string) {
+				return null;
+			}
+		};
+		scale.setLabelFormatter(converter);
 	}
 
 	private void buildScales(){
