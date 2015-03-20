@@ -20,9 +20,10 @@
 		</HBox>
 		<Button text="Refill" GridPane.columnIndex="0" GridPane.rowIndex="1"
 				onAction="#repaintBackground"/>
-		<Button fx:id="refresher" text="reset" onAction="#restart"
-				GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-
+		<Button text="Stop" onAction="#stopTrying"
+				GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+		<Button fx:id="refresher" text="Reset" onAction="#restart"
+				GridPane.columnIndex="0" GridPane.rowIndex="3"/>
 	</VBox>
 	<Slider fx:id="horizontalScale" GridPane.columnIndex="1" styleClass="horizontal_scale"
 			 GridPane.rowIndex="1"/>

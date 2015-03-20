@@ -69,14 +69,14 @@ public class MainForm extends Application implements Initializable {
 		packetView.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-					speedSlider.setDisable(true);
-					mainView.getPacket().setTarget(
-							new Point2D(event.getX(),
-									mainView.getHeight() - event.getY())
-									.multiply(mainView.getScale()));
-					mainView.setAngleBisectionEnabled(true);
-					new VisualizationThread().start(mainView, refresher);
-					packetView.setDisable(true);
+				speedSlider.setDisable(true);
+				mainView.getPacket().setTarget(
+						new Point2D(event.getX(),
+								mainView.getHeight() - event.getY())
+								.multiply(mainView.getScale()));
+				mainView.setAngleBisectionEnabled(true);
+				new VisualizationThread().start(mainView, refresher);
+				packetView.setDisable(true);
 			}
 		});
 
@@ -146,5 +146,10 @@ public class MainForm extends Application implements Initializable {
 		VisualizationThread.targetReached = false;
 		packetView.setDisable(false);
 		mainView.setPacket(new Packet(speedSlider.getValue()));
+	}
+
+	public void stopTrying(){
+		if (VisualizationThread.isRunning)
+			VisualizationThread.targetReached = true;
 	}
 }
