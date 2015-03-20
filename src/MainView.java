@@ -34,6 +34,10 @@ public class MainView extends Canvas implements Runnable {
 	public void fillBackground() {
 		mBottomContext.setFill(BACKGROUND);
 		mBottomContext.fillRect(0, 0, getWidth(), getHeight());
+		mTopContext.clearRect(0, 0, getWidth(), getHeight());
+		if (VisualizationThread.isRunning){
+			drawTarget();
+		}
 	}
 
 	public Packet getPacket() {
@@ -100,16 +104,17 @@ public class MainView extends Canvas implements Runnable {
 		mBottomContext.setStroke(Color.RED);
 		mBottomContext.setFill(Color.RED);
 		mBottomContext.strokeOval(mPacket.getTarget().getX() / scale - PACKET_GAGE,
-				getHeight() - mPacket.getTarget().getY() / scale - PACKET_GAGE, PACKET_GAGE*2, PACKET_GAGE*2);
-		mBottomContext.strokeOval(mPacket.getTarget().getX() / scale - PACKET_GAGE/2,
-				getHeight() - mPacket.getTarget().getY() / scale - PACKET_GAGE/2, PACKET_GAGE, PACKET_GAGE);
+				getHeight() - mPacket.getTarget().getY() / scale - PACKET_GAGE, PACKET_GAGE * 2, PACKET_GAGE * 2);
+		mBottomContext.strokeOval(mPacket.getTarget().getX() / scale - PACKET_GAGE / 2,
+				getHeight() - mPacket.getTarget().getY() / scale - PACKET_GAGE / 2, PACKET_GAGE, PACKET_GAGE);
 		mBottomContext.fillOval(mPacket.getTarget().getX() / scale - 1,
 				getHeight() - mPacket.getTarget().getY() / scale - 1, 2, 2);
-		mBottomContext.moveTo(mPacket.getTarget().getX() / scale, getHeight() - mPacket.getTarget().getY() / scale - PACKET_GAGE-2);
-		mBottomContext.lineTo(mPacket.getTarget().getX() / scale, getHeight() - mPacket.getTarget().getY() / scale + PACKET_GAGE+2);
-		mBottomContext.moveTo(mPacket.getTarget().getX() / scale - PACKET_GAGE-2, getHeight() - mPacket.getTarget().getY() / scale);
-		mBottomContext.lineTo(mPacket.getTarget().getX() / scale + PACKET_GAGE+2, getHeight() - mPacket.getTarget().getY() / scale);
-		mBottomContext.stroke();
+		mBottomContext.strokeLine(mPacket.getTarget().getX() / scale,
+				getHeight() - mPacket.getTarget().getY() / scale - PACKET_GAGE - 2,
+				mPacket.getTarget().getX() / scale, getHeight() - mPacket.getTarget().getY() / scale + PACKET_GAGE + 2);
+		mBottomContext.strokeLine(mPacket.getTarget().getX() / scale - PACKET_GAGE - 2,
+				getHeight() - mPacket.getTarget().getY() / scale,
+				mPacket.getTarget().getX() / scale + PACKET_GAGE + 2, getHeight() - mPacket.getTarget().getY() / scale);
 	}
 
 	private void plaster(){

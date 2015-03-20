@@ -4,9 +4,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.input.MouseEvent;
@@ -22,12 +22,14 @@ public class MainForm extends Application implements Initializable {
 
 	@FXML private GridPane root;
 	private static MainView mainView;
+	private static Canvas packetView;
 	@FXML private Slider verticalScale;
 	@FXML private Slider horizontalScale;
 	@FXML private Label infoLabel;
 	@FXML private Label nameLabel;
 	@FXML private Slider speedSlider;
 	@FXML private Label selectedSpeed;
+	@FXML private Button refresher;
 
 	public static void main(String[] args) {
 		launch(args);
@@ -57,7 +59,7 @@ public class MainForm extends Application implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		double canvasWidth = Screen.getPrimary().getVisualBounds().getWidth() - 250;
 		double canvasHeight = canvasWidth/2;
-		Canvas packetView = new Canvas(canvasWidth, canvasHeight);
+		packetView = new Canvas(canvasWidth, canvasHeight);
 		mainView = new MainView(packetView, canvasWidth, canvasHeight);
 		mainView.setRefreshableObjects(infoLabel, horizontalScale, verticalScale);
 		root.add(mainView, 1, 0);
@@ -66,19 +68,16 @@ public class MainForm extends Application implements Initializable {
 		nameLabel.setText("SpeedX\nSpeedY\nSpeed\nX\nY\nTime\nAngle");
 
 		packetView.setOnMouseClicked(new EventHandler<MouseEvent>() {
-			private boolean isStarted = false;
 			@Override
 			public void handle(MouseEvent event) {
-				if (!isStarted) {
 					speedSlider.setDisable(true);
 					mainView.getPacket().setTarget(
 							new Point2D(event.getX(),
 									mainView.getHeight() - event.getY())
 									.multiply(mainView.getScale()));
 					mainView.setAngleBisectionEnabled(true);
-					new VisualizationThread().start(mainView);
-					isStarted = true;
-				}
+					new VisualizationThread().start(mainView, refresher);
+					packetView.setDisable(true);
 			}
 		});
 
@@ -87,6 +86,7 @@ public class MainForm extends Application implements Initializable {
 			buildScales();
 		});
 		selectedSpeed.textProperty().bind(speedSlider.valueProperty().asString("Speed:\n%.2f"));
+		refresher.setDisable(true);
 	}
 
 	/*Из start() и initialize() нельзя получить width и height() элементов,
@@ -113,7 +113,8 @@ public class MainForm extends Application implements Initializable {
 		scale.setMax(beautyMark);
 		scale.setMajorTickUnit(beautyMark / markNumber);
 		scale.setDisable(true);
-		// Пришлось это вернуть, т.к. при размерах поля, отличных от 1024*512 всё очень плохо
+
+		// Пришлось это вернуть, т.к. при размерах поля, отличных от 1024*512, всё очень плохо
 		StringConverter converter = new StringConverter<Double>() {
 			@Override
 			public String toString(Double object) {
@@ -131,5 +132,16 @@ public class MainForm extends Application implements Initializable {
 	private void buildScales(){
 		buildScale(horizontalScale, mainView.getWidth(),  50);
 		buildScale(verticalScale, mainView.getHeight(), 50);
+	}
+
+	public void restart(){
+		refresher.setDisable(true);
+		repaintBackground();
+		horizontalScale.setValue(0.0);
+		verticalScale.setValue(0.0);
+		speedSlider.setDisable(false);
+		VisualizationThread.targetReached = false;
+		packetView.setDisable(false);
+		mainView.setPacket(new Packet(speedSlider.getValue()));
 	}
 }

@@ -1,4 +1,6 @@
 import javafx.application.Platform;
+import javafx.scene.control.Button;
+
 import java.util.ArrayDeque;
 import java.util.Queue;
 
@@ -7,15 +9,16 @@ import java.util.Queue;
  */
 public class VisualizationThread extends Thread {
 	private MainView mView;
-
+	private Button mRefresher;
 	private AngleChoice mCurrentChoice;
 	private Queue<AngleChoice> mChoices;
 
 	public static boolean targetReached = false;
-
+	public static boolean isRunning = false;
 	private final double DEGREE = Math.PI/180;
-	public void start(MainView view){
+	public void start(MainView view, Button refresher){
 		mView = view;
+		mRefresher = refresher;
 		mChoices = new ArrayDeque<>();
 		mCurrentChoice = new AngleChoice(0.0, Math.PI/2,
 				Math.atan(mView.getPacket().getSpeed().getY()/mView.getPacket().getSpeed().getX())
@@ -26,6 +29,7 @@ public class VisualizationThread extends Thread {
 	
 	@Override
 	public void run() {
+		isRunning = true;
 		double updateStep = 5.0;
 		mView.getPacket().setupMarkers(MainView.PACKET_GAGE);
 		mView.getPacket().update(1.0);
@@ -67,5 +71,10 @@ public class VisualizationThread extends Thread {
 				}
 				Platform.runLater(mView);
 			}
+		Platform.runLater(() -> {
+			mRefresher.setDisable(false);
+			mRefresher.requestFocus();
+		});
+		isRunning = false;
 	}
 }
