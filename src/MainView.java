@@ -28,7 +28,8 @@ public class MainView extends Canvas implements Runnable {
 		mTopContext = canvas.getGraphicsContext2D();
 		mBottomContext =     getGraphicsContext2D();
 		fillBackground();
-		setPacket(new Packet(212.0));
+		//to avoid mismatch between default slider value & default speed
+		//setPacket(new Packet(212.0));
 	}
 
 	public void fillBackground() {
@@ -88,7 +89,7 @@ public class MainView extends Canvas implements Runnable {
 		Point2D drawingArea = mPacket.getFlightRectangle();
 		scale = Math.max(drawingArea.getX()/getWidth(), drawingArea.getY()/getHeight());
 		mSleepFactor = 400/mPacket.getStartSpeed()/mPacket.getStartSpeed()/scale;
-		packet.setupMarkers(Math.min(PACKET_GAGE * scale, PACKET_GAGE));
+		//unnecessary action #1: packet.setupMarkers(Math.min(PACKET_GAGE * scale, PACKET_GAGE));
 	}
 
 	private void drawCircle(GraphicsContext context, Point2D position, Color color, double radius){

@@ -19,7 +19,9 @@
 					styleClass="speed_slider"/>
 		</HBox>
 		<Button text="Refill" GridPane.columnIndex="0" GridPane.rowIndex="1"
-				onAction="#repaintBackground" disabled="true" fx:id="refresher"/>
+				onAction="#repaintBackground"/>
+		<Button fx:id="refresher" text="reset" onAction="#restart"
+				GridPane.rowIndex="2" GridPane.columnIndex="0"/>
 
 	</VBox>
 	<Slider fx:id="horizontalScale" GridPane.columnIndex="1" styleClass="horizontal_scale"
