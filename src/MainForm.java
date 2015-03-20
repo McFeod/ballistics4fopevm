@@ -62,7 +62,6 @@ public class MainForm extends Application implements Initializable {
 		mainView.setRefreshableObjects(infoLabel, horizontalScale, verticalScale);
 		root.add(mainView, 1, 0);
 		root.add(packetView, 1, 0);
-		buildScales();
 		nameLabel.setText("SpeedX\nSpeedY\nSpeed\nX\nY\nTime\nAngle");
 
 		packetView.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -87,6 +86,10 @@ public class MainForm extends Application implements Initializable {
 			buildScales();
 		});
 		selectedSpeed.textProperty().bind(speedSlider.valueProperty().asString("Speed:\n%.2f"));
+		//to avoid mismatch between default slider value & default speed
+		mainView.setPacket(new Packet(speedSlider.valueProperty().doubleValue()));
+		//causes NullPointer in the old places
+		buildScales();
 	}
 
 	/*Из start() и initialize() нельзя получить width и height() элементов,

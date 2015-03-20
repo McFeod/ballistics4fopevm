@@ -27,7 +27,7 @@ public class VisualizationThread extends Thread {
 	@Override
 	public void run() {
 		double updateStep = 5.0;
-		mView.getPacket().setupMarkers(MainView.PACKET_GAGE);
+		mView.getPacket().setupMarkers(MainView.PACKET_GAGE * mView.getScale() * 0.7); //#1
 		mView.getPacket().update(1.0);
 		if (mView.isAngleBisectionEnabled()){
 			start:
@@ -43,6 +43,7 @@ public class VisualizationThread extends Thread {
 						break start;
 					}
 				}
+				// sleep between launches
 				try{
 					Thread.sleep(200);
 				} catch (Exception ignore){}
