@@ -69,10 +69,7 @@ public class MainView extends Canvas implements Runnable {
 
 	public void setAngleBisectionEnabled(boolean value){
 		isAngleBisectionEnabled = value;
-		if (value)
-			if (isAngleBisectionEnabled){ //todo wtf?
-				drawTarget();
-			}
+		drawTarget();
 	}
 
 	public void setRefreshableObjects(Label infoLabel,
@@ -86,7 +83,7 @@ public class MainView extends Canvas implements Runnable {
 		this.mPacket = packet;
 		Point2D drawingArea = mPacket.getFlightRectangle();
 		scale = Math.max(drawingArea.getX()/getWidth(), drawingArea.getY()/getHeight());
-		mSleepFactor = 0.1/scale;
+		mSleepFactor = 400/mPacket.getStartSpeed()/mPacket.getStartSpeed()/scale;
 		packet.setupMarkers(Math.min(PACKET_GAGE * scale, PACKET_GAGE));
 	}
 

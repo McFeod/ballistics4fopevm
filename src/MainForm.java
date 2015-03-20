@@ -1,8 +1,3 @@
-
-/**
- * Пока что примерный набросок
- */
-
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -36,7 +31,6 @@ public class MainForm extends Application implements Initializable {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception{
-
 		root = FXMLLoader.load(getClass().getResource("main_form.fxml"));
 
 		primaryStage.setTitle("Кликни мышкой на поле");
@@ -100,7 +94,7 @@ public class MainForm extends Application implements Initializable {
 		mainView.fillBackground();
 	}
 
-	private void buildScale(Slider scale, double scaleSize, double interval){;
+	private void buildScale(Slider scale, double scaleSize, double interval){
 		double markNumber = Math.floor(scaleSize / interval);
 		double maxMark = scaleSize * mainView.getScale();
 
@@ -111,32 +105,11 @@ public class MainForm extends Application implements Initializable {
 		double beautyMark = Math.round(maxMark / pow10) * pow10;
 		scale.setMax(beautyMark);
 		scale.setMajorTickUnit(beautyMark / markNumber);
+		scale.setDisable(true);
 	}
 
 	private void buildScales(){
 		buildScale(horizontalScale, mainView.getWidth(),  50);
-		buildScale(verticalScale,   mainView.getHeight(), 50);
-
-		/*double scaleMark = (mainView.getScale()) * 50;
-		horizontalScale.setMax(scaleMark * (mainView.getWidth() / 50));
-		horizontalScale.setMajorTickUnit(scaleMark);
-		verticalScale.setMax(scaleMark * (mainView.getWidth() / 100));
-		verticalScale.setMajorTickUnit(scaleMark);
-
-		// Красивая шкала с одинаковыми цифрами для малых скоростей
-		StringConverter converter = new StringConverter<Double>() {
-			@Override
-			public String toString(Double object) {
-				int n = ((int) Math.round(object)/10)*10;
-				return String.valueOf(n);
-			}
-
-			@Override
-			public Double fromString(String string) {
-				return null;
-			}
-		};
-		verticalScale.setLabelFormatter(converter);
-		horizontalScale.setLabelFormatter(converter);*/
+		buildScale(verticalScale, mainView.getHeight(), 50);
 	}
 }

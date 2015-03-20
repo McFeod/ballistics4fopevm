@@ -28,6 +28,7 @@
 }
 
 .vertical_scale, .horizontal_scale {
+	-fx-opacity: 1.0;
 	-fx-show-tick-labels: true;
 	-fx-show-tick-marks: true;
 	-fx-snap-to-ticks: true;

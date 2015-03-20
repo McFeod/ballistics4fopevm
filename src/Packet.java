@@ -48,9 +48,10 @@ public class Packet {
 		mLastPositions = new ArrayDeque<>();
 
 		//TODO уточнить формулы: при наличии сил сопротивления подгонка под экран не работает
+		double extraFactor = 1-0.5*mStartSpeed/1000;
 		double ascentTime = mStartSpeed/Math.sqrt(2)/G; //mSpeed.getY() / G;
 		double maxHeightInVacuum = G * Math.pow(ascentTime, 2) / 2;
-		double distanceInVacuum = mStartSpeed/Math.sqrt(2) * ascentTime * 2;//mSpeed.getX() * ascentTime * 2;
+		double distanceInVacuum = mStartSpeed/Math.sqrt(2) * ascentTime * 2 * extraFactor;//mSpeed.getX() * ascentTime * 2;
 		flightRectangle = new Point2D(distanceInVacuum, maxHeightInVacuum);
 	}
 	
@@ -90,6 +91,10 @@ public class Packet {
 
 	public Point2D getSpeed() {
 		return mSpeed;
+	}
+
+	public Double getStartSpeed() {
+		return mStartSpeed;
 	}
 
 	public Boolean getSummarize(){
