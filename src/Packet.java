@@ -76,11 +76,23 @@ public class Packet {
 		return flightRectangle;
 	}
 
-	@Deprecated
-	public synchronized Point2D getPosition() {
+	/*
+	Использовать только 1 раз за цикл отрисовки!
+	#2
+	 */
+	public synchronized Point2D getUnrendered() {
 		if (mLastPositions.isEmpty())
 			return mPosition;
 		return mLastPositions.poll();
+	}
+
+	/*
+	Использовать только в логической части. Для потока отрисовки
+	эта информация ещё не актуальна.
+	#2
+	 */
+	public Point2D getPosition() {
+		return mPosition;
 	}
 
 	public Double getLastDelta(){

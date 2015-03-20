@@ -66,7 +66,7 @@ public class MainView extends Canvas implements Runnable {
 	@Override
 	public void run() {
 		plaster();
-		mCurrentPoint = mPacket.getPosition();
+		mCurrentPoint = mPacket.getUnrendered();
 		drawCircle(mBottomContext, mCurrentPoint, mTailColor, TAIL_GAGE);
 		drawCircle(mTopContext, mCurrentPoint, Color.BLACK, PACKET_GAGE);
 		refreshObjects();
