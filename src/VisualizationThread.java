@@ -8,6 +8,9 @@ import java.util.Queue;
  * Поток, в котором раз в mSleepTime мс вызывается mView.run()
  */
 public class VisualizationThread extends Thread {
+	// #4
+	public static final boolean TEST_RUN = false;
+
 	private MainView mView;
 	private Button mRefresher;
 	private AngleChoice mCurrentChoice;
@@ -63,15 +66,18 @@ public class VisualizationThread extends Thread {
 				}
 				mView.reset(mCurrentChoice.getAngle());
 			}
-		}else
+		}else{
+			mView.getPacket().resetSpeed(Math.PI * 3.0 / 180);
 			while (mView.getPacket().inTheAir()) {
 				try {
 					Thread.sleep(mView.getSleepTime());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+				mView.getPacket().update(updateStep);
 				Platform.runLater(mView);
 			}
+		}
 		Platform.runLater(() -> {
 			mRefresher.setDisable(false);
 			mRefresher.requestFocus();

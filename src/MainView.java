@@ -21,7 +21,7 @@ public class MainView extends Canvas implements Runnable {
 	private boolean isAngleBisectionEnabled = false;
 	private Color mTailColor;
 	private Point2D mCurrentPoint = new Point2D(0.0, 0.0);
-	private double mSleepFactor = 0.06, mSleepLitter = 0.0;
+	private double mSleepFactor = 0.1, mSleepLitter = 0.0;
 
 	public MainView(Canvas canvas, double sizeX, double sizeY){
 		super(sizeX, sizeY);
@@ -84,7 +84,8 @@ public class MainView extends Canvas implements Runnable {
 	}
 
 	public void setPacket(Packet packet) {
-		this.mPacket = packet;
+		// #4
+		this.mPacket = (VisualizationThread.TEST_RUN) ? new Packet53ОФ350(packet.getStartSpeed()) : packet;
 		Point2D drawingArea = mPacket.getFlightRectangle();
 		scale = Math.max(drawingArea.getX()/getWidth(), drawingArea.getY()/getHeight());
 		//unnecessary action #1: packet.setupMarkers(Math.min(PACKET_GAGE * scale, PACKET_GAGE));
