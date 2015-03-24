@@ -22,7 +22,7 @@ public class Packet {
 	public final double Cf = 0.47; //коэффициент для вычисления сопротивления воздуха
 	
 	volatile private Point2D mPosition;
-	volatile private Point2D mSpeed, mAcceleration, mAirResistance, mGravity, mWindSpeed;
+	volatile private Point2D mSpeed, mAcceleration, mAirForce, mGravity, mWindSpeed;
 	private Double mTimeDelta = 0.0;  // время в секундах между двумя состояниями
 	private Double mTime; //общее время
 	private Double mStartSpeed;
@@ -40,7 +40,7 @@ public class Packet {
 
 		mPosition = new Point2D(0.0, 0.0);
 		mAcceleration = new Point2D(0.0, 0.0);
-		mAirResistance = new Point2D(0.0, 0.0);
+		mAirForce = new Point2D(0.0, 0.0);
 		mWindSpeed = new Point2D(-20.0, 0.0);
 		mGravity =  new Point2D(0.0, -WEIGHT* G);
 		mTime = 0.0;
@@ -59,17 +59,18 @@ public class Packet {
 		double t = T0 - mPosition.getY()*L;
 		double p = P0 * Math.pow(1-L*mPosition.getY()/T0, G*M/R/L);
 		double thickness = p*M/R/t;
-		//сопротивление воздуха
-		mAirResistance = mSpeed.normalize().multiply(-Cf*thickness*mSpeed.magnitude()*mSpeed.magnitude()/2*S);
-		//ветер
-		//todo найти адекватную инфу по нему
-		mAirResistance = mAirResistance.add(mWindSpeed.normalize().multiply(
-				mWindSpeed.magnitude()*mWindSpeed.magnitude()*0.5*S*thickness));
+		// ветер и сопротивление воздуха
+		mAirForce = resistance(thickness, mWindSpeed).add(resistance(thickness, mSpeed.multiply(-1.0)));
+
+	}
+
+	private Point2D resistance(Double thickness, Point2D speed){
+		return speed.normalize().multiply(Cf*thickness*speed.magnitude()*speed.magnitude()/2*S);
 	}
 	
 	private void calcAcceleration(){
 		calcAirResistance();
-		mAcceleration = mGravity.add(mAirResistance).multiply(1.0/WEIGHT);
+		mAcceleration = mGravity.add(mAirForce).multiply(1.0/WEIGHT);
 	}
 
 	public Point2D getFlightRectangle() {

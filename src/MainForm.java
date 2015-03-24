@@ -44,7 +44,7 @@ public class MainForm extends Application implements Initializable {
 		primaryStage.setScene(scene);
 		scene.getStylesheets().add("main_form.css");
 		primaryStage.show();
-		primaryStage.setFullScreen(true);
+		//primaryStage.setFullScreen(true);
 	}
 
 	/*Теперь в наличии 3 функции инициализации.
@@ -118,7 +118,7 @@ public class MainForm extends Application implements Initializable {
 		scale.setDisable(true);
 
 		// Пришлось это вернуть, т.к. при размерах поля, отличных от 1024*512, всё очень плохо
-		StringConverter converter = new StringConverter<Double>() {
+		StringConverter<Double> converter = new StringConverter<Double>() {
 			@Override
 			public String toString(Double object) {
 				int n = ((int) Math.round(object/5)*5);

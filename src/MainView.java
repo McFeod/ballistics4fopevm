@@ -59,7 +59,6 @@ public class MainView extends Canvas implements Runnable {
 		mPacket.resetMarkers();
 		mPacket.setPosition(new Point2D(0, 0));
 		Random random = new Random();
-		random.nextInt(256);
 		mTailColor = Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256));
 	}
 
