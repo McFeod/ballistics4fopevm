@@ -12,13 +12,14 @@ public class Packet53ОФ350 extends Packet{
 	public Packet53ОФ350(Double speed) {
 		super(speed);
 		mWindSpeed = new Point2D(0.0, 0.0);
+		mGravity = new Point2D(0.0, -WEIGHT*G);
 	}
 
 	@Override
 	protected void calcAcceleration(){
 		calcAirResistance();
 		mAcceleration = mGravity.add(mAirForce).multiply(1.0/WEIGHT);
-		System.out.println(WEIGHT);
+		//System.out.println(WEIGHT);
 	}
 
 	@Override
