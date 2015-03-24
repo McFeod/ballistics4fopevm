@@ -14,7 +14,7 @@
 		</HBox>
 		<HBox alignment="CENTER">
 			<Label fx:id="selectedSpeed" prefWidth="100"/>
-			<Slider fx:id="speedSlider" min="100" max="1000" value="212"
+			<Slider fx:id="speedSlider" min="100" max="1000" value="655"
 					prefHeight="200"
 					styleClass="speed_slider"/>
 		</HBox>
