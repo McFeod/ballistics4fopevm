@@ -21,7 +21,7 @@ public class MainView extends Canvas implements Runnable {
 	private boolean isAngleBisectionEnabled = false;
 	private Color mTailColor;
 	private Point2D mCurrentPoint = new Point2D(0.0, 0.0);
-	private Double mSleepFactor;
+	private double mSleepFactor = 0.1, mSleepLitter = 0.0;
 
 	public MainView(Canvas canvas, double sizeX, double sizeY){
 		super(sizeX, sizeY);
@@ -88,7 +88,6 @@ public class MainView extends Canvas implements Runnable {
 		this.mPacket = (VisualizationThread.TEST_RUN) ? new Packet53ОФ350(packet.getStartSpeed()) : packet;
 		Point2D drawingArea = mPacket.getFlightRectangle();
 		scale = Math.max(drawingArea.getX()/getWidth(), drawingArea.getY()/getHeight());
-		mSleepFactor = 400/mPacket.getStartSpeed()/mPacket.getStartSpeed()/scale;
 		//unnecessary action #1: packet.setupMarkers(Math.min(PACKET_GAGE * scale, PACKET_GAGE));
 	}
 
@@ -150,6 +149,15 @@ public class MainView extends Canvas implements Runnable {
 	}
 
 	public long getSleepTime(){
-		return (long)(mSleepFactor*mPacket.getLastDelta()*1000)+1;
+		/*пропуск точек. при малом sleepFactor могут быть проблемы при отрисовке*/
+		mSleepLitter += mSleepFactor*mPacket.getLastDelta()*1000;
+		while (mSleepLitter<1.0){
+			mPacket.update(5.0);
+			mPacket.getUnrendered();
+			mSleepLitter += mSleepFactor*mPacket.getLastDelta()*1000;
+		}
+		long result = (long) mSleepLitter;
+		mSleepLitter -= result;
+		return result; //(long)(mSleepFactor*mPacket.getLastDelta()*1000)+1;
 	}
 }
