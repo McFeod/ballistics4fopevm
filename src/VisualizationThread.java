@@ -19,6 +19,7 @@ class VisualizationThread extends Thread {
 	public static boolean targetReached = false;
 	public static boolean isRunning = false;
 	private final double DEGREE = Math.PI/180;
+
 	public void start(MainView view, Button refresher){
 		mView = view;
 		mRefresher = refresher;
@@ -34,53 +35,64 @@ class VisualizationThread extends Thread {
 	public void run() {
 		isRunning = true;
 		mView.getPacket().setupMarkers(MainView.PACKET_GAGE * mView.getScale() * 0.7); //#1
-		mView.getPacket().update();
-		if (mView.isAngleBisectionEnabled()){
-			start:
-			while (mCurrentChoice.isMatter()){
-				mView.getPacket().resetMarkers();
-				while (mView.getPacket().inTheAir()) {
-					mView.getPacket().update();
-					try {
-						Thread.sleep(mView.getSleepTime());
-					} catch (Exception ignore) {}
-					Platform.runLater(mView);
-					if (targetReached){
-						break start;
-					}
-				}
-				// sleep between launches
-				try{
-					Thread.sleep(200);
-				} catch (Exception ignore){}
-				Boolean result = mView.getPacket().getSummarize();
-				if (result==null){
-					mChoices.add(mCurrentChoice.getAnother(mView.getPacket().helpToChoose()));
-				} else {
-					mCurrentChoice.next(result);
-				}
 
-				if (!mChoices.isEmpty()&&(!mCurrentChoice.isMatter())){
-					mCurrentChoice = mChoices.poll();
-				}
-				mView.reset(mCurrentChoice.getAngle());
+		while (mCurrentChoice.isMatter()){
+			mView.reset(mCurrentChoice.getAngle());
+
+			// промежуточные шаги отрисовываются в зависимости от режима
+			if (singleFly(mView.isAngleBisectionEnabled())){
+				break;  // попадание
 			}
-		}else{
-			mView.getPacket().resetSpeed(Math.PI * 3.0 / 180);
-			while (mView.getPacket().inTheAir()) {
-				try {
-					Thread.sleep(mView.getSleepTime());
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				mView.getPacket().update();
-				Platform.runLater(mView);
+			// sleep between launches
+			if (mView.isAngleBisectionEnabled()) {
+				try { Thread.sleep(200); }
+				catch (Exception ignore) {}
+			}
+			//  получаем направление деления
+			Boolean result = mView.getPacket().getSummarize();
+			if (result==null){
+				mChoices.add(mCurrentChoice.getAnother(mView.getPacket().helpToChoose()));  // подстраховка в неявном случае
+			} else {
+				mCurrentChoice.next(result);  // меняем угол
+			}
+			if (!mChoices.isEmpty()&&(!mCurrentChoice.isMatter())){
+				mCurrentChoice = mChoices.poll();  // запасы пригодились
 			}
 		}
-		Platform.runLater(() -> {
+
+		if (!mView.isAngleBisectionEnabled()){
+			targetReached = false;
+			mView.reset(mCurrentChoice.getAngle()); // найденный заранее угол
+			singleFly(true);  // повторяем последний полёт
+		}
+
+		Platform.runLater(() -> {  // перевод фокуса на кнопку - пашет не всегда O_o
 			mRefresher.setDisable(false);
 			mRefresher.requestFocus();
 		});
 		isRunning = false;
+	}
+
+	/**
+	 * Рассчёт одной траектории
+	 * @param draw - включение/отключение отрисовки
+	 * @return true при достижении цели, false при падении
+	 */
+	private boolean singleFly(boolean draw){
+		while (mView.getPacket().inTheAir()) {
+			mView.getPacket().update(draw);
+			if (draw) {
+				try {
+					Thread.sleep(mView.someUpdates());  // основной логический шаг с отрисовкой
+				} catch (Exception ignore) {}
+				Platform.runLater(mView);
+			}else{
+				mView.getPacket().update(false);  // без отрисовки
+			}
+			if (targetReached){
+				return true;  // прекрщаем считать: попали
+			}
+		}
+		return false;
 	}
 }

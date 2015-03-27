@@ -13,14 +13,14 @@ public class Packet {
 	private final double DENSITY = 7800; //плотность шара
 	private final double WEIGHT = 4/3*RADIUS*S*DENSITY;
 	//характеристика среды
-	final double G = 9.8;
+	final double G = 9.80665;
 	private final double L = 0.0065; //просто константа
 	private final double R = 8.314; //еще одна константа
 	private final double T0 = 288.15; //температура на уровне моря
 	private final double P0 = 101325; //Давление на уровне моря
 	private final double M = 0.029; //молярная масса воздуха
 	private final double Cf = 0.47; //коэффициент для вычисления сопротивления воздуха
-	
+
 	private volatile Point2D mPosition;
 	private volatile Point2D mSpeed;
 	volatile Point2D mAcceleration;
@@ -144,6 +144,8 @@ public class Packet {
 
 	public void resetTime(){
 		mTime = 0.0;
+		mLastPositions.clear();
+		mLastDeltas.clear();
 	}
 
 	public void setPosition(Point2D position) {
@@ -163,18 +165,18 @@ public class Packet {
 	/**
 	 * Основной шаг логической части программы
 	 * dS = 2*RADIUS - расстояние (в метрах) между двумя состояниями снаряда
+	 * @param keepTrack - включение/отключение очереди точек и timeDeltas
 	 */
-	public synchronized boolean update(){
+	public synchronized boolean update(boolean keepTrack){
 		calcAcceleration();
-
-		mLastDeltas.add(mTimeDelta);
+		if (keepTrack) {
+			mLastDeltas.add(mTimeDelta);
+			mLastPositions.add(mPosition);
+		}
 		mTimeDelta = 2*RADIUS / mSpeed.magnitude();
 		mTime += mTimeDelta;
-
 		mSpeed = mSpeed.add(mAcceleration.multiply(mTimeDelta));
-		mLastPositions.add(mPosition);
 		mPosition = mPosition.add(mSpeed.multiply(mTimeDelta));
-
 		return mMarkers.refresh(mPosition);
 	}
 }

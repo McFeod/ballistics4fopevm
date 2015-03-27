@@ -6,6 +6,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.input.MouseEvent;
@@ -29,6 +30,7 @@ public class MainForm extends Application implements Initializable {
 	@FXML private Slider speedSlider;
 	@FXML private Label selectedSpeed;
 	@FXML private Button refresher;
+	@FXML private CheckBox bisectionBox;
 
 	public static void main(String[] args) {
 		launch(args);
@@ -72,7 +74,8 @@ public class MainForm extends Application implements Initializable {
 							mainView.getHeight() - event.getY())
 							.multiply(mainView.getScale()));
 			// #4
-			mainView.setAngleBisectionEnabled(!VisualizationThread.TEST_RUN);
+			mainView.setAngleBisectionEnabled(bisectionBox.isSelected());
+			mainView.drawTarget();
 			new VisualizationThread().start(mainView, refresher);
 			packetView.setDisable(true);
 		});

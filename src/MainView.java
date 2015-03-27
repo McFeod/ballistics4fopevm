@@ -81,7 +81,6 @@ class MainView extends Canvas implements Runnable {
 
 	public void setAngleBisectionEnabled(boolean value){
 		isAngleBisectionEnabled = value;
-		drawTarget();
 	}
 
 	public void setRefreshableObjects(Label infoLabel,
@@ -108,7 +107,7 @@ class MainView extends Canvas implements Runnable {
 	/**
 	 * Отрисовка мишени вручную
 	 */
-	private void drawTarget() {
+	void drawTarget() {
 		mBottomContext.setStroke(Color.RED);
 		mBottomContext.setFill(Color.RED);
 		mBottomContext.strokeOval(mPacket.getTarget().getX() / scale - PACKET_GAGE,
@@ -156,19 +155,18 @@ class MainView extends Canvas implements Runnable {
 		hSlider.setValue(mCurrentPoint.getX());
 	}
 
-	public long getSleepTime() {
-		incTimeBuffer();
+	/**
+	 * Вызывает необходимое число раз packet.update и сохраняет точки
+	 * @return необходимое время сна в мс
+	 */
+	public long someUpdates() {
 		while (mTimeBuffer < RENDER_PAUSE) {
-			if (mPacket.update()) break; // попали
+			if (mPacket.update(true)) break; // попали
 			mTailBuffer.add(mPacket.getUnrendered()); // из пустого в порожнее
-			incTimeBuffer();
+			mTimeBuffer += mSleepFactor*mPacket.getLastDelta()*1000;
 		}
 		long result = (long) mTimeBuffer;
 		mTimeBuffer -= result;
 		return result;
-	}
-
-	private void incTimeBuffer(){
-		mTimeBuffer += mSleepFactor*mPacket.getLastDelta()*1000;
 	}
 }

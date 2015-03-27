@@ -5,9 +5,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
 
+<?import javafx.scene.control.CheckBox?>
 <GridPane fx:controller="MainForm" fx:id="root"
           xmlns:fx="http://javafx.com/fxml" alignment="CENTER" >
 	<VBox prefWidth="200" alignment="CENTER" styleClass="control_panel">
+		<CheckBox text="Показать решение" fx:id="bisectionBox" selected="true"/>
 		<HBox GridPane.columnIndex="0" GridPane.rowIndex="0">
 			<Label fx:id="nameLabel"/>
 			<Label fx:id="infoLabel"/>
