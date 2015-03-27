@@ -12,6 +12,7 @@ class VisualizationThread extends Thread {
 	public static final boolean TEST_RUN = false;
 
 	private MainView mView;
+	private Packet mPacket;
 	private Button mRefresher;
 	private AngleChoice mCurrentChoice;
 	private Queue<AngleChoice> mChoices;
@@ -22,10 +23,11 @@ class VisualizationThread extends Thread {
 
 	public void start(MainView view, Button refresher){
 		mView = view;
+		mPacket = view.getPacket();
 		mRefresher = refresher;
 		mChoices = new ArrayDeque<>();
 		mCurrentChoice = new AngleChoice(0.0, Math.PI/2,
-				Math.atan(mView.getPacket().getSpeed().getY()/mView.getPacket().getSpeed().getX())
+				Math.atan(mPacket.getSpeed().getY()/mPacket.getSpeed().getX())
 				,true, DEGREE/mView.getScale());
 		setDaemon(true); // lazy & dangerous(for IO) way to stop a thread when closing app
 		start();
@@ -34,7 +36,7 @@ class VisualizationThread extends Thread {
 	@Override
 	public void run() {
 		isRunning = true;
-		mView.getPacket().setupMarkers(MainView.PACKET_GAGE * mView.getScale() * 0.7); //#1
+		mPacket.setupMarkers(MainView.PACKET_GAGE * mView.getScale() * 0.7); //#1
 
 		while (mCurrentChoice.isMatter()){
 			mView.reset(mCurrentChoice.getAngle());
@@ -49,9 +51,9 @@ class VisualizationThread extends Thread {
 				catch (Exception ignore) {}
 			}
 			//  получаем направление деления
-			Boolean result = mView.getPacket().getSummarize();
+			Boolean result = mPacket.getSummarize();
 			if (result==null){
-				mChoices.add(mCurrentChoice.getAnother(mView.getPacket().helpToChoose()));  // подстраховка в неявном случае
+				mChoices.add(mCurrentChoice.getAnother(mPacket.helpToChoose()));  // подстраховка в неявном случае
 			} else {
 				mCurrentChoice.next(result);  // меняем угол
 			}
@@ -79,15 +81,15 @@ class VisualizationThread extends Thread {
 	 * @return true при достижении цели, false при падении
 	 */
 	private boolean singleFly(boolean draw){
-		while (mView.getPacket().inTheAir()) {
-			mView.getPacket().update(draw);
+		while (mPacket.inTheAir()) {
+			mPacket.update(draw);
 			if (draw) {
 				try {
 					Thread.sleep(mView.someUpdates());  // основной логический шаг с отрисовкой
 				} catch (Exception ignore) {}
 				Platform.runLater(mView);
 			}else{
-				mView.getPacket().update(false);  // без отрисовки
+				mPacket.update(false);  // без отрисовки
 			}
 			if (targetReached){
 				return true;  // прекрщаем считать: попали

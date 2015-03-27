@@ -73,7 +73,6 @@ public class MainForm extends Application implements Initializable {
 					new Point2D(event.getX(),
 							mainView.getHeight() - event.getY())
 							.multiply(mainView.getScale()));
-			// #4
 			mainView.setAngleBisectionEnabled(bisectionBox.isSelected());
 			mainView.drawTarget();
 			new VisualizationThread().start(mainView, refresher);
@@ -104,17 +103,18 @@ public class MainForm extends Application implements Initializable {
 		mainView.fillBackground();
 	}
 
+	/**
+	 * Страдания со шкалами
+	 * @param scale - на самом деле никакая не шкала, а слайдер О_о
+	 * @param scaleSize - размер шкалы в пикселах
+	 * @param interval - размер главного деления в пикселах
+	 */
 	private void buildScale(Slider scale, double scaleSize, double interval){
 		double markNumber = Math.floor(scaleSize / interval);
 		double maxMark = scaleSize * mainView.getScale();
 
-		// Last digit "2" means how mush significant digits after first
-		// we want to keep in maxTick.
-		// For usual ticks we keep (this number + 2) significant digits.
-		//double pow10 = Math.pow(10, (Math.floor(Math.log10(maxMark)) - 1));
-		//double beautyMark = Math.round(maxMark / pow10) * pow10;
-		scale.setMax(maxMark); //beautyMark
-		scale.setMajorTickUnit(maxMark / markNumber); //beautyMark / markNumber
+		scale.setMax(maxMark);
+		scale.setMajorTickUnit(maxMark / markNumber);
 		scale.setDisable(true);
 
 		// Пришлось это вернуть, т.к. при размерах поля, отличных от 1024*512, всё очень плохо
@@ -137,6 +137,9 @@ public class MainForm extends Application implements Initializable {
 		buildScale(verticalScale, mainView.getHeight(), 50);
 	}
 
+	/**
+	 * Сброс всего и вся
+	 */
 	public void restart(){
 		refresher.setDisable(true);
 		repaintBackground();
@@ -148,6 +151,9 @@ public class MainForm extends Application implements Initializable {
 		mainView.setPacket(new Packet(speedSlider.getValue()));
 	}
 
+	/**
+	 * "На следующей остановите!"
+	 */
 	public void stopTrying(){
 		if (VisualizationThread.isRunning)
 			VisualizationThread.targetReached = true;

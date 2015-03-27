@@ -1,3 +1,6 @@
+/**
+ * Реализация половинного деления
+ */
 public class AngleChoice {
 	private Double mAngle1, mAngle2, mAngle;
 	private boolean isDown;
@@ -14,7 +17,10 @@ public class AngleChoice {
 		return mAngle;
 	}
 
-	void next(){
+	/**
+	 * Само половинное деление
+	 */
+	private void next(){
 		if (isDown)
 			mAngle2 = mAngle;
 		else
@@ -22,11 +28,20 @@ public class AngleChoice {
 		mAngle = (mAngle1 + mAngle2) / 2;
 	}
 
+	/**
+	 * Задание нового угла
+	 * @param down - выбор направления деления
+	 */
 	public void next(Boolean down){
 		isDown = down;
 		next();
 	}
 
+	/**
+	 * Копирование состояния половинного деления в любой непонятонй ситуации)
+	 * @param down - текущий выбор, в котором есть сомнения
+	 * @return - выбор, противоположный текущему
+	 */
 	public AngleChoice getAnother(boolean down){
 		isDown = down;
 		AngleChoice choice = new AngleChoice(mAngle1, mAngle2, mAngle, !isDown, mEps);
@@ -35,6 +50,10 @@ public class AngleChoice {
 		return choice;
 	}
 
+	/**
+	 * Для принудительного завершения деления в случае неудачи
+	 * @return false если всё плохо
+	 */
 	public boolean isMatter(){
 		return Math.abs(mAngle2-mAngle1)> mEps;
 	}

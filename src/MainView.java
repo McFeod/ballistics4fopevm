@@ -28,7 +28,11 @@ class MainView extends Canvas implements Runnable {
 	private double mSleepFactor = 0.01, mTimeBuffer = 0.0;
 	private Queue<Point2D> mTailBuffer; // хранение неотрисованного следа
 
-
+	/**
+	 * @param canvas - Холст для шарика
+	 * @param sizeX
+	 * @param sizeY
+	 */
 	public MainView(Canvas canvas, double sizeX, double sizeY){
 		super(sizeX, sizeY);
 		mTopContext = canvas.getGraphicsContext2D();
@@ -37,6 +41,9 @@ class MainView extends Canvas implements Runnable {
 		mTailBuffer = new ArrayDeque<>();
 	}
 
+	/**
+	 * Убираем следы от снаряда
+	 */
 	public void fillBackground() {
 		mBottomContext.setFill(BACKGROUND);
 		mBottomContext.fillRect(0, 0, getWidth(), getHeight());
@@ -58,6 +65,10 @@ class MainView extends Canvas implements Runnable {
 		return isAngleBisectionEnabled;
 	}
 
+	/**
+	 * Смена цвета следа + вызов методов очистки Packet
+	 * @param angle - тангенс нового стартового угла
+	 */
 	public void reset(Double angle){
 		mPacket.resetTime();
 		mPacket.resetSpeed(angle);
@@ -67,6 +78,9 @@ class MainView extends Canvas implements Runnable {
 		mTailColor = Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256));
 	}
 
+	/**
+	 * собственно, отрисовка
+	 */
 	@Override
 	public void run() {
 		plaster();
@@ -95,9 +109,15 @@ class MainView extends Canvas implements Runnable {
 		this.mPacket = (VisualizationThread.TEST_RUN) ? new Packet53ОФ350(packet.getStartSpeed()) : packet;
 		Point2D drawingArea = mPacket.getFlightRectangle();
 		scale = Math.max(drawingArea.getX()/getWidth(), drawingArea.getY()/getHeight());
-		//unnecessary action #1: packet.setupMarkers(Math.min(PACKET_GAGE * scale, PACKET_GAGE));
 	}
 
+	/**
+	 * Обёртка для fillOval
+	 * @param context - gc нужного холста
+	 * @param position
+	 * @param color
+	 * @param radius
+	 */
 	private void drawCircle(GraphicsContext context, Point2D position, Color color, double radius){
 		context.setFill(color);
 		context.fillOval((position.getX()) / scale - radius / 2,
@@ -124,6 +144,9 @@ class MainView extends Canvas implements Runnable {
 				mPacket.getTarget().getX() / scale + PACKET_GAGE + 2, getHeight() - mPacket.getTarget().getY() / scale);
 	}
 
+	/**
+	 * Затираем шарик
+	 */
 	private void plaster(){
 		mTopContext.clearRect((mCurrentPoint.getX())/scale-PACKET_GAGE,
 				getHeight() - (mCurrentPoint.getY())/scale-PACKET_GAGE,

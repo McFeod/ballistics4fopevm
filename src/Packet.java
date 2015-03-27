@@ -68,6 +68,12 @@ public class Packet {
 
 	}
 
+	/**
+	 * Формула подсчёта сопротивления.
+	 * @param thickness - плотность (?)
+	 * @param speed - скорость снаряда относительно среды
+	 * @return сила сопротивления (вектор)
+	 */
 	Point2D resistance(Double thickness, Point2D speed){
 		return speed.normalize().multiply(Cf*thickness*speed.magnitude()*speed.magnitude()/2*S);
 	}
@@ -100,6 +106,10 @@ public class Packet {
 		return mPosition;
 	}
 
+	/**
+	 * Нужно для расчёта sleep time
+	 * @return Время в секундах (в симуляции, а не реальное!)
+	 */
 	public Double getLastDelta(){
 		if (mLastDeltas.isEmpty())
 			return 0.0;
@@ -126,6 +136,10 @@ public class Packet {
 		return mTime;
 	}
 
+	/**
+	 * Способ выбора угла в неясной ситуации
+	 * @return true - если нужно уменьшать угол
+	 */
 	public boolean helpToChoose(){
 		return (Math.abs(mSpeed.getY() / (mSpeed.getX() + 1e-5)) > 1);
 	}

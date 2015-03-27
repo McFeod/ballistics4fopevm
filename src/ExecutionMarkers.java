@@ -1,5 +1,8 @@
 import javafx.geometry.Point2D;
 
+/**
+ * Набор проверок взаимного расположения объектов. Нужен для AngleChoice
+ */
 class ExecutionMarkers {
 	private boolean yReached = false, isReachable = false;
 	private final Point2D mTarget;
@@ -27,7 +30,7 @@ class ExecutionMarkers {
 		if (dx <=eps/2) {
 			if (dy <= eps) {
 				VisualizationThread.targetReached = true;
-				return true;
+				return true;  // цель достигнута
 			}
 		}else {
 			if (dy <= eps) {
@@ -47,6 +50,11 @@ class ExecutionMarkers {
 		lastX = 0.0;
 		firstX = Double.MAX_VALUE;
 	}
+
+	/**
+	 * Итог одного полёта снаряда
+	 * @return true, если надо уменьшать угол, false - увеличивать, null - НЕ ОПРЕДЕЛЕНО, нужно пробовать оба варианта
+	 */
 	public Boolean summarize(){
 		if (yReached){
 			if (firstX <= mTarget.getX()) {
