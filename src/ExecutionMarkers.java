@@ -13,7 +13,12 @@ public class ExecutionMarkers {
 		eps = radius;
 	}
 
-	public void refresh(Point2D pos){
+	/**
+	 * Проверки на взаимное расположение снаряда и цели
+	 * @param pos - координаты снаряда
+	 * @return true - если нужно остановить запуски
+	 */
+	public boolean refresh(Point2D pos){
 		px = pos.getX();
 		py = pos.getY();
 		dx = Math.abs(mTarget.getX()-px);
@@ -22,6 +27,7 @@ public class ExecutionMarkers {
 		if (dx<=eps/2) {
 			if (dy <= eps) {
 				VisualizationThread.targetReached = true;
+				return true;
 			}
 		}else {
 			if (dy <= eps) {
@@ -33,6 +39,7 @@ public class ExecutionMarkers {
 				}
 			}
 		}
+		return false;
 	}
 
 	public void reset(){

@@ -33,15 +33,14 @@ public class VisualizationThread extends Thread {
 	@Override
 	public void run() {
 		isRunning = true;
-		double updateStep = 5.0;
 		mView.getPacket().setupMarkers(MainView.PACKET_GAGE * mView.getScale() * 0.7); //#1
-		mView.getPacket().update(1.0);
+		mView.getPacket().update();
 		if (mView.isAngleBisectionEnabled()){
 			start:
 			while (mCurrentChoice.isMatter()){
 				mView.getPacket().resetMarkers();
 				while (mView.getPacket().inTheAir()) {
-					mView.getPacket().update(updateStep);
+					mView.getPacket().update();
 					try {
 						Thread.sleep(mView.getSleepTime());
 					} catch (Exception ignore) {}
@@ -74,7 +73,7 @@ public class VisualizationThread extends Thread {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				mView.getPacket().update(updateStep);
+				mView.getPacket().update();
 				Platform.runLater(mView);
 			}
 		}

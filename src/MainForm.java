@@ -112,10 +112,10 @@ public class MainForm extends Application implements Initializable {
 		// Last digit "2" means how mush significant digits after first
 		// we want to keep in maxTick.
 		// For usual ticks we keep (this number + 2) significant digits.
-		double pow10 = Math.pow(10, (Math.floor(Math.log10(maxMark)) - 1));
-		double beautyMark = Math.round(maxMark / pow10) * pow10;
-		scale.setMax(beautyMark);
-		scale.setMajorTickUnit(beautyMark / markNumber);
+		//double pow10 = Math.pow(10, (Math.floor(Math.log10(maxMark)) - 1));
+		//double beautyMark = Math.round(maxMark / pow10) * pow10;
+		scale.setMax(maxMark); //beautyMark
+		scale.setMajorTickUnit(maxMark / markNumber); //beautyMark / markNumber
 		scale.setDisable(true);
 
 		// Пришлось это вернуть, т.к. при размерах поля, отличных от 1024*512, всё очень плохо

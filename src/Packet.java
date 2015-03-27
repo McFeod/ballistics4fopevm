@@ -158,19 +158,19 @@ public class Packet {
 
 	/**
 	 * Основной шаг логической части программы
-	 * @param dS - расстояние (в метрах) между двумя состояниями снаряда
+	 * dS = 2*RADIUS - расстояние (в метрах) между двумя состояниями снаряда
 	 */
-	public synchronized void update(Double dS){
+	public synchronized boolean update(){
 		calcAcceleration();
 
 		mLastDeltas.add(mTimeDelta);
-		mTimeDelta = dS / mSpeed.magnitude();
+		mTimeDelta = 2*RADIUS / mSpeed.magnitude();
 		mTime += mTimeDelta;
 
 		mSpeed = mSpeed.add(mAcceleration.multiply(mTimeDelta));
 		mLastPositions.add(mPosition);
 		mPosition = mPosition.add(mSpeed.multiply(mTimeDelta));
 
-		mMarkers.refresh(mPosition);
+		return mMarkers.refresh(mPosition);
 	}
 }

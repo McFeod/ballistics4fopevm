@@ -4,6 +4,9 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.paint.Color;
+
+import java.util.ArrayDeque;
+import java.util.Queue;
 import java.util.Random;
 
 /**
@@ -13,6 +16,7 @@ public class MainView extends Canvas implements Runnable {
 	public static final Color BACKGROUND = Color.rgb(60, 105, 117);
 	public static final double PACKET_GAGE = 10;
 	private static final int TAIL_GAGE = 2;
+	private static final double RENDER_PAUSE = 10; // 100 FPS
 	private GraphicsContext mTopContext, mBottomContext;
 	private Packet mPacket;
 	private double scale;
@@ -21,15 +25,16 @@ public class MainView extends Canvas implements Runnable {
 	private boolean isAngleBisectionEnabled = false;
 	private Color mTailColor;
 	private Point2D mCurrentPoint = new Point2D(0.0, 0.0);
-	private double mSleepFactor = 0.1, mSleepLitter = 0.0;
+	private double mSleepFactor = 0.01, mTimeBuffer = 0.0;
+	private Queue<Point2D> mTailBuffer; // хранение неотрисованного следа
+
 
 	public MainView(Canvas canvas, double sizeX, double sizeY){
 		super(sizeX, sizeY);
 		mTopContext = canvas.getGraphicsContext2D();
 		mBottomContext =     getGraphicsContext2D();
 		fillBackground();
-		//to avoid mismatch between default slider value & default speed
-		//setPacket(new Packet(212.0));
+		mTailBuffer = new ArrayDeque<>();
 	}
 
 	public void fillBackground() {
@@ -66,6 +71,9 @@ public class MainView extends Canvas implements Runnable {
 	public void run() {
 		plaster();
 		mCurrentPoint = mPacket.getUnrendered();
+		while(!mTailBuffer.isEmpty()){ // fix для следа от снаряда
+			drawCircle(mBottomContext, mTailBuffer.poll(), mTailColor, TAIL_GAGE);
+		}
 		drawCircle(mBottomContext, mCurrentPoint, mTailColor, TAIL_GAGE);
 		drawCircle(mTopContext, mCurrentPoint, Color.BLACK, PACKET_GAGE);
 		refreshObjects();
@@ -93,8 +101,8 @@ public class MainView extends Canvas implements Runnable {
 
 	private void drawCircle(GraphicsContext context, Point2D position, Color color, double radius){
 		context.setFill(color);
-		context.fillOval((position.getX())/scale-radius/2,
-				getHeight()-(position.getY())/scale-radius/2, radius, radius);
+		context.fillOval((position.getX()) / scale - radius / 2,
+				getHeight() - (position.getY()) / scale - radius / 2, radius, radius);
 	}
 
 	/**
@@ -148,16 +156,19 @@ public class MainView extends Canvas implements Runnable {
 		hSlider.setValue(mCurrentPoint.getX());
 	}
 
-	public long getSleepTime(){
-		/*пропуск точек. при малом sleepFactor могут быть проблемы при отрисовке*/
-		mSleepLitter += mSleepFactor*mPacket.getLastDelta()*1000;
-		while (mSleepLitter<1.0){
-			mPacket.update(5.0);
-			mPacket.getUnrendered();
-			mSleepLitter += mSleepFactor*mPacket.getLastDelta()*1000;
+	public long getSleepTime() {
+		incTimeBuffer();
+		while (mTimeBuffer < RENDER_PAUSE) {
+			if (mPacket.update()) break; // попали
+			mTailBuffer.add(mPacket.getUnrendered()); // из пустого в порожнее
+			incTimeBuffer();
 		}
-		long result = (long) mSleepLitter;
-		mSleepLitter -= result;
-		return result; //(long)(mSleepFactor*mPacket.getLastDelta()*1000)+1;
+		long result = (long) mTimeBuffer;
+		mTimeBuffer -= result;
+		return result;
+	}
+
+	private void incTimeBuffer(){
+		mTimeBuffer += mSleepFactor*mPacket.getLastDelta()*1000;
 	}
 }
