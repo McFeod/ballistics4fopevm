@@ -2,12 +2,12 @@ import javafx.geometry.Point2D;
 
 //#4
 public class Packet53ОФ350 extends Packet{
-	public final double RADIUS = 0.038; //полкалибра снаряда
-	public final double S = RADIUS * RADIUS * Math.PI; //площадь сечения шара
-	public final double WEIGHT = 6.2;
+	private final double RADIUS = 0.038; //полкалибра снаряда
+	private final double S = RADIUS * RADIUS * Math.PI; //площадь сечения шара
+	private final double WEIGHT = 6.2;
 
 	//характеристика среды
-	public final double Cf = 0.905; //коэффициент для вычисления сопротивления воздуха
+	private final double Cf = 0.905; //коэффициент для вычисления сопротивления воздуха
 
 	public Packet53ОФ350(Double speed) {
 		super(speed);
@@ -22,7 +22,7 @@ public class Packet53ОФ350 extends Packet{
 		//System.out.println(WEIGHT);
 	}
 
-	protected double siacci(double V){
+	double siacci(double V){
 		double linearTerm = 0.2002 * V - 48.05;
 		double middleTerm = Math.sqrt(
 				Math.pow((0.1648*V - 47.95),2)

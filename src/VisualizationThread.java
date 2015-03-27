@@ -7,7 +7,7 @@ import java.util.Queue;
 /**
  * Поток, в котором раз в mSleepTime мс вызывается mView.run()
  */
-public class VisualizationThread extends Thread {
+class VisualizationThread extends Thread {
 	// #4
 	public static final boolean TEST_RUN = false;
 

@@ -1,7 +1,7 @@
 public class AngleChoice {
 	private Double mAngle1, mAngle2, mAngle;
 	private boolean isDown;
-	private double mEps;
+	private final double mEps;
 	public AngleChoice(Double angle1, Double angle2, Double angle, boolean isDown, Double eps) {
 		mAngle1 = angle1;
 		mAngle2 = angle2;
@@ -14,7 +14,7 @@ public class AngleChoice {
 		return mAngle;
 	}
 
-	public void next(){
+	void next(){
 		if (isDown)
 			mAngle2 = mAngle;
 		else

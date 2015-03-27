@@ -8,32 +8,36 @@ import java.util.Queue;
  */
 public class Packet {
 	//характеристика шара
-	public final double RADIUS = 1.0; //радиус шара в метрах
-	public final double S = RADIUS * RADIUS * Math.PI; //площадь сечения шара
-	public final double DENSITY = 7800; //плотность шара
-	public final double WEIGHT = 4/3*RADIUS*S*DENSITY;
+	private final double RADIUS = 1.0; //радиус шара в метрах
+	private final double S = RADIUS * RADIUS * Math.PI; //площадь сечения шара
+	private final double DENSITY = 7800; //плотность шара
+	private final double WEIGHT = 4/3*RADIUS*S*DENSITY;
 	//характеристика среды
-	public final double G = 9.8;
-	public final double L = 0.0065; //просто константа
-	public final double R = 8.314; //еще одна константа
-	public final double T0 = 288.15; //температура на уровне моря
-	public final double P0 = 101325; //Давление на уровне моря
-	public final double M = 0.029; //молярная масса воздуха
-	public final double Cf = 0.47; //коэффициент для вычисления сопротивления воздуха
+	final double G = 9.8;
+	private final double L = 0.0065; //просто константа
+	private final double R = 8.314; //еще одна константа
+	private final double T0 = 288.15; //температура на уровне моря
+	private final double P0 = 101325; //Давление на уровне моря
+	private final double M = 0.029; //молярная масса воздуха
+	private final double Cf = 0.47; //коэффициент для вычисления сопротивления воздуха
 	
-	volatile protected Point2D mPosition;
-	volatile protected Point2D mSpeed, mAcceleration, mAirForce, mGravity, mWindSpeed;
+	private volatile Point2D mPosition;
+	private volatile Point2D mSpeed;
+	volatile Point2D mAcceleration;
+	volatile Point2D mAirForce;
+	volatile Point2D mGravity;
+	volatile Point2D mWindSpeed;
 	private Double mTimeDelta = 0.0;  // время в секундах между двумя состояниями
 	private Double mTime; //общее время
-	private Double mStartSpeed;
+	private final Double mStartSpeed;
 	private Point2D mTarget;
 	private ExecutionMarkers mMarkers;
-	private Queue<Point2D> mLastPositions;
-	private Queue<Double> mLastDeltas;
+	private final Queue<Point2D> mLastPositions;
+	private final Queue<Double> mLastDeltas;
 
 	/**Наименьший прямоугольник, в который может быть вписана траектория полёта
 	* Вычисляется для нужд масштабирования*/
-	private Point2D flightRectangle;
+	private final Point2D flightRectangle;
 
 	public Packet(Double speed) {
 		mStartSpeed = speed;
@@ -55,7 +59,7 @@ public class Packet {
 		flightRectangle = new Point2D(distanceInVacuum, maxHeightInVacuum);
 	}
 	
-	protected void calcAirResistance(){
+	void calcAirResistance(){
 		double t = T0 - mPosition.getY()*L;
 		double p = P0 * Math.pow(1-L*mPosition.getY()/T0, G*M/R/L);
 		double thickness = p*M/R/t;
@@ -64,11 +68,11 @@ public class Packet {
 
 	}
 
-	protected Point2D resistance(Double thickness, Point2D speed){
+	Point2D resistance(Double thickness, Point2D speed){
 		return speed.normalize().multiply(Cf*thickness*speed.magnitude()*speed.magnitude()/2*S);
 	}
 	
-	protected void calcAcceleration(){
+	void calcAcceleration(){
 		calcAirResistance();
 		mAcceleration = mGravity.add(mAirForce).multiply(1.0/WEIGHT);
 	}
@@ -123,7 +127,7 @@ public class Packet {
 	}
 
 	public boolean helpToChoose(){
-		return (Math.abs(mSpeed.getY()/(mSpeed.getX()+1e-5)) > 1);
+		return (Math.abs(mSpeed.getY() / (mSpeed.getX() + 1e-5)) > 1);
 	}
 
 	public boolean inTheAir(){

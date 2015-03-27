@@ -1,9 +1,9 @@
 import javafx.geometry.Point2D;
 
-public class ExecutionMarkers {
+class ExecutionMarkers {
 	private boolean yReached = false, isReachable = false;
-	private Point2D mTarget;
-	private Double dx, dy, px, py, eps;
+	private final Point2D mTarget;
+	private final Double eps;
 
 	private Double lastX = 0.0; // 1 точка, в которой достигнута высота цели.
 	private Double firstX = Double.MAX_VALUE; // 2 точка, в которой достигнута высота цели. Вряд ли их больше.
@@ -19,12 +19,12 @@ public class ExecutionMarkers {
 	 * @return true - если нужно остановить запуски
 	 */
 	public boolean refresh(Point2D pos){
-		px = pos.getX();
-		py = pos.getY();
-		dx = Math.abs(mTarget.getX()-px);
-		dy = Math.abs(mTarget.getY()-py);
+		Double px = pos.getX();
+		Double py = pos.getY();
+		Double dx = Math.abs(mTarget.getX() - px);
+		Double dy = Math.abs(mTarget.getY() - py);
 
-		if (dx<=eps/2) {
+		if (dx <=eps/2) {
 			if (dy <= eps) {
 				VisualizationThread.targetReached = true;
 				return true;

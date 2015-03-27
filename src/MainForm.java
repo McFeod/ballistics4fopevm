@@ -1,5 +1,4 @@
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -66,19 +65,16 @@ public class MainForm extends Application implements Initializable {
 		root.add(packetView, 1, 0);
 		nameLabel.setText("SpeedX\nSpeedY\nSpeed\nX\nY\nTime\nAngle");
 
-		packetView.setOnMouseClicked(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				speedSlider.setDisable(true);
-				mainView.getPacket().setTarget(
-						new Point2D(event.getX(),
-								mainView.getHeight() - event.getY())
-								.multiply(mainView.getScale()));
-				// #4
-				mainView.setAngleBisectionEnabled(!VisualizationThread.TEST_RUN);
-				new VisualizationThread().start(mainView, refresher);
-				packetView.setDisable(true);
-			}
+		packetView.setOnMouseClicked((MouseEvent event) -> {
+			speedSlider.setDisable(true);
+			mainView.getPacket().setTarget(
+					new Point2D(event.getX(),
+							mainView.getHeight() - event.getY())
+							.multiply(mainView.getScale()));
+			// #4
+			mainView.setAngleBisectionEnabled(!VisualizationThread.TEST_RUN);
+			new VisualizationThread().start(mainView, refresher);
+			packetView.setDisable(true);
 		});
 
 		speedSlider.valueProperty().addListener((observable, oldV, newV) -> {
@@ -98,7 +94,7 @@ public class MainForm extends Application implements Initializable {
 	* */
 
 	@FXML
-	public void repaintBackground(){
+	void repaintBackground(){
 		System.out.println(verticalScale.getHeight());
 		System.out.println(horizontalScale.getWidth());
 		System.out.println(mainView.getScale());

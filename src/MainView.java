@@ -12,12 +12,12 @@ import java.util.Random;
 /**
  * Холст с методом отрисовки одного шага
  */
-public class MainView extends Canvas implements Runnable {
-	public static final Color BACKGROUND = Color.rgb(60, 105, 117);
+class MainView extends Canvas implements Runnable {
+	private static final Color BACKGROUND = Color.rgb(60, 105, 117);
 	public static final double PACKET_GAGE = 10;
 	private static final int TAIL_GAGE = 2;
 	private static final double RENDER_PAUSE = 10; // 100 FPS
-	private GraphicsContext mTopContext, mBottomContext;
+	private final GraphicsContext mTopContext, mBottomContext;
 	private Packet mPacket;
 	private double scale;
 	private Slider vSlider, hSlider;
