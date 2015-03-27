@@ -13,8 +13,8 @@ import java.util.Random;
  * Холст с методом отрисовки одного шага
  */
 class MainView extends Canvas implements Runnable {
-	private static final Color BACKGROUND = Color.rgb(60, 105, 117);
 	public static final double PACKET_GAGE = 10;
+	private static final Color BACKGROUND = Color.rgb(60, 105, 117);
 	private static final int TAIL_GAGE = 2;
 	private static final double RENDER_PAUSE = 10; // 100 FPS
 	private final GraphicsContext mTopContext, mBottomContext;
@@ -33,10 +33,10 @@ class MainView extends Canvas implements Runnable {
 	 * @param sizeX
 	 * @param sizeY
 	 */
-	public MainView(Canvas canvas, double sizeX, double sizeY){
+	public MainView(Canvas canvas, double sizeX, double sizeY) {
 		super(sizeX, sizeY);
 		mTopContext = canvas.getGraphicsContext2D();
-		mBottomContext =     getGraphicsContext2D();
+		mBottomContext = getGraphicsContext2D();
 		fillBackground();
 		mTailBuffer = new ArrayDeque<>();
 	}
@@ -48,7 +48,7 @@ class MainView extends Canvas implements Runnable {
 		mBottomContext.setFill(BACKGROUND);
 		mBottomContext.fillRect(0, 0, getWidth(), getHeight());
 		mTopContext.clearRect(0, 0, getWidth(), getHeight());
-		if (VisualizationThread.isRunning){
+		if (VisualizationThread.isRunning) {
 			drawTarget();
 		}
 	}
@@ -61,64 +61,19 @@ class MainView extends Canvas implements Runnable {
 		return scale;
 	}
 
-	public boolean isAngleBisectionEnabled(){
+	public boolean isAngleBisectionEnabled() {
 		return isAngleBisectionEnabled;
 	}
 
 	/**
-	 * Смена цвета следа + вызов методов очистки Packet
-	 * @param angle - тангенс нового стартового угла
-	 */
-	public void reset(Double angle){
-		mPacket.resetTime();
-		mPacket.resetSpeed(angle);
-		mPacket.resetMarkers();
-		mPacket.setPosition(new Point2D(0, 0));
-		Random random = new Random();
-		mTailColor = Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256));
-	}
-
-	/**
-	 * собственно, отрисовка
-	 */
-	@Override
-	public void run() {
-		plaster();
-		mCurrentPoint = mPacket.getUnrendered();
-		while(!mTailBuffer.isEmpty()){ // fix для следа от снаряда
-			drawCircle(mBottomContext, mTailBuffer.poll(), mTailColor, TAIL_GAGE);
-		}
-		drawCircle(mBottomContext, mCurrentPoint, mTailColor, TAIL_GAGE);
-		drawCircle(mTopContext, mCurrentPoint, Color.BLACK, PACKET_GAGE);
-		refreshObjects();
-	}
-
-	public void setAngleBisectionEnabled(boolean value){
-		isAngleBisectionEnabled = value;
-	}
-
-	public void setRefreshableObjects(Label infoLabel,
-	                                  Slider hScale, Slider vScale){
-		this.infoLabel = infoLabel;
-		this.hSlider = hScale;
-		this.vSlider = vScale;
-	}
-
-	public void setPacket(Packet packet) {
-		// #4
-		this.mPacket = (VisualizationThread.TEST_RUN) ? new Packet53ОФ350(packet.getStartSpeed()) : packet;
-		Point2D drawingArea = mPacket.getFlightRectangle();
-		scale = Math.max(drawingArea.getX()/getWidth(), drawingArea.getY()/getHeight());
-	}
-
-	/**
 	 * Обёртка для fillOval
-	 * @param context - gc нужного холста
+	 *
+	 * @param context  - gc нужного холста
 	 * @param position
 	 * @param color
 	 * @param radius
 	 */
-	private void drawCircle(GraphicsContext context, Point2D position, Color color, double radius){
+	private void drawCircle(GraphicsContext context, Point2D position, Color color, double radius) {
 		context.setFill(color);
 		context.fillOval((position.getX()) / scale - radius / 2,
 				getHeight() - (position.getY()) / scale - radius / 2, radius, radius);
@@ -147,46 +102,94 @@ class MainView extends Canvas implements Runnable {
 	/**
 	 * Затираем шарик
 	 */
-	private void plaster(){
-		mTopContext.clearRect((mCurrentPoint.getX())/scale-PACKET_GAGE,
-				getHeight() - (mCurrentPoint.getY())/scale-PACKET_GAGE,
-				PACKET_GAGE*2, PACKET_GAGE*2);
+	private void plaster() {
+		mTopContext.clearRect((mCurrentPoint.getX()) / scale - PACKET_GAGE,
+				getHeight() - (mCurrentPoint.getY()) / scale - PACKET_GAGE,
+				PACKET_GAGE * 2, PACKET_GAGE * 2);
 	}
 
 	/**
 	 * Вывод информации о полёте
 	 */
-	private void refreshObjects(){
+	private void refreshObjects() {
 		infoLabel.setText(String.format(String.format(
-				"%s\n%s\n%s\n%s\n%s\n%s\n%s",
-					"%.4f м/с",
-					"%.4f м/с",
-					"%.4f м/с",
-					"%.4f м",
-					"%.4f м",
-					"%.3f с",
-					"%.4f"),
-					mPacket.getSpeed().getX(),
-					mPacket.getSpeed().getY(),
-					mPacket.getSpeed().magnitude(),
-					mCurrentPoint.getX(),
-					mCurrentPoint.getY(),
-					mPacket.getTime(),
-					Math.atan(mPacket.getSpeed().getY()/mPacket.getSpeed().getX())*180/Math.PI)
-				);
+								"%s\n%s\n%s\n%s\n%s\n%s\n%s",
+								"%.4f м/с",
+								"%.4f м/с",
+								"%.4f м/с",
+								"%.4f м",
+								"%.4f м",
+								"%.3f с",
+								"%.4f"),
+						mPacket.getSpeed().getX(),
+						mPacket.getSpeed().getY(),
+						mPacket.getSpeed().magnitude(),
+						mCurrentPoint.getX(),
+						mCurrentPoint.getY(),
+						mPacket.getTime(),
+						Math.atan(mPacket.getSpeed().getY() / mPacket.getSpeed().getX()) * 180 / Math.PI)
+		);
 		vSlider.setValue(mCurrentPoint.getY());
 		hSlider.setValue(mCurrentPoint.getX());
 	}
 
 	/**
+	 * Смена цвета следа + вызов методов очистки Packet
+	 *
+	 * @param angle - тангенс нового стартового угла
+	 */
+	public void reset(Double angle) {
+		mPacket.resetTime();
+		mPacket.resetSpeed(angle);
+		mPacket.resetMarkers();
+		mPacket.setPosition(new Point2D(0, 0));
+		Random random = new Random();
+		mTailColor = Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256));
+	}
+
+	/**
+	 * собственно, отрисовка
+	 */
+	@Override
+	public void run() {
+		plaster();
+		mCurrentPoint = mPacket.getUnrendered();
+		while (!mTailBuffer.isEmpty()) { // fix для следа от снаряда
+			drawCircle(mBottomContext, mTailBuffer.poll(), mTailColor, TAIL_GAGE);
+		}
+		drawCircle(mBottomContext, mCurrentPoint, mTailColor, TAIL_GAGE);
+		drawCircle(mTopContext, mCurrentPoint, Color.BLACK, PACKET_GAGE);
+		refreshObjects();
+	}
+
+	public void setAngleBisectionEnabled(boolean value) {
+		isAngleBisectionEnabled = value;
+	}
+
+	public void setPacket(Packet packet) {
+		// #4
+		this.mPacket = (VisualizationThread.TEST_RUN) ? new Packet53ОФ350(packet.getStartSpeed()) : packet;
+		Point2D drawingArea = mPacket.getFlightRectangle();
+		scale = Math.max(drawingArea.getX() / getWidth(), drawingArea.getY() / getHeight());
+	}
+
+	public void setRefreshableObjects(Label infoLabel,
+	                                  Slider hScale, Slider vScale) {
+		this.infoLabel = infoLabel;
+		this.hSlider = hScale;
+		this.vSlider = vScale;
+	}
+
+	/**
 	 * Вызывает необходимое число раз packet.update и сохраняет точки
+	 *
 	 * @return необходимое время сна в мс
 	 */
 	public long someUpdates() {
 		while (mTimeBuffer < RENDER_PAUSE) {
 			if (mPacket.update(true)) break; // попали
 			mTailBuffer.add(mPacket.getUnrendered()); // из пустого в порожнее
-			mTimeBuffer += mSleepFactor*mPacket.getLastDelta()*1000;
+			mTimeBuffer += mSleepFactor * mPacket.getLastDelta() * 1000;
 		}
 		long result = (long) mTimeBuffer;
 		mTimeBuffer -= result;

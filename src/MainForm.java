@@ -32,23 +32,45 @@ public class MainForm extends Application implements Initializable {
 	@FXML private Button refresher;
 	@FXML private CheckBox bisectionBox;
 
-	public static void main(String[] args) {
-		launch(args);
+	/**
+	 * Страдания со шкалами
+	 * @param scale - на самом деле никакая не шкала, а слайдер О_о
+	 * @param scaleSize - размер шкалы в пикселах
+	 * @param interval - размер главного деления в пикселах
+	 */
+	private void buildScale(Slider scale, double scaleSize, double interval){
+		double markNumber = Math.floor(scaleSize / interval);
+		double maxMark = scaleSize * mainView.getScale();
+
+		scale.setMax(maxMark);
+		scale.setMajorTickUnit(maxMark / markNumber);
+		scale.setDisable(true);
+
+		// Пришлось это вернуть, т.к. при размерах поля, отличных от 1024*512, всё очень плохо
+		StringConverter<Double> converter = new StringConverter<Double>() {
+			@Override
+			public String toString(Double object) {
+				int n = ((int) Math.round(object / 5) * 5);
+				return String.valueOf(n);
+			}
+			@Override
+			public Double fromString(String string) {
+				return null;
+			}
+		};
+		scale.setLabelFormatter(converter);
 	}
 
-	@Override
-	public void start(Stage primaryStage) throws Exception{
-		root = FXMLLoader.load(getClass().getResource("main_form.fxml"));
-
-		primaryStage.setTitle("Кликни мышкой на поле");
-		Scene scene = new Scene(root);
-		primaryStage.setScene(scene);
-		scene.getStylesheets().add("main_form.css");
-		primaryStage.show();
-		//primaryStage.setFullScreen(true);
+	/**
+	 * Из start() и initialize() нельзя получить width и height() элементов,
+	 * т.к. они ещё не созданы. Даже из слушателя на WindowEvent.OnShown нельзя.
+	 * */
+	private void buildScales(){
+		buildScale(horizontalScale, mainView.getWidth(), 50);
+		buildScale(verticalScale, mainView.getHeight(), 50);
 	}
 
-	/*Теперь в наличии 3 функции инициализации.
+	/**Теперь в наличии 3 функции инициализации.
 	* Проблема в том, что обращение к FXML элементам из start() даёт NullPointer,
 	* т.к. они ещё не загрузились.
 	* А обращение к mainView, определённому в start() из initialize() тоже даёт NullPointer,
@@ -91,9 +113,10 @@ public class MainForm extends Application implements Initializable {
 		refresher.setDisable(true);
 	}
 
-	/*Из start() и initialize() нельзя получить width и height() элементов,
-	* т.к. они ещё не созданы. Даже из слушателя на WindowEvent.OnShown нельзя.
-	* */
+
+	public static void main(String[] args) {
+		launch(args);
+	}
 
 	@FXML
 	void repaintBackground(){
@@ -101,40 +124,6 @@ public class MainForm extends Application implements Initializable {
 		System.out.println(horizontalScale.getWidth());
 		System.out.println(mainView.getScale());
 		mainView.fillBackground();
-	}
-
-	/**
-	 * Страдания со шкалами
-	 * @param scale - на самом деле никакая не шкала, а слайдер О_о
-	 * @param scaleSize - размер шкалы в пикселах
-	 * @param interval - размер главного деления в пикселах
-	 */
-	private void buildScale(Slider scale, double scaleSize, double interval){
-		double markNumber = Math.floor(scaleSize / interval);
-		double maxMark = scaleSize * mainView.getScale();
-
-		scale.setMax(maxMark);
-		scale.setMajorTickUnit(maxMark / markNumber);
-		scale.setDisable(true);
-
-		// Пришлось это вернуть, т.к. при размерах поля, отличных от 1024*512, всё очень плохо
-		StringConverter<Double> converter = new StringConverter<Double>() {
-			@Override
-			public String toString(Double object) {
-				int n = ((int) Math.round(object/5)*5);
-				return String.valueOf(n);
-			}
-			@Override
-			public Double fromString(String string) {
-				return null;
-			}
-		};
-		scale.setLabelFormatter(converter);
-	}
-
-	private void buildScales(){
-		buildScale(horizontalScale, mainView.getWidth(),  50);
-		buildScale(verticalScale, mainView.getHeight(), 50);
 	}
 
 	/**
@@ -149,6 +138,17 @@ public class MainForm extends Application implements Initializable {
 		VisualizationThread.targetReached = false;
 		packetView.setDisable(false);
 		mainView.setPacket(new Packet(speedSlider.getValue()));
+	}
+
+	@Override
+	public void start(Stage primaryStage) throws Exception{
+		root = FXMLLoader.load(getClass().getResource("main_form.fxml"));
+
+		primaryStage.setTitle("Кликни мышкой на поле");
+		Scene scene = new Scene(root);
+		primaryStage.setScene(scene);
+		scene.getStylesheets().add("main_form.css");
+		primaryStage.show();
 	}
 
 	/**

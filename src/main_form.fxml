@@ -1,13 +1,7 @@
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.control.Slider?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.HBox?>
-
-<?import javafx.scene.control.CheckBox?>
-<GridPane fx:controller="MainForm" fx:id="root"
-          xmlns:fx="http://javafx.com/fxml" alignment="CENTER" >
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<GridPane xmlns:fx="http://javafx.com/fxml" fx:controller="MainForm"
+		  fx:id="root" alignment="CENTER">
 	<VBox prefWidth="200" alignment="CENTER" styleClass="control_panel">
 		<CheckBox text="Показать решение" fx:id="bisectionBox" selected="true"/>
 		<HBox GridPane.columnIndex="0" GridPane.rowIndex="0">
@@ -28,6 +22,6 @@
 				GridPane.columnIndex="0" GridPane.rowIndex="3"/>
 	</VBox>
 	<Slider fx:id="horizontalScale" GridPane.columnIndex="1" styleClass="horizontal_scale"
-			 GridPane.rowIndex="1"/>
+			GridPane.rowIndex="1"/>
 	<Slider fx:id="verticalScale" GridPane.columnIndex="2" styleClass="vertical_scale" prefWidth="50"/>
 </GridPane>

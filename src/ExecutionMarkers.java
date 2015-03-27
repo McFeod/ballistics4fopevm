@@ -4,10 +4,9 @@ import javafx.geometry.Point2D;
  * Набор проверок взаимного расположения объектов. Нужен для AngleChoice
  */
 class ExecutionMarkers {
-	private boolean yReached = false, isReachable = false;
 	private final Point2D mTarget;
 	private final Double eps;
-
+	private boolean yReached = false, isReachable = false;
 	private Double lastX = 0.0; // 1 точка, в которой достигнута высота цели.
 	private Double firstX = Double.MAX_VALUE; // 2 точка, в которой достигнута высота цели. Вряд ли их больше.
 
@@ -18,25 +17,26 @@ class ExecutionMarkers {
 
 	/**
 	 * Проверки на взаимное расположение снаряда и цели
+	 *
 	 * @param pos - координаты снаряда
 	 * @return true - если нужно остановить запуски
 	 */
-	public boolean refresh(Point2D pos){
+	public boolean refresh(Point2D pos) {
 		Double px = pos.getX();
 		Double py = pos.getY();
 		Double dx = Math.abs(mTarget.getX() - px);
 		Double dy = Math.abs(mTarget.getY() - py);
 
-		if (dx <=eps/2) {
+		if (dx <= eps / 2) {
 			if (dy <= eps) {
 				VisualizationThread.targetReached = true;
 				return true;  // цель достигнута
 			}
-		}else {
+		} else {
 			if (dy <= eps) {
-				if (yReached){
+				if (yReached) {
 					lastX = px;
-				}else {
+				} else {
 					yReached = true;
 					firstX = px;
 				}
@@ -45,7 +45,7 @@ class ExecutionMarkers {
 		return false;
 	}
 
-	public void reset(){
+	public void reset() {
 		yReached = false;
 		lastX = 0.0;
 		firstX = Double.MAX_VALUE;
@@ -53,13 +53,14 @@ class ExecutionMarkers {
 
 	/**
 	 * Итог одного полёта снаряда
+	 *
 	 * @return true, если надо уменьшать угол, false - увеличивать, null - НЕ ОПРЕДЕЛЕНО, нужно пробовать оба варианта
 	 */
-	public Boolean summarize(){
-		if (yReached){
+	public Boolean summarize() {
+		if (yReached) {
 			if (firstX <= mTarget.getX()) {
-				if (lastX <= mTarget.getX()){
-					if (isReachable){
+				if (lastX <= mTarget.getX()) {
+					if (isReachable) {
 						return false; // уже пролетало над целью, а теперь не долетело - поднимаем
 					}
 					return null;  // цель правее параболы - неопределённость

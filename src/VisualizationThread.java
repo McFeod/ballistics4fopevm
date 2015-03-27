@@ -10,29 +10,15 @@ import java.util.Queue;
 class VisualizationThread extends Thread {
 	// #4
 	public static final boolean TEST_RUN = false;
-
+	public static boolean targetReached = false;
+	public static boolean isRunning = false;
+	private final double DEGREE = Math.PI/180;
 	private MainView mView;
 	private Packet mPacket;
 	private Button mRefresher;
 	private AngleChoice mCurrentChoice;
 	private Queue<AngleChoice> mChoices;
 
-	public static boolean targetReached = false;
-	public static boolean isRunning = false;
-	private final double DEGREE = Math.PI/180;
-
-	public void start(MainView view, Button refresher){
-		mView = view;
-		mPacket = view.getPacket();
-		mRefresher = refresher;
-		mChoices = new ArrayDeque<>();
-		mCurrentChoice = new AngleChoice(0.0, Math.PI/2,
-				Math.atan(mPacket.getSpeed().getY()/mPacket.getSpeed().getX())
-				,true, DEGREE/mView.getScale());
-		setDaemon(true); // lazy & dangerous(for IO) way to stop a thread when closing app
-		start();
-	}
-	
 	@Override
 	public void run() {
 		isRunning = true;
@@ -96,5 +82,17 @@ class VisualizationThread extends Thread {
 			}
 		}
 		return false;
+	}
+
+	public void start(MainView view, Button refresher){
+		mView = view;
+		mPacket = view.getPacket();
+		mRefresher = refresher;
+		mChoices = new ArrayDeque<>();
+		mCurrentChoice = new AngleChoice(0.0, Math.PI/2,
+				Math.atan(mPacket.getSpeed().getY()/mPacket.getSpeed().getX())
+				,true, DEGREE/mView.getScale());
+		setDaemon(true); // lazy & dangerous(for IO) way to stop a thread when closing app
+		start();
 	}
 }
