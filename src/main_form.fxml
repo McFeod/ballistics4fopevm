@@ -4,7 +4,7 @@
 	
 	<HBox alignment="CENTER" styleClass="horizontal_control_panel"
 		  GridPane.columnIndex="1" GridPane.columnSpan="2">
-		<CheckBox text="Показать решение" fx:id="bisectionBox" selected="true" prefWidth="200"/>
+		<CheckBox text="Показать ход решения" fx:id="bisectionBox" selected="true" prefWidth="200"/>
 		<Slider fx:id="speedSlider" min="100" max="1000" value="655" styleClass="speed_slider"/>
 		<Label fx:id="selectedSpeed" styleClass="pre_slider_label"/>
 		<Slider fx:id="sleepSlider" min="0.001" max="2" value="0.1" styleClass="sleep_slider"/>
