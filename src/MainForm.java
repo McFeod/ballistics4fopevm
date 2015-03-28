@@ -116,7 +116,7 @@ public class MainForm extends Application implements Initializable {
 			mainView.setSleepFactor(newV.doubleValue());
 		});
 		selectedSpeed.textProperty().bind(speedSlider.valueProperty().asString("Speed: %.2f"));
-		selectedSleep.textProperty().bind(sleepSlider.valueProperty().asString("Sleep: %.2f"));
+		selectedSleep.textProperty().bind(sleepSlider.valueProperty().asString("Sleep: %.3f"));
 		//to avoid mismatch between default slider value & default speed
 		mainView.setPacket(new Packet(speedSlider.valueProperty().doubleValue()));
 		//causes NullPointer in the old places
