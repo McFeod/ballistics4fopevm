@@ -25,7 +25,7 @@ class MainView extends Canvas implements Runnable {
 	private boolean isAngleBisectionEnabled = false;
 	private Color mTailColor;
 	private Point2D mCurrentPoint = new Point2D(0.0, 0.0);
-	private double mSleepFactor = 0.01, mTimeBuffer = 0.0;
+	private double mSleepFactor = 0.1, mTimeBuffer = 0.0;
 	private Queue<Point2D> mTailBuffer; // хранение неотрисованного следа
 
 	/**
@@ -39,6 +39,14 @@ class MainView extends Canvas implements Runnable {
 		mBottomContext = getGraphicsContext2D();
 		fillBackground();
 		mTailBuffer = new ArrayDeque<>();
+	}
+
+	public double getSleepFactor() {
+		return mSleepFactor;
+	}
+
+	public void setSleepFactor(double sleepFactor) {
+		mSleepFactor = sleepFactor;
 	}
 
 	/**

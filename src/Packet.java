@@ -28,10 +28,10 @@ public class Packet {
 	 * Вычисляется для нужд масштабирования
 	 */
 	private final Point2D flightRectangle;
-	volatile Point2D mAcceleration;
-	volatile Point2D mAirForce;
-	volatile Point2D mGravity;
-	volatile Point2D mWindSpeed;
+	protected Point2D mAcceleration;
+	protected Point2D mAirForce;
+	protected Point2D mGravity;
+	protected Point2D mWindSpeed;
 	private volatile Point2D mPosition;
 	private volatile Point2D mSpeed;
 	private Double mTimeDelta = 0.0;  // время в секундах между двумя состояниями
@@ -115,6 +115,14 @@ public class Packet {
 
 	public Double getTime() {
 		return mTime;
+	}
+
+	public Point2D getWindSpeed() {
+		return mWindSpeed;
+	}
+
+	public void setWindSpeed(Point2D windSpeed) {
+		mWindSpeed = windSpeed;
 	}
 
 	/*

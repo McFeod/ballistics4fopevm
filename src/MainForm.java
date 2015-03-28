@@ -1,3 +1,6 @@
+import java.net.URL;
+import java.util.ResourceBundle;
+
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -15,11 +18,9 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
 public class MainForm extends Application implements Initializable {
 
+	private int windSpeedPickerLength = 180;
 	@FXML private GridPane root;
 	private static MainView mainView;
 	private static Canvas packetView;
@@ -29,8 +30,13 @@ public class MainForm extends Application implements Initializable {
 	@FXML private Label nameLabel;
 	@FXML private Slider speedSlider;
 	@FXML private Label selectedSpeed;
+	@FXML private Slider sleepSlider;
+	@FXML private Label selectedSleep;
 	@FXML private Button refresher;
 	@FXML private CheckBox bisectionBox;
+	@FXML private GridPane windSpeedBox;
+	@FXML private Label xWindSpeedLabel;
+	@FXML private Label yWindSpeedLabel;
 
 	/**
 	 * Страдания со шкалами
@@ -85,8 +91,8 @@ public class MainForm extends Application implements Initializable {
 		packetView = new Canvas(canvasWidth, canvasHeight);
 		mainView = new MainView(packetView, canvasWidth, canvasHeight);
 		mainView.setRefreshableObjects(infoLabel, horizontalScale, verticalScale);
-		root.add(mainView, 1, 0);
-		root.add(packetView, 1, 0);
+		root.add(mainView, 1, 1);
+		root.add(packetView, 1, 1);
 		nameLabel.setText("SpeedX\nSpeedY\nSpeed\nX\nY\nTime\nAngle");
 
 		packetView.setOnMouseClicked((MouseEvent event) -> {
@@ -105,11 +111,20 @@ public class MainForm extends Application implements Initializable {
 			mainView.setPacket(new Packet(newV.doubleValue()));
 			buildScales();
 		});
+		sleepSlider.valueProperty().addListener((observable, oldV, newV) -> {
+			mainView.setSleepFactor(newV.doubleValue());
+		});
 		selectedSpeed.textProperty().bind(speedSlider.valueProperty().asString("Speed:\n%.2f"));
+		selectedSleep.textProperty().bind(sleepSlider.valueProperty().asString("Sleep:\n%.2f"));
 		//to avoid mismatch between default slider value & default speed
 		mainView.setPacket(new Packet(speedSlider.valueProperty().doubleValue()));
 		//causes NullPointer in the old places
 		buildScales();
+		
+		Canvas canvas = new Canvas(windSpeedPickerLength, windSpeedPickerLength);
+		windSpeedBox.add(canvas, 0, 0);
+		windSpeedBox.add(new WindPicker(windSpeedPickerLength, mainView.getPacket(),
+				xWindSpeedLabel, yWindSpeedLabel, canvas.getGraphicsContext2D()), 0, 0);
 		refresher.setDisable(true);
 	}
 
@@ -120,9 +135,6 @@ public class MainForm extends Application implements Initializable {
 
 	@FXML
 	void repaintBackground(){
-		System.out.println(verticalScale.getHeight());
-		System.out.println(horizontalScale.getWidth());
-		System.out.println(mainView.getScale());
 		mainView.fillBackground();
 	}
 
