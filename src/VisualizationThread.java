@@ -1,14 +1,17 @@
 import javafx.application.Platform;
+import javafx.geometry.Point2D;
 import javafx.scene.control.Button;
-
-
+import java.util.ArrayDeque;
+import java.util.Queue;
 
 /**
  * Поток, в котором раз в mSleepTime мс вызывается mView.run()
  */
 class VisualizationThread extends Thread {
-	// #4
-	public static final boolean TEST_RUN = false;
+	public  static final boolean TEST_RUN = false;  //// #4
+	private static final double RENDER_PAUSE = 10;
+	private static final double SLEEP_FACTOR = 0.01;
+
 	public static boolean targetReached = false;
 	public static boolean isRunning = false;
 
@@ -16,25 +19,33 @@ class VisualizationThread extends Thread {
 	private Packet mPacket;
 	private Button mRefresher;
 
+	private Queue<Point2D> mPath = new ArrayDeque<Point2D>();
+	private double mTimeBuffer = 0.0;
+
 	@Override
 	public void run() {
 		isRunning = true;
+		mView.setBuffer(mPath);
 		mPacket.setupMarkers(MainView.PACKET_GAGE * mView.getScale() * 0.7); //#1
 		Marksman marksman = new Marksman(mPacket, mView.getScale());
 		AngleChoice currentAngle = marksman.getAngle();
 
-		while (currentAngle != null){
+		while (!(currentAngle == null || targetReached)){
 			mView.reset(currentAngle.mAngle);
 
-			// промежуточные шаги отрисовываются в зависимости от режима
-			if (singleFly(mView.isAngleBisectionEnabled())){
-				break;  // попадание
+			while(!mPacket.update(false) && mPacket.inTheAir()){
+				mPath.add(mPacket.getPosition()); // из пустого в порожнее
+				mTimeBuffer += SLEEP_FACTOR * mPacket.getTimeDelta() * 1000;
+				if(mTimeBuffer < RENDER_PAUSE) continue;
+
+				//if RENDER_PAUSE finished
+				long result = (long) mTimeBuffer;
+				mTimeBuffer -= result;
+				mySleep(result);
+				Platform.runLater(mView);
 			}
 			// sleep between launches
-			if (mView.isAngleBisectionEnabled()) {
-				try { Thread.sleep(200); }
-				catch (Exception ignore) {}
-			}
+			mySleep(200);
 			currentAngle = marksman.selectNewAngle(mPacket.getSummarize());
 		}
 
@@ -45,27 +56,9 @@ class VisualizationThread extends Thread {
 		isRunning = false;
 	}
 
-	/**
-	 * Рассчёт одной траектории
-	 * @param draw - включение/отключение отрисовки
-	 * @return true при достижении цели, false при падении
-	 */
-	private boolean singleFly(boolean draw){
-		while (mPacket.inTheAir()) {
-			mPacket.update(draw);
-			if (draw) {
-				try {
-					Thread.sleep(mView.someUpdates());  // основной логический шаг с отрисовкой
-				} catch (Exception ignore) {}
-				Platform.runLater(mView);
-			}else{
-				mPacket.update(false);  // без отрисовки
-			}
-			if (targetReached){
-				return true;  // прекрщаем считать: попали
-			}
-		}
-		return false;
+	private void mySleep(long time){
+		try{ Thread.sleep(time);
+		} catch (Exception ignore) {}
 	}
 
 	public void start(MainView view, Button refresher){

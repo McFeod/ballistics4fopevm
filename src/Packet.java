@@ -117,10 +117,14 @@ public class Packet {
 		return mTime;
 	}
 
+	public Double getTimeDelta() {
+		return mTimeDelta;
+	}
+
 	/*
-	Использовать только 1 раз за цикл отрисовки!
-	#2
-	 */
+		Использовать только 1 раз за цикл отрисовки!
+		#2
+		 */
 	public synchronized Point2D getUnrendered() {
 		if (mLastPositions.isEmpty())
 			return mPosition;

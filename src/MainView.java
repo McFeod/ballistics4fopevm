@@ -16,16 +16,13 @@ class MainView extends Canvas implements Runnable {
 	public static final double PACKET_GAGE = 10;
 	private static final Color BACKGROUND = Color.rgb(60, 105, 117);
 	private static final int TAIL_GAGE = 2;
-	private static final double RENDER_PAUSE = 10; // 100 FPS
 	private final GraphicsContext mTopContext, mBottomContext;
 	private Packet mPacket;
 	private double scale;
 	private Slider vSlider, hSlider;
 	private Label infoLabel;
-	private boolean isAngleBisectionEnabled = false;
 	private Color mTailColor;
 	private Point2D mCurrentPoint = new Point2D(0.0, 0.0);
-	private double mSleepFactor = 0.01, mTimeBuffer = 0.0;
 	private Queue<Point2D> mTailBuffer; // хранение неотрисованного следа
 
 	/**
@@ -38,7 +35,6 @@ class MainView extends Canvas implements Runnable {
 		mTopContext = canvas.getGraphicsContext2D();
 		mBottomContext = getGraphicsContext2D();
 		fillBackground();
-		mTailBuffer = new ArrayDeque<>();
 	}
 
 	/**
@@ -59,10 +55,6 @@ class MainView extends Canvas implements Runnable {
 
 	public double getScale() {
 		return scale;
-	}
-
-	public boolean isAngleBisectionEnabled() {
-		return isAngleBisectionEnabled;
 	}
 
 	/**
@@ -162,8 +154,8 @@ class MainView extends Canvas implements Runnable {
 		refreshObjects();
 	}
 
-	public void setAngleBisectionEnabled(boolean value) {
-		isAngleBisectionEnabled = value;
+	public void setBuffer(Queue<Point2D> buffer){
+		mTailBuffer = buffer;
 	}
 
 	public void setPacket(Packet packet) {
@@ -178,21 +170,5 @@ class MainView extends Canvas implements Runnable {
 		this.infoLabel = infoLabel;
 		this.hSlider = hScale;
 		this.vSlider = vScale;
-	}
-
-	/**
-	 * Вызывает необходимое число раз packet.update и сохраняет точки
-	 *
-	 * @return необходимое время сна в мс
-	 */
-	public long someUpdates() {
-		while (mTimeBuffer < RENDER_PAUSE) {
-			if (mPacket.update(true)) break; // попали
-			mTailBuffer.add(mPacket.getUnrendered()); // из пустого в порожнее
-			mTimeBuffer += mSleepFactor * mPacket.getLastDelta() * 1000;
-		}
-		long result = (long) mTimeBuffer;
-		mTimeBuffer -= result;
-		return result;
 	}
 }

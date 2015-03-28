@@ -95,7 +95,7 @@ public class MainForm extends Application implements Initializable {
 					new Point2D(event.getX(),
 							mainView.getHeight() - event.getY())
 							.multiply(mainView.getScale()));
-			mainView.setAngleBisectionEnabled(bisectionBox.isSelected());
+			//mainView.setAngleBisectionEnabled(bisectionBox.isSelected());
 			mainView.drawTarget();
 			new VisualizationThread().start(mainView, refresher);
 			packetView.setDisable(true);

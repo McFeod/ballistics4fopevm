@@ -6,14 +6,16 @@ import java.util.Queue;
  * Отвечает за бинарный поиск и хранение сопутствующих данных
  */
 public class Marksman{
+	private static final double DEGREE = Math.PI / 180;
+
 	private AngleChoice mCurrentChoice;
 	private Queue<AngleChoice> mChoices = new ArrayDeque<>();
 	private final double mEps; // binary search accuracy
 	private Packet mPacket;
 
 	public Marksman(Packet packet, double scale){
-		mCurrentChoice = new AngleChoice(0.0, Math.PI/2, packet.getSpeed().angle(0,0), true);
-		mEps = Math.PI/180/scale;
+		mCurrentChoice = new AngleChoice(0.0, Math.PI/2, packet.getSpeed().angle(1,0)*DEGREE, true);
+		mEps = DEGREE/scale;
 		mPacket = packet;
 	}
 
