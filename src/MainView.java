@@ -57,6 +57,23 @@ class MainView extends Canvas implements Runnable {
 		return scale;
 	}
 
+	private double countMaxDistance(){
+		final double otherDegree = Math.PI / 180;
+		Packet tmpPacket = new Packet(mPacket.getStartSpeed());
+		tmpPacket.setTarget(new Point2D(-5, -5));
+		tmpPacket.setupMarkers(1.0);
+
+		System.out.println("************");
+		double maxDistance = 0;
+		for(int i = 5; i <= 90; i+=5){
+			tmpPacket.resetSpeed(otherDegree * i);
+			tmpPacket.setPosition(new Point2D(0,0));
+			while (tmpPacket.inTheAir()) tmpPacket.update();
+			maxDistance = Math.max(maxDistance, tmpPacket.getPosition().getX());
+		}
+		return maxDistance;
+	}
+
 	/**
 	 * Обёртка для fillOval
 	 *
@@ -145,7 +162,7 @@ class MainView extends Canvas implements Runnable {
 	@Override
 	public void run() {
 		plaster();
-		mCurrentPoint = mPacket.getUnrendered();
+		mCurrentPoint = mPacket.getPosition();
 		while (!mTailBuffer.isEmpty()) { // fix для следа от снаряда
 			drawCircle(mBottomContext, mTailBuffer.poll(), mTailColor, TAIL_GAGE);
 		}
@@ -161,8 +178,10 @@ class MainView extends Canvas implements Runnable {
 	public void setPacket(Packet packet) {
 		// #4
 		this.mPacket = (VisualizationThread.TEST_RUN) ? new Packet53ОФ350(packet.getStartSpeed()) : packet;
-		Point2D drawingArea = mPacket.getFlightRectangle();
-		scale = Math.max(drawingArea.getX() / getWidth(), drawingArea.getY() / getHeight());
+		//Point2D drawingArea = mPacket.getFlightRectangle();
+		scale = countMaxDistance() / getWidth();
+
+		//scale = Math.max(drawingArea.getX() / getWidth(), drawingArea.getY() / getHeight());
 	}
 
 	public void setRefreshableObjects(Label infoLabel,

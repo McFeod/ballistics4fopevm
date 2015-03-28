@@ -33,7 +33,7 @@ class VisualizationThread extends Thread {
 		while (!(currentAngle == null || targetReached)){
 			mView.reset(currentAngle.mAngle);
 
-			while(!mPacket.update(false) && mPacket.inTheAir()){
+			while(!mPacket.update() && mPacket.inTheAir()){
 				mPath.add(mPacket.getPosition()); // из пустого в порожнее
 				mTimeBuffer += SLEEP_FACTOR * mPacket.getTimeDelta() * 1000;
 				if(mTimeBuffer < RENDER_PAUSE) continue;

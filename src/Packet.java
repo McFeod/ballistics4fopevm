@@ -21,8 +21,6 @@ public class Packet {
 	private final double M = 0.029; //молярная масса воздуха
 	private final double Cf = 0.47; //коэффициент для вычисления сопротивления воздуха
 	private final Double mStartSpeed;
-	private final Queue<Point2D> mLastPositions;
-	private final Queue<Double> mLastDeltas;
 	/**
 	 * Наименьший прямоугольник, в который может быть вписана траектория полёта
 	 * Вычисляется для нужд масштабирования
@@ -48,8 +46,6 @@ public class Packet {
 		mWindSpeed = new Point2D(-20.0, 0.0);
 		mGravity = new Point2D(0.0, -WEIGHT * G);
 		mTime = 0.0;
-		mLastDeltas = new ArrayDeque<>();
-		mLastPositions = new ArrayDeque<>();
 
 		//TODO уточнить формулы: при наличии сил сопротивления подгонка под экран не работает
 		double extraFactor = 1 - 0.5 * mStartSpeed / 1000;
@@ -75,17 +71,6 @@ public class Packet {
 
 	public Point2D getFlightRectangle() {
 		return flightRectangle;
-	}
-
-	/**
-	 * Нужно для расчёта sleep time
-	 *
-	 * @return Время в секундах (в симуляции, а не реальное!)
-	 */
-	public Double getLastDelta() {
-		if (mLastDeltas.isEmpty())
-			return 0.0;
-		return mLastDeltas.poll();
 	}
 
 	/*
@@ -121,16 +106,6 @@ public class Packet {
 		return mTimeDelta;
 	}
 
-	/*
-		Использовать только 1 раз за цикл отрисовки!
-		#2
-		 */
-	public synchronized Point2D getUnrendered() {
-		if (mLastPositions.isEmpty())
-			return mPosition;
-		return mLastPositions.poll();
-	}
-
 	public boolean inTheAir() {
 		return (mPosition.getY() >= 0);
 	}
@@ -145,8 +120,6 @@ public class Packet {
 
 	public void resetTime() {
 		mTime = 0.0;
-		mLastPositions.clear();
-		mLastDeltas.clear();
 	}
 
 	/**
@@ -177,15 +150,9 @@ public class Packet {
 	/**
 	 * Основной шаг логической части программы
 	 * dS = 2*RADIUS - расстояние (в метрах) между двумя состояниями снаряда
-	 *
-	 * @param keepTrack - включение/отключение очереди точек и timeDeltas
 	 */
-	public synchronized boolean update(boolean keepTrack) {
+	public synchronized boolean update() {
 		calcAcceleration();
-		if (keepTrack) {
-			mLastDeltas.add(mTimeDelta);
-			mLastPositions.add(mPosition);
-		}
 		mTimeDelta = 2 * RADIUS / mSpeed.magnitude();
 		mTime += mTimeDelta;
 		mSpeed = mSpeed.add(mAcceleration.multiply(mTimeDelta));
