@@ -24,6 +24,9 @@ public class Marksman{
 	}
 
 	public AngleChoice selectNewAngle(Boolean shotResult){
+		// временный костьль для режима "Показать решение"
+		if(VisualizationThread.targetReached) return null;
+
 		if (shotResult==null){                         // if packet hasn't reached target.x and has fallen to the left
 			Point2D speed = mPacket.getSpeed();
 			boolean isSharp = Math.abs(speed.getY() /  //is shot angle sharp (>45). is abs() necessary?
@@ -43,7 +46,7 @@ public class Marksman{
 		if(Math.abs(mCurrentChoice.mAngle2 - mCurrentChoice.mAngle1) < mEps){
 			if(!mChoices.isEmpty())
 				 mCurrentChoice = mChoices.poll();
-			else mCurrentChoice = null;
+			else return null; // временный костьль для режима "Показать решение"
 		}
 		return mCurrentChoice;
 	}
