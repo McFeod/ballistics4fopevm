@@ -121,21 +121,25 @@ class MainView extends Canvas implements Runnable {
 	 */
 	private void refreshObjects() {
 		infoLabel.setText(String.format(String.format(
-								"%s\n%s\n%s\n%s\n%s\n%s\n%s",
+								"%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s",
 								"%.4f м/с",
 								"%.4f м/с",
 								"%.4f м/с",
 								"%.4f м",
 								"%.4f м",
 								"%.3f с",
-								"%.4f"),
+								"%.3f Н",
+								"%.3f Н",
+								"%.3f м/с^2"),
 						mPacket.getSpeed().getX(),
 						mPacket.getSpeed().getY(),
 						mPacket.getSpeed().magnitude(),
 						mCurrentPoint.getX(),
 						mCurrentPoint.getY(),
 						mPacket.getTime(),
-						Math.atan(mPacket.getSpeed().getY() / mPacket.getSpeed().getX()) * 180 / Math.PI)
+						mPacket.getGravity().magnitude(),
+						mPacket.getAirForce().magnitude(),
+						mPacket.getAcceleration().magnitude())
 		);
 		vSlider.setValue(mCurrentPoint.getY());
 		hSlider.setValue(mCurrentPoint.getX());

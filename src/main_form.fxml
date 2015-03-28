@@ -2,20 +2,17 @@
 <?import javafx.scene.layout.*?>
 <GridPane xmlns:fx="http://javafx.com/fxml" fx:controller="MainForm" fx:id="root" alignment="CENTER">
 	
-	<HBox alignment="CENTER" styleClass="horizontal_control_panel" GridPane.columnSpan="3">
-		<CheckBox text="Показать решение" fx:id="bisectionBox" selected="true"/>
-		<HBox alignment="CENTER">
-			<Label fx:id="selectedSpeed"/>
-			<Slider fx:id="speedSlider" min="100" max="1000" value="655" styleClass="speed_slider"/>
-		</HBox>
-		<HBox alignment="CENTER">
-			<Label fx:id="selectedSleep"/>
-			<Slider fx:id="sleepSlider" min="0.01" max="10" value="0.1" styleClass="sleep_slider"/>
-		</HBox>
+	<HBox alignment="CENTER" styleClass="horizontal_control_panel"
+		  GridPane.columnIndex="1" GridPane.columnSpan="2">
+		<CheckBox text="Показать решение" fx:id="bisectionBox" selected="true" prefWidth="200"/>
+		<Slider fx:id="speedSlider" min="100" max="1000" value="655" styleClass="speed_slider"/>
+		<Label fx:id="selectedSpeed" styleClass="pre_slider_label"/>
+		<Slider fx:id="sleepSlider" min="0.001" max="2" value="0.1" styleClass="sleep_slider"/>
+		<Label fx:id="selectedSleep" styleClass="pre_slider_label"/>
 	</HBox>
 
-	<VBox prefWidth="200" alignment="CENTER" styleClass="vertical_control_panel"
-		GridPane.rowIndex="1" GridPane.rowSpan="2">
+	<VBox prefWidth="220" alignment="CENTER" styleClass="vertical_control_panel"
+		GridPane.rowIndex="0" GridPane.rowSpan="3">
 		<HBox>
 			<Label fx:id="nameLabel"/>
 			<Label fx:id="infoLabel"/>
@@ -24,16 +21,16 @@
 		<Button text="Refill" onAction="#repaintBackground"/>
 		<Button text="Stop" onAction="#stopTrying"/>
 		<Button fx:id="refresher" text="Reset" onAction="#restart"/>
-		
-		<GridPane fx:id="windSpeedBox">
+
+		<GridPane fx:id="windSpeedBox" alignment="CENTER">
 			<Label fx:id="xWindSpeedLabel" GridPane.rowIndex="1"/>
 			<Label fx:id="yWindSpeedLabel" GridPane.rowIndex="2"/>
 		</GridPane>
 	</VBox>
-	
+
 	<Slider fx:id="horizontalScale" styleClass="horizontal_scale" GridPane.columnIndex="1"
 			GridPane.rowIndex="2"/>
 	
 	<Slider fx:id="verticalScale" styleClass="vertical_scale" GridPane.columnIndex="2" GridPane.rowIndex="1"
-		prefWidth="50"/>
+		prefWidth="60"/>
 </GridPane>

@@ -20,7 +20,7 @@ import javafx.util.StringConverter;
 
 public class MainForm extends Application implements Initializable {
 
-	private int windSpeedPickerLength = 180;
+	private static final int WIND_PICKER_SIZE = 180 ;
 	@FXML private GridPane root;
 	private static MainView mainView;
 	private static Canvas packetView;
@@ -37,6 +37,7 @@ public class MainForm extends Application implements Initializable {
 	@FXML private GridPane windSpeedBox;
 	@FXML private Label xWindSpeedLabel;
 	@FXML private Label yWindSpeedLabel;
+	private static WindPicker mWindPicker;
 
 	/**
 	 * Страдания со шкалами
@@ -86,14 +87,14 @@ public class MainForm extends Application implements Initializable {
 
 	@FXML @Override
 	public void initialize(URL location, ResourceBundle resources) {
-		double canvasWidth = Screen.getPrimary().getVisualBounds().getWidth() - 250;
+		double canvasWidth = Screen.getPrimary().getVisualBounds().getWidth() - 280;
 		double canvasHeight = canvasWidth/2;
 		packetView = new Canvas(canvasWidth, canvasHeight);
 		mainView = new MainView(packetView, canvasWidth, canvasHeight);
 		mainView.setRefreshableObjects(infoLabel, horizontalScale, verticalScale);
 		root.add(mainView, 1, 1);
 		root.add(packetView, 1, 1);
-		nameLabel.setText("SpeedX\nSpeedY\nSpeed\nX\nY\nTime\nAngle");
+		nameLabel.setText("SpeedX\nSpeedY\nSpeed\nX\nY\nTime\nGravity\nAero Force\nAcceleration");
 
 		packetView.setOnMouseClicked((MouseEvent event) -> {
 			speedSlider.setDisable(true);
@@ -114,17 +115,18 @@ public class MainForm extends Application implements Initializable {
 		sleepSlider.valueProperty().addListener((observable, oldV, newV) -> {
 			mainView.setSleepFactor(newV.doubleValue());
 		});
-		selectedSpeed.textProperty().bind(speedSlider.valueProperty().asString("Speed:\n%.2f"));
-		selectedSleep.textProperty().bind(sleepSlider.valueProperty().asString("Sleep:\n%.2f"));
+		selectedSpeed.textProperty().bind(speedSlider.valueProperty().asString("Speed: %.2f"));
+		selectedSleep.textProperty().bind(sleepSlider.valueProperty().asString("Sleep: %.2f"));
 		//to avoid mismatch between default slider value & default speed
 		mainView.setPacket(new Packet(speedSlider.valueProperty().doubleValue()));
 		//causes NullPointer in the old places
 		buildScales();
 		
-		Canvas canvas = new Canvas(windSpeedPickerLength, windSpeedPickerLength);
+		Canvas canvas = new Canvas(WIND_PICKER_SIZE, WIND_PICKER_SIZE);
 		windSpeedBox.add(canvas, 0, 0);
-		windSpeedBox.add(new WindPicker(windSpeedPickerLength, mainView.getPacket(),
-				xWindSpeedLabel, yWindSpeedLabel, canvas.getGraphicsContext2D()), 0, 0);
+		mWindPicker = new WindPicker(WIND_PICKER_SIZE, xWindSpeedLabel, yWindSpeedLabel,
+				canvas.getGraphicsContext2D(), mainView.getPacket().getWindSpeed());
+		windSpeedBox.add(mWindPicker, 0, 0);
 		refresher.setDisable(true);
 	}
 
@@ -150,6 +152,8 @@ public class MainForm extends Application implements Initializable {
 		VisualizationThread.targetReached = false;
 		packetView.setDisable(false);
 		mainView.setPacket(new Packet(speedSlider.getValue()));
+		mainView.getPacket().setWindSpeed(mWindPicker.getValue());
+		mainView.setSleepFactor(sleepSlider.getValue());
 	}
 
 	@Override

@@ -32,8 +32,8 @@ public class Packet {
 	protected Point2D mAirForce;
 	protected Point2D mGravity;
 	protected Point2D mWindSpeed;
-	private volatile Point2D mPosition;
-	private volatile Point2D mSpeed;
+	private Point2D mPosition;
+	private Point2D mSpeed;
 	private Double mTimeDelta = 0.0;  // время в секундах между двумя состояниями
 	private Double mTime; //общее время
 	private Point2D mTarget;
@@ -204,5 +204,17 @@ public class Packet {
 		mSpeed = mSpeed.add(mAcceleration.multiply(mTimeDelta));
 		mPosition = mPosition.add(mSpeed.multiply(mTimeDelta));
 		return mMarkers.refresh(mPosition);
+	}
+
+	public Point2D getGravity() {
+		return mGravity;
+	}
+
+	public Point2D getAirForce() {
+		return mAirForce;
+	}
+
+	public Point2D getAcceleration() {
+		return mAcceleration;
 	}
 }
