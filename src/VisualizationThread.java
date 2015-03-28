@@ -1,8 +1,7 @@
 import javafx.application.Platform;
 import javafx.scene.control.Button;
 
-import java.util.ArrayDeque;
-import java.util.Queue;
+
 
 /**
  * Поток, в котором раз в mSleepTime мс вызывается mView.run()
@@ -12,20 +11,20 @@ class VisualizationThread extends Thread {
 	public static final boolean TEST_RUN = false;
 	public static boolean targetReached = false;
 	public static boolean isRunning = false;
-	private final double DEGREE = Math.PI/180;
+
 	private MainView mView;
 	private Packet mPacket;
 	private Button mRefresher;
-	private AngleChoice mCurrentChoice;
-	private Queue<AngleChoice> mChoices;
 
 	@Override
 	public void run() {
 		isRunning = true;
 		mPacket.setupMarkers(MainView.PACKET_GAGE * mView.getScale() * 0.7); //#1
+		Marksman marksman = new Marksman(mPacket, mView.getScale());
+		AngleChoice currentAngle = marksman.getAngle();
 
-		while (mCurrentChoice.isMatter()){
-			mView.reset(mCurrentChoice.getAngle());
+		while (currentAngle != null){
+			mView.reset(currentAngle.mAngle);
 
 			// промежуточные шаги отрисовываются в зависимости от режима
 			if (singleFly(mView.isAngleBisectionEnabled())){
@@ -36,22 +35,7 @@ class VisualizationThread extends Thread {
 				try { Thread.sleep(200); }
 				catch (Exception ignore) {}
 			}
-			//  получаем направление деления
-			Boolean result = mPacket.getSummarize();
-			if (result==null){
-				mChoices.add(mCurrentChoice.getAnother(mPacket.helpToChoose()));  // подстраховка в неявном случае
-			} else {
-				mCurrentChoice.next(result);  // меняем угол
-			}
-			if (!mChoices.isEmpty()&&(!mCurrentChoice.isMatter())){
-				mCurrentChoice = mChoices.poll();  // запасы пригодились
-			}
-		}
-
-		if (!mView.isAngleBisectionEnabled()){
-			targetReached = false;
-			mView.reset(mCurrentChoice.getAngle()); // найденный заранее угол
-			singleFly(true);  // повторяем последний полёт
+			currentAngle = marksman.selectNewAngle(mPacket.getSummarize());
 		}
 
 		Platform.runLater(() -> {  // перевод фокуса на кнопку - пашет не всегда O_o
@@ -88,10 +72,7 @@ class VisualizationThread extends Thread {
 		mView = view;
 		mPacket = view.getPacket();
 		mRefresher = refresher;
-		mChoices = new ArrayDeque<>();
-		mCurrentChoice = new AngleChoice(0.0, Math.PI/2,
-				Math.atan(mPacket.getSpeed().getY()/mPacket.getSpeed().getX())
-				,true, DEGREE/mView.getScale());
+
 		setDaemon(true); // lazy & dangerous(for IO) way to stop a thread when closing app
 		start();
 	}

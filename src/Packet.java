@@ -127,15 +127,6 @@ public class Packet {
 		return mLastPositions.poll();
 	}
 
-	/**
-	 * Способ выбора угла в неясной ситуации
-	 *
-	 * @return true - если нужно уменьшать угол
-	 */
-	public boolean helpToChoose() {
-		return (Math.abs(mSpeed.getY() / (mSpeed.getX() + 1e-5)) > 1);
-	}
-
 	public boolean inTheAir() {
 		return (mPosition.getY() >= 0);
 	}
