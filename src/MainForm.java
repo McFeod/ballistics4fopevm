@@ -25,19 +25,12 @@ public class MainForm extends Application implements Initializable {
 	@FXML private GridPane root;
 	private static MainView mainView;
 	private static Canvas packetView;
-	@FXML private Slider verticalScale;
-	@FXML private Slider horizontalScale;
-	@FXML private Label infoLabel;
-	@FXML private Label nameLabel;
-	@FXML private Slider speedSlider;
-	@FXML private Label selectedSpeed;
-	@FXML private Slider sleepSlider;
-	@FXML private Label selectedSleep;
+	@FXML private Slider verticalScale, horizontalScale, temperatureSlider, speedSlider, sleepSlider;
+	@FXML private Label infoLabel, nameLabel, xWindSpeedLabel, yWindSpeedLabel, selectedSpeed,
+						selectedTemperature, selectedSleep;
 	@FXML private Button refresher;
 	@FXML private CheckBox bisectionBox;
 	@FXML private GridPane windSpeedBox;
-	@FXML private Label xWindSpeedLabel;
-	@FXML private Label yWindSpeedLabel;
 	private static WindPicker mWindPicker;
 
 	/**
@@ -110,16 +103,21 @@ public class MainForm extends Application implements Initializable {
 		});
 
 		speedSlider.valueProperty().addListener((observable, oldV, newV) -> {
-			mainView.setPacket(new Packet(newV.doubleValue()));
+			mainView.setPacket(new Packet(newV.doubleValue(), temperatureSlider.getValue()));
 			buildScales();
 		});
 		sleepSlider.valueProperty().addListener((observable, oldV, newV) -> {
 			mainView.setSleepFactor(newV.doubleValue());
 		});
+		temperatureSlider.valueProperty().addListener((observable, oldT, newT) -> {
+			mainView.setPacket(new Packet(speedSlider.getValue(), newT.doubleValue()));
+		});
 		selectedSpeed.textProperty().bind(speedSlider.valueProperty().asString("Speed: %.2f"));
 		selectedSleep.textProperty().bind(sleepSlider.valueProperty().asString("Sleep: %.3f"));
+		selectedTemperature.textProperty().bind(
+				temperatureSlider.valueProperty().asString("%.2f °C, at the ground"));
 		//to avoid mismatch between default slider value & default speed
-		mainView.setPacket(new Packet(speedSlider.valueProperty().doubleValue()));
+		mainView.setPacket(new Packet(speedSlider.getValue(), temperatureSlider.getValue()));
 		//causes NullPointer in the old places
 		buildScales();
 		
@@ -160,7 +158,7 @@ public class MainForm extends Application implements Initializable {
 		speedSlider.setDisable(false);
 		VisualizationThread.targetReached = false;
 		packetView.setDisable(false);
-		mainView.setPacket(new Packet(speedSlider.getValue()));
+		mainView.setPacket(new Packet(speedSlider.getValue(), temperatureSlider.getValue()));
 		mainView.getPacket().setWindSpeed(mWindPicker.getValue());
 		mainView.setSleepFactor(sleepSlider.getValue());
 	}

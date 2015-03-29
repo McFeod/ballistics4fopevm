@@ -4,15 +4,18 @@
 	
 	<HBox alignment="CENTER" styleClass="horizontal_control_panel"
 		  GridPane.columnIndex="1" GridPane.columnSpan="2">
-		<CheckBox text="Показать ход решения" fx:id="bisectionBox" selected="true" prefWidth="200"/>
 		<Slider fx:id="speedSlider" min="100" max="1000" value="655" styleClass="speed_slider"/>
 		<Label fx:id="selectedSpeed" styleClass="pre_slider_label"/>
 		<Slider fx:id="sleepSlider" min="0.001" max="2" value="0.1" styleClass="sleep_slider"/>
 		<Label fx:id="selectedSleep" styleClass="pre_slider_label"/>
+		<Slider fx:id="temperatureSlider" min="-50" max="50" value="15" styleClass="temp_slider"/>
+		<Label fx:id="selectedTemperature" styleClass="pre_slider_label"/>
 	</HBox>
 
 	<VBox prefWidth="220" alignment="CENTER" styleClass="vertical_control_panel"
 		GridPane.rowIndex="0" GridPane.rowSpan="3">
+
+		<CheckBox text="Показать ход решения" fx:id="bisectionBox" selected="true" prefWidth="200"/>
 		<HBox>
 			<Label fx:id="nameLabel"/>
 			<Label fx:id="infoLabel"/>

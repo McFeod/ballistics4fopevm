@@ -16,7 +16,7 @@ public class Packet {
 	private final double WEIGHT = 4 / 3 * RADIUS * S * DENSITY;
 	private final double L = 0.0065; //просто константа
 	private final double R = 8.314; //еще одна константа
-	private final double T0 = 288.15; //температура на уровне моря
+	private double T0 = 288.15; //температура на уровне моря
 	private final double P0 = 101325; //Давление на уровне моря
 	private final double M = 0.029; //молярная масса воздуха
 	private final double Cf = 0.47; //коэффициент для вычисления сопротивления воздуха
@@ -39,9 +39,9 @@ public class Packet {
 	private Point2D mTarget;
 	private ExecutionMarkers mMarkers;
 
-	public Packet(Double speed) {
+	public Packet(Double speed, Double temperature) {
 		mStartSpeed = speed;
-
+		T0 = temperature + 237.15;
 		mPosition = new Point2D(0.0, 0.0);
 		mAcceleration = new Point2D(0.0, 0.0);
 		mAirForce = new Point2D(0.0, 0.0);

@@ -9,8 +9,8 @@ public class Packet53ОФ350 extends Packet{
 	//характеристика среды
 	private final double Cf = 0.905; //коэффициент для вычисления сопротивления воздуха
 
-	public Packet53ОФ350(Double speed) {
-		super(speed);
+	public Packet53ОФ350(Double speed, Double temperature) {
+		super(speed, temperature);
 		mWindSpeed = new Point2D(0.0, 0.0);
 		mGravity = new Point2D(0.0, -WEIGHT*G);
 	}

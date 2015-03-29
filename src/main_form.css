@@ -23,21 +23,21 @@
 	-fx-padding: 0 0 10 0;
 }
 
-.speed_slider, .sleep_slider{
-	-fx-pref-width: 250;
+.speed_slider, .sleep_slider, .temp_slider{
+	-fx-pref-width: 220;
 	-fx-show-tick-marks: true;
 	-fx-show-tick-labels: true;
 	-fx-orientation: horizontal;
 }
 
+.temp_slider{
+	-fx-minor-tick-count: 3;
+	-fx-major-tick-unit: 20;
+}
+
 .speed_slider{
 	-fx-minor-tick-count: 3;
 	-fx-major-tick-unit: 300;
-}
-.speed_slider .axis .axis-tick-mark,
-.speed_slider .axis .axis-minor-tick-mark{
-	-fx-fill: null;
-	-fx-stroke: yellow;
 }
 
 .sleep_slider{
@@ -47,7 +47,11 @@
 }
 
 .sleep_slider .axis .axis-tick-mark,
-.sleep_slider .axis .axis-minor-tick-mark{
+.sleep_slider .axis .axis-minor-tick-mark,
+.temp_slider  .axis .axis-minor-tick-mark,
+.temp_slider .axis .axis-tick-mark,
+.speed_slider .axis .axis-tick-mark,
+.speed_slider .axis .axis-minor-tick-mark{
 	-fx-fill: null;
 	-fx-stroke: yellow;
 }
