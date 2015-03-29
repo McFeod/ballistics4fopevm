@@ -45,18 +45,17 @@
 	-fx-minor-tick-count: 3;
 }
 
-.weight_slider{
-	-fx-pref-width: 550;
-	-fx-block-increment: 0.25;
-	-fx-minor-tick-count: 20;
-	-fx-major-tick-unit: 32656;
+.density_slider{
+	-fx-block-increment: 100;
+	-fx-minor-tick-count: 6;
+	-fx-major-tick-unit: 4500;
 }
 
 .sleep_slider{
 	-fx-minor-tick-count: 10;
 	-fx-major-tick-unit: 0.49;
 	-fx-block-increment: 0.05;
-	-fx-pref-width: 300;
+	-fx-pref-width: 600;
 }
 
 .slider .axis .axis-tick-mark,

@@ -180,7 +180,7 @@ class MainView extends Canvas implements Runnable {
 
 	public void setPacket(Packet packet) {
 		// #4
-		this.mPacket = (VisualizationThread.TEST_RUN) ? new Packet53ОФ350(packet.getStartSpeed()) : packet;
+		this.mPacket = packet;
 		Point2D drawingArea = mPacket.getFlightRectangle();
 		scale = Math.max(drawingArea.getX() / getWidth(), drawingArea.getY() / getHeight());
 	}

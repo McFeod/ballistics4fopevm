@@ -10,7 +10,6 @@ import java.util.Queue;
  */
 class VisualizationThread extends Thread {
 	// #4
-	public static final boolean TEST_RUN = false;
 	public static boolean targetReached = false;
 	public static boolean isRunning = false;
 	private final double DEGREE = Math.PI/180;

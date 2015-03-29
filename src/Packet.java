@@ -12,8 +12,8 @@ public class Packet {
 	//характеристика шара
 	private double mRadius;// = 1.0; //радиус шара в метрах
 	private double S; //площадь сечения шара
-	//private final double DENSITY = 7800; //плотность шара
-	private double mWeight;// = 4 / 3 * mRadius * S * DENSITY;
+	private double mDensity; //плотность шара
+	private double mWeight;
 	private final double L = 0.0065; //просто константа
 	private final double R = 8.314; //еще одна константа
 	private double T0 = 288.15; //температура на уровне моря
@@ -39,10 +39,12 @@ public class Packet {
 	private Point2D mTarget;
 	private ExecutionMarkers mMarkers;
 
-	public Packet(Double speed, Double radius, Double weight, Double temperature) {
+	public Packet(Double speed, Double radius, Double density, Double temperature) {
 		mRadius = radius;
-		mWeight = weight;
+		mDensity = density;
 		S = mRadius * mRadius * Math.PI;
+		mWeight = 4 / 3 * mRadius * S * mDensity;
+
 		mStartSpeed = speed;
 		T0 = temperature + 237.15;
 		mPosition = new Point2D(0.0, 0.0);
@@ -55,7 +57,7 @@ public class Packet {
 		mLastPositions = new ArrayDeque<>();
 
 		//TODO уточнить формулы: при наличии сил сопротивления подгонка под экран не работает
-		double extraFactor = 1 - 0.5 * mStartSpeed / 1000;
+		double extraFactor = 1;
 		double ascentTime = mStartSpeed / Math.sqrt(2) / G; //mSpeed.getY() / G;
 		double maxHeightInVacuum = G * Math.pow(ascentTime, 2) / 2;
 		double distanceInVacuum = mStartSpeed / Math.sqrt(2) * ascentTime * 2 * extraFactor;//mSpeed.getX() * ascentTime * 2;
@@ -173,8 +175,18 @@ public class Packet {
 	 * @return сила сопротивления (вектор)
 	 */
 	Point2D resistance(Double thickness, Point2D speed) {
-		return speed.normalize().multiply(Cf * thickness * speed.magnitude() * speed.magnitude() / 2 * S);
+		return speed.normalize().multiply(Cf * thickness * Math.pow(speed.magnitude(), calcExponent()) / 2 * S);
 	}
+
+	/**
+	 * Очень грубая подгонка ф-и, которая монотонна, непрерывна и
+	 * @return примерно 2 на дозвуковых, 1 на сверхзвуке, что-то между в переходном состоянии
+	 */
+	Double calcExponent(){
+		return 1.5-Math.atan((mSpeed.magnitude()-340)/34)/Math.PI;
+	}
+
+
 
 	public void setPosition(Point2D position) {
 		mPosition = position;

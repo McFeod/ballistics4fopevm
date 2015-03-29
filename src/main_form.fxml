@@ -12,8 +12,8 @@
 			<Label fx:id="selectedTemperature" styleClass="pre_slider_label"/>
 		</HBox>
 		<HBox styleClass="horizontal_control_panel">
-			<Slider fx:id="weightSlider" min="1" max="32656" value="32656" styleClass="weight_slider"/>
-			<Label fx:id="selectedWeight" styleClass="pre_slider_label"/>
+			<Slider fx:id="densitySlider" min="5000" max="14000" value="7800" styleClass="density_slider"/>
+			<Label fx:id="selectedDensity" styleClass="pre_slider_label"/>
 			<Slider fx:id="sleepSlider" min="0.001" max="2" value="0.1" styleClass="sleep_slider"/>
 			<Label fx:id="selectedSleep" style="-fx-padding: 5 0 0 10;"/>
 		</HBox>

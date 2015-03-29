@@ -8,7 +8,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -29,9 +28,9 @@ public class MainForm extends Application implements Initializable {
 	private static MainView mainView;
 	private static Canvas packetView;
 	@FXML private Slider verticalScale, horizontalScale, temperatureSlider, speedSlider,
-						sleepSlider, weightSlider, radiusSlider;
+						sleepSlider, densitySlider, radiusSlider;
 	@FXML private Label infoLabel, nameLabel, windSpeedLabel, selectedSpeed,
-						selectedTemperature, selectedSleep, selectedWeight, selectedRadius;
+						selectedTemperature, selectedSleep, selectedDensity, selectedRadius;
 	@FXML private Button refresher;
 	@FXML private CheckBox bisectionBox;
 	@FXML private GridPane windSpeedBox;
@@ -103,13 +102,13 @@ public class MainForm extends Application implements Initializable {
 			mainView.setAngleBisectionEnabled(bisectionBox.isSelected());
 			mainView.drawTarget();
 			new VisualizationThread().start(mainView, new Node[]{refresher, mWindPicker,
-					bisectionBox, weightSlider, radiusSlider, temperatureSlider});
+					bisectionBox, densitySlider, radiusSlider, temperatureSlider});
 			lockControls();
 		});
 
 		SliderListener listener = new SliderListener();
 		speedSlider.valueProperty().addListener(listener);
-		weightSlider.valueProperty().addListener(listener);
+		densitySlider.valueProperty().addListener(listener);
 		radiusSlider.valueProperty().addListener(listener);
 		temperatureSlider.valueProperty().addListener(listener);
 		sleepSlider.valueProperty().addListener((observable, oldV, newV) -> {
@@ -120,7 +119,7 @@ public class MainForm extends Application implements Initializable {
 		selectedSleep.textProperty().bind(sleepSlider.valueProperty().asString("Sleep: %.3f"));
 		selectedTemperature.textProperty().bind(
 				temperatureSlider.valueProperty().asString("%.2f °C, at the ground"));
-		selectedWeight.textProperty().bind(weightSlider.valueProperty().asString("Weight: %.3f"));
+		selectedDensity.textProperty().bind(densitySlider.valueProperty().asString("Density: %.1f"));
 		selectedRadius.textProperty().bind(radiusSlider.valueProperty().asString("Radius: %.3f"));
 		//to avoid mismatch between default slider value & default speed
 		updateSettings();
@@ -143,7 +142,7 @@ public class MainForm extends Application implements Initializable {
 		bisectionBox.setDisable(true);
 		mWindPicker.setDisable(true);
 		packetView.setDisable(true);
-		weightSlider.setDisable(true);
+		densitySlider.setDisable(true);
 		radiusSlider.setDisable(true);
 		temperatureSlider.setDisable(true);
 	}
@@ -194,7 +193,7 @@ public class MainForm extends Application implements Initializable {
 		mainView.setPacket(new Packet(
 				speedSlider.getValue(),
 				radiusSlider.getValue(),
-				weightSlider.getValue(),
+				densitySlider.getValue(),
 				temperatureSlider.getValue()
 		));
 	}
