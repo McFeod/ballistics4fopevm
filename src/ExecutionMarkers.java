@@ -29,7 +29,7 @@ class ExecutionMarkers {
 
 		if (dx <= eps / 2) {
 			if (dy <= eps) {
-				VisualizationThread.targetReached = true;
+				Marksman.targetReached = true;
 				return true;  // цель достигнута
 			}
 		} else {

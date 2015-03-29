@@ -66,8 +66,7 @@ class MainView extends Canvas implements Runnable {
 		System.out.println("************");
 		double maxDistance = 0;
 		for(int i = 5; i <= 90; i+=5){
-			tmpPacket.resetSpeed(otherDegree * i);
-			tmpPacket.setPosition(new Point2D(0,0));
+			tmpPacket.reset(otherDegree * i);
 			while (tmpPacket.inTheAir()) tmpPacket.update();
 			maxDistance = Math.max(maxDistance, tmpPacket.getPosition().getX());
 		}
@@ -140,20 +139,6 @@ class MainView extends Canvas implements Runnable {
 		);
 		vSlider.setValue(mCurrentPoint.getY());
 		hSlider.setValue(mCurrentPoint.getX());
-	}
-
-	/**
-	 * Смена цвета следа + вызов методов очистки Packet
-	 *
-	 * @param angle - тангенс нового стартового угла
-	 */
-	public void reset(Double angle) {
-		mPacket.resetTime();
-		mPacket.resetSpeed(angle);
-		mPacket.resetMarkers();
-		mPacket.setPosition(new Point2D(0, 0));
-		//Random random = new Random();
-		//mTailColor = Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256));
 	}
 
 	/**

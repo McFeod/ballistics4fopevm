@@ -135,7 +135,7 @@ public class MainForm extends Application implements Initializable {
 		horizontalScale.setValue(0.0);
 		verticalScale.setValue(0.0);
 		speedSlider.setDisable(false);
-		VisualizationThread.targetReached = false;
+		Marksman.targetReached = false;
 		packetView.setDisable(false);
 		mainView.setPacket(new Packet(speedSlider.getValue()));
 	}
@@ -156,6 +156,6 @@ public class MainForm extends Application implements Initializable {
 	 */
 	public void stopTrying(){
 		if (VisualizationThread.isRunning)
-			VisualizationThread.targetReached = true;
+			Marksman.targetReached = true;
 	}
 }

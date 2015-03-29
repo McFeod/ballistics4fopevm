@@ -14,7 +14,6 @@ class VisualizationThread extends Thread {
 	private static final double SLEEP_FACTOR = 0.01;
 
 	public static boolean showOnlySolution = false;
-	public static boolean targetReached = false;
 	public static boolean isRunning = false;
 
 	// MainView permits thread to make next shot after it completes drawing previous one
@@ -33,22 +32,21 @@ class VisualizationThread extends Thread {
 		mView.setBuffer(mPath);
 		mPacket.setupMarkers(MainView.PACKET_GAGE * mView.getScale() * 0.7); //#1
 		Marksman marksman = new Marksman(mPacket, mView.getScale());
-		AngleChoice currentAngle = marksman.getAngle();
+		Double currentAngle = marksman.getAngle();
 
-		System.out.println(shotPermission.availablePermits());
-		while (!(currentAngle == null || targetReached)){
+		while (currentAngle != null){
 			if(!showOnlySolution){
 				try   {shotPermission.acquire();}
 				catch (Exception ignore){}
 			}
-			mView.reset(currentAngle.mAngle);
+			mPacket.reset(currentAngle);
 			singleFly(!showOnlySolution);
 			if(!showOnlySolution) mySleep(1);
 			currentAngle = marksman.selectNewAngle(mPacket.getSummarize());
 		}
 		if(showOnlySolution){
 			mPath.clear();
-			mView.reset(marksman.getAngle().mAngle);
+			mPacket.reset(marksman.getAngle());
 			singleFly(true);
 		}
 		Platform.runLater(() -> {  // перевод фокуса на кнопку - пашет не всегда O_o

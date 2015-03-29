@@ -21,11 +21,7 @@ public class Packet {
 	private final double M = 0.029; //молярная масса воздуха
 	private final double Cf = 0.47; //коэффициент для вычисления сопротивления воздуха
 	private final Double mStartSpeed;
-	/**
-	 * Наименьший прямоугольник, в который может быть вписана траектория полёта
-	 * Вычисляется для нужд масштабирования
-	 */
-	private final Point2D flightRectangle;
+
 	volatile Point2D mAcceleration;
 	volatile Point2D mAirForce;
 	volatile Point2D mGravity;
@@ -48,11 +44,11 @@ public class Packet {
 		mTime = 0.0;
 
 		//TODO уточнить формулы: при наличии сил сопротивления подгонка под экран не работает
-		double extraFactor = 1 - 0.5 * mStartSpeed / 1000;
+		/*double extraFactor = 1 - 0.5 * mStartSpeed / 1000;
 		double ascentTime = mStartSpeed / Math.sqrt(2) / G; //mSpeed.getY() / G;
 		double maxHeightInVacuum = G * Math.pow(ascentTime, 2) / 2;
 		double distanceInVacuum = mStartSpeed / Math.sqrt(2) * ascentTime * 2 * extraFactor;//mSpeed.getX() * ascentTime * 2;
-		flightRectangle = new Point2D(distanceInVacuum, maxHeightInVacuum);
+		flightRectangle = new Point2D(distanceInVacuum, maxHeightInVacuum);*/
 	}
 
 	void calcAcceleration() {
@@ -66,11 +62,6 @@ public class Packet {
 		double thickness = p * M / R / t;
 		// ветер и сопротивление воздуха
 		mAirForce = resistance(thickness, mWindSpeed).add(resistance(thickness, mSpeed.multiply(-1.0)));
-
-	}
-
-	public Point2D getFlightRectangle() {
-		return flightRectangle;
 	}
 
 	/*
@@ -110,18 +101,15 @@ public class Packet {
 		return (mPosition.getY() >= 0);
 	}
 
-	public void resetMarkers() {
-		mMarkers.reset();
-	}
-
-	public void resetSpeed(Double angle) {
-		mSpeed = new Point2D(Math.cos(angle) * mStartSpeed, Math.sin(angle) * mStartSpeed);
-	}
-
-	public void resetTime() {
+	/**
+	 * @param angle - тангенс нового стартового угла
+	 */
+	public void reset(Double angle) {
 		mTime = 0.0;
+		mSpeed = new Point2D(Math.cos(angle) * mStartSpeed, Math.sin(angle) * mStartSpeed);
+		mMarkers.reset();
+		mPosition = new Point2D(0,0);
 	}
-
 	/**
 	 * Формула подсчёта сопротивления.
 	 *
@@ -131,10 +119,6 @@ public class Packet {
 	 */
 	Point2D resistance(Double thickness, Point2D speed) {
 		return speed.normalize().multiply(Cf * thickness * speed.magnitude() * speed.magnitude() / 2 * S);
-	}
-
-	public void setPosition(Point2D position) {
-		mPosition = position;
 	}
 
 	public void setTarget(Point2D target) {
