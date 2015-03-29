@@ -1,27 +1,36 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<GridPane xmlns:fx="http://javafx.com/fxml" fx:controller="MainForm"
-		  fx:id="root" alignment="CENTER">
-	<VBox prefWidth="200" alignment="CENTER" styleClass="control_panel">
-		<CheckBox text="Показать решение" fx:id="bisectionBox" selected="true"/>
-		<HBox GridPane.columnIndex="0" GridPane.rowIndex="0">
+<GridPane xmlns:fx="http://javafx.com/fxml" fx:controller="MainForm" fx:id="root" alignment="CENTER">
+	
+	<HBox alignment="CENTER" styleClass="horizontal_control_panel"
+		  GridPane.columnIndex="1" GridPane.columnSpan="2">
+		<CheckBox text="Показать решение" fx:id="bisectionBox" selected="true" prefWidth="200"/>
+		<Slider fx:id="speedSlider" min="100" max="1000" value="655" styleClass="speed_slider"/>
+		<Label fx:id="selectedSpeed" styleClass="pre_slider_label"/>
+		<Slider fx:id="sleepSlider" min="0.001" max="2" value="0.1" styleClass="sleep_slider"/>
+		<Label fx:id="selectedSleep" styleClass="pre_slider_label"/>
+	</HBox>
+
+	<VBox prefWidth="220" alignment="CENTER" styleClass="vertical_control_panel"
+		GridPane.rowIndex="0" GridPane.rowSpan="3">
+		<HBox>
 			<Label fx:id="nameLabel"/>
 			<Label fx:id="infoLabel"/>
 		</HBox>
-		<HBox alignment="CENTER">
-			<Label fx:id="selectedSpeed" prefWidth="100"/>
-			<Slider fx:id="speedSlider" min="100" max="1000" value="655"
-					prefHeight="200"
-					styleClass="speed_slider"/>
-		</HBox>
-		<Button text="Refill" GridPane.columnIndex="0" GridPane.rowIndex="1"
-				onAction="#repaintBackground"/>
-		<Button text="Stop" onAction="#stopTrying"
-				GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-		<Button fx:id="refresher" text="Reset" onAction="#restart"
-				GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+		
+		<Button text="Refill" onAction="#repaintBackground"/>
+		<Button text="Stop" onAction="#stopTrying"/>
+		<Button fx:id="refresher" text="Reset" onAction="#restart"/>
+
+		<GridPane fx:id="windSpeedBox" alignment="CENTER">
+			<Label fx:id="xWindSpeedLabel" GridPane.rowIndex="1"/>
+			<Label fx:id="yWindSpeedLabel" GridPane.rowIndex="2"/>
+		</GridPane>
 	</VBox>
-	<Slider fx:id="horizontalScale" GridPane.columnIndex="1" styleClass="horizontal_scale"
-			GridPane.rowIndex="1"/>
-	<Slider fx:id="verticalScale" GridPane.columnIndex="2" styleClass="vertical_scale" prefWidth="50"/>
+
+	<Slider fx:id="horizontalScale" styleClass="horizontal_scale" GridPane.columnIndex="1"
+			GridPane.rowIndex="2"/>
+	
+	<Slider fx:id="verticalScale" styleClass="vertical_scale" GridPane.columnIndex="2" GridPane.rowIndex="1"
+		prefWidth="60"/>
 </GridPane>

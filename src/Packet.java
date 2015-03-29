@@ -96,6 +96,14 @@ public class Packet {
 	public Double getTimeDelta() {
 		return mTimeDelta;
 	}
+	
+	public Point2D getWindSpeed() {
+		return mWindSpeed;
+	}
+
+	public void setWindSpeed(Point2D windSpeed) {
+		mWindSpeed = windSpeed;
+	}
 
 	public boolean inTheAir() {
 		return (mPosition.getY() >= 0);
@@ -142,5 +150,17 @@ public class Packet {
 		mSpeed = mSpeed.add(mAcceleration.multiply(mTimeDelta));
 		mPosition = mPosition.add(mSpeed.multiply(mTimeDelta));
 		return mMarkers.refresh(mPosition);
+	}
+
+	public Point2D getGravity() {
+		return mGravity;
+	}
+
+	public Point2D getAirForce() {
+		return mAirForce;
+	}
+
+	public Point2D getAcceleration() {
+		return mAcceleration;
 	}
 }
