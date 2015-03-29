@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
@@ -104,8 +105,8 @@ public class MainForm extends Application implements Initializable {
 							.multiply(mainView.getScale()));
 			mainView.setAngleBisectionEnabled(bisectionBox.isSelected());
 			mainView.drawTarget();
-			new VisualizationThread().start(mainView, refresher);
-			packetView.setDisable(true);
+			new VisualizationThread().start(mainView, new Node[]{refresher, mWindPicker, bisectionBox});
+			lockControls();
 		});
 
 		speedSlider.valueProperty().addListener((observable, oldV, newV) -> {
@@ -130,6 +131,15 @@ public class MainForm extends Application implements Initializable {
 		refresher.setDisable(true);
 	}
 
+	/**
+	 * Чтобы юзер не шалил
+	 */
+	private void lockControls(){
+		refresher.setDisable(true);
+		bisectionBox.setDisable(true);
+		mWindPicker.setDisable(true);
+		packetView.setDisable(true);
+	}
 
 	public static void main(String[] args) {
 		launch(args);
@@ -144,7 +154,6 @@ public class MainForm extends Application implements Initializable {
 	 * Сброс всего и вся
 	 */
 	public void restart(){
-		refresher.setDisable(true);
 		repaintBackground();
 		horizontalScale.setValue(0.0);
 		verticalScale.setValue(0.0);
@@ -159,7 +168,6 @@ public class MainForm extends Application implements Initializable {
 	@Override
 	public void start(Stage primaryStage) throws Exception{
 		root = FXMLLoader.load(getClass().getResource("main_form.fxml"));
-
 		primaryStage.setTitle("Кликни мышкой на поле");
 		Scene scene = new Scene(root);
 		primaryStage.setScene(scene);

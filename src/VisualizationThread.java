@@ -1,4 +1,5 @@
 import javafx.application.Platform;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 
 import java.util.ArrayDeque;
@@ -15,7 +16,7 @@ class VisualizationThread extends Thread {
 	private final double DEGREE = Math.PI/180;
 	private MainView mView;
 	private Packet mPacket;
-	private Button mRefresher;
+	private Node[] mLockedControls;
 	private AngleChoice mCurrentChoice;
 	private Queue<AngleChoice> mChoices;
 
@@ -55,8 +56,10 @@ class VisualizationThread extends Thread {
 		}
 
 		Platform.runLater(() -> {  // перевод фокуса на кнопку - пашет не всегда O_o
-			mRefresher.setDisable(false);
-			mRefresher.requestFocus();
+			for(Node node: mLockedControls){
+				node.setDisable(false);
+			}
+			mLockedControls[0].requestFocus();
 		});
 		isRunning = false;
 	}
@@ -84,10 +87,10 @@ class VisualizationThread extends Thread {
 		return false;
 	}
 
-	public void start(MainView view, Button refresher){
+	public void start(MainView view, Node[] controls){
 		mView = view;
 		mPacket = view.getPacket();
-		mRefresher = refresher;
+		mLockedControls = controls;
 		mChoices = new ArrayDeque<>();
 		mCurrentChoice = new AngleChoice(0.0, Math.PI/2,
 				Math.atan(mPacket.getSpeed().getY()/mPacket.getSpeed().getX())

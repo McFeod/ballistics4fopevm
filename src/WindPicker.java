@@ -31,12 +31,10 @@ public class WindPicker extends Canvas {
 		drawLine();
 		refreshText();
 		this.setOnMouseClicked(mouseEvent -> {
-			if (!VisualizationThread.isRunning){
-				mValue = new Point2D((mouseEvent.getX() - mCenter.getX()),
-						(mCenter.getY() - mouseEvent.getY()));
-				refreshText();
-				drawLine();
-			}
+			mValue = new Point2D((mouseEvent.getX() - mCenter.getX()),
+					(mCenter.getY() - mouseEvent.getY()));
+			refreshText();
+			drawLine();
 		});
 	}
 	
