@@ -152,8 +152,8 @@ class MainView extends Canvas implements Runnable {
 		mPacket.resetSpeed(angle);
 		mPacket.resetMarkers();
 		mPacket.setPosition(new Point2D(0, 0));
-		Random random = new Random();
-		mTailColor = Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256));
+		//Random random = new Random();
+		//mTailColor = Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256));
 	}
 
 	/**
@@ -166,9 +166,13 @@ class MainView extends Canvas implements Runnable {
 		while (!mTailBuffer.isEmpty()) { // fix для следа от снаряда
 			drawCircle(mBottomContext, mTailBuffer.poll(), mTailColor, TAIL_GAGE);
 		}
-		drawCircle(mBottomContext, mCurrentPoint, mTailColor, TAIL_GAGE);
 		drawCircle(mTopContext, mCurrentPoint, Color.BLACK, PACKET_GAGE);
 		refreshObjects();
+		if(!mPacket.inTheAir()){
+			Random random = new Random();
+			mTailColor = Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256));
+			VisualizationThread.shotPermission.release();
+		}
 	}
 
 	public void setBuffer(Queue<Point2D> buffer){

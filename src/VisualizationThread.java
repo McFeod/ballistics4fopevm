@@ -3,6 +3,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.control.Button;
 import java.util.ArrayDeque;
 import java.util.Queue;
+import java.util.concurrent.Semaphore;
 
 /**
  * Поток, в котором раз в mSleepTime мс вызывается mView.run()
@@ -15,6 +16,9 @@ class VisualizationThread extends Thread {
 	public static boolean showOnlySolution = false;
 	public static boolean targetReached = false;
 	public static boolean isRunning = false;
+
+	// MainView permits thread to make next shot after it completes drawing previous one
+	public static Semaphore shotPermission = new Semaphore(1);
 
 	private MainView mView;
 	private Packet mPacket;
@@ -31,10 +35,15 @@ class VisualizationThread extends Thread {
 		Marksman marksman = new Marksman(mPacket, mView.getScale());
 		AngleChoice currentAngle = marksman.getAngle();
 
+		System.out.println(shotPermission.availablePermits());
 		while (!(currentAngle == null || targetReached)){
+			if(!showOnlySolution){
+				try   {shotPermission.acquire();}
+				catch (Exception ignore){}
+			}
 			mView.reset(currentAngle.mAngle);
 			singleFly(!showOnlySolution);
-			if(!showOnlySolution) mySleep(200);
+			if(!showOnlySolution) mySleep(1);
 			currentAngle = marksman.selectNewAngle(mPacket.getSummarize());
 		}
 		if(showOnlySolution){
@@ -68,6 +77,11 @@ class VisualizationThread extends Thread {
 				Platform.runLater(mView);
 			}
 		}
+		/*#7
+		* 1) To avoid special handle of current position when drawing tail
+		* 2) To give MainView possibility to determine, that packet ha landed
+		* and change tail color.*/
+		mPath.add(mPacket.getPosition());
 	}
 
 	public void start(MainView view, Button refresher){

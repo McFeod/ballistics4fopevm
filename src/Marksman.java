@@ -30,7 +30,7 @@ public class Marksman{
 		if (shotResult==null){                         // if packet hasn't reached target.x and has fallen to the left
 			Point2D speed = mPacket.getSpeed();
 			boolean isSharp = Math.abs(speed.getY() /  //is shot angle sharp (>45). is abs() necessary?
-			                  (speed.getX() + 1e-5)) > 1;
+			                  (speed.getX() + 1e-5)) < 1;
 
 			// at first we try to make angle closer to 45
 			mCurrentChoice.isDown = !isSharp;
@@ -44,10 +44,8 @@ public class Marksman{
 		mCurrentChoice.next();
 
 		if(Math.abs(mCurrentChoice.mAngle2 - mCurrentChoice.mAngle1) < mEps){
-			if(!mChoices.isEmpty())
-				 mCurrentChoice = mChoices.poll();
-			else return null; // временный костьль для режима "Показать решение"
+			if(!mChoices.isEmpty())	 mCurrentChoice = mChoices.poll();
 		}
-		return mCurrentChoice;
+		return (Math.abs(mCurrentChoice.mAngle2 - mCurrentChoice.mAngle1) > mEps) ? mCurrentChoice : null;
 	}
 }
