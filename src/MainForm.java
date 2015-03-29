@@ -117,7 +117,7 @@ public class MainForm extends Application implements Initializable {
 			buildScales();
 		});
 		sleepSlider.valueProperty().addListener((observable, oldV, newV) -> {
-			mainView.setSleepFactor(newV.doubleValue());
+			VisualizationThread.setSleepFactor(newV.doubleValue());
 		});
 		selectedSpeed.textProperty().bind(speedSlider.valueProperty().asString("Speed: %.2f"));
 		selectedSleep.textProperty().bind(sleepSlider.valueProperty().asString("Sleep: %.2f"));
@@ -157,7 +157,7 @@ public class MainForm extends Application implements Initializable {
 		packetView.setDisable(false);
 		mainView.setPacket(new Packet(speedSlider.getValue()));
 		mainView.getPacket().setWindSpeed(mWindPicker.getValue());
-		mainView.setSleepFactor(sleepSlider.getValue());
+		VisualizationThread.setSleepFactor(sleepSlider.getValue());
 	}
 
 	@Override

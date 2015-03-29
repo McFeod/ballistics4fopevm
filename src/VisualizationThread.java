@@ -1,6 +1,6 @@
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
-import javafx.scene.control.Button;
+
 import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.concurrent.Semaphore;
@@ -11,8 +11,8 @@ import java.util.concurrent.Semaphore;
 class VisualizationThread extends Thread {
 	public  static final boolean TEST_RUN = false;  //// #4
 	private static final double RENDER_PAUSE = 10;
-	private static final double SLEEP_FACTOR = 0.01;
 
+	private static double sleepFactor = 0.01;
 	public static boolean showOnlySolution = false;
 	public static boolean isRunning = false;
 
@@ -61,7 +61,7 @@ class VisualizationThread extends Thread {
 	private void singleFly(boolean draw){
 		while(!mPacket.update() && mPacket.inTheAir()){
 			mPath.add(mPacket.getPosition()); // из пустого в порожнее
-			mTimeBuffer += SLEEP_FACTOR * mPacket.getTimeDelta() * 1000;
+			mTimeBuffer += sleepFactor * mPacket.getTimeDelta() * 1000;
 			if(mTimeBuffer < RENDER_PAUSE) continue;
 
 			//if RENDER_PAUSE finished
@@ -77,6 +77,10 @@ class VisualizationThread extends Thread {
 		* 2) To give MainView possibility to determine, that packet ha landed
 		* and change tail color.*/
 		mPath.add(mPacket.getPosition());
+	}
+
+	public static void setSleepFactor(double factor){
+		sleepFactor = factor;
 	}
 
 	public void start(MainView view, Runnable callback){
