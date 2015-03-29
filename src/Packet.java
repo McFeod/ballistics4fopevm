@@ -10,10 +10,10 @@ public class Packet {
 	//характеристика среды
 	final double G = 9.80665;
 	//характеристика шара
-	private final double RADIUS = 1.0; //радиус шара в метрах
-	private final double S = RADIUS * RADIUS * Math.PI; //площадь сечения шара
-	private final double DENSITY = 7800; //плотность шара
-	private final double WEIGHT = 4 / 3 * RADIUS * S * DENSITY;
+	private double mRadius;// = 1.0; //радиус шара в метрах
+	private double S; //площадь сечения шара
+	//private final double DENSITY = 7800; //плотность шара
+	private double mWeight;// = 4 / 3 * mRadius * S * DENSITY;
 	private final double L = 0.0065; //просто константа
 	private final double R = 8.314; //еще одна константа
 	private double T0 = 288.15; //температура на уровне моря
@@ -39,14 +39,17 @@ public class Packet {
 	private Point2D mTarget;
 	private ExecutionMarkers mMarkers;
 
-	public Packet(Double speed, Double temperature) {
+	public Packet(Double speed, Double radius, Double weight, Double temperature) {
+		mRadius = radius;
+		mWeight = weight;
+		S = mRadius * mRadius * Math.PI;
 		mStartSpeed = speed;
 		T0 = temperature + 237.15;
 		mPosition = new Point2D(0.0, 0.0);
 		mAcceleration = new Point2D(0.0, 0.0);
 		mAirForce = new Point2D(0.0, 0.0);
 		mWindSpeed = new Point2D(-20.0, 0.0);
-		mGravity = new Point2D(0.0, -WEIGHT * G);
+		mGravity = new Point2D(0.0, -mWeight * G);
 		mTime = 0.0;
 		mLastDeltas = new ArrayDeque<>();
 		mLastPositions = new ArrayDeque<>();
@@ -61,7 +64,7 @@ public class Packet {
 
 	void calcAcceleration() {
 		calcAirResistance();
-		mAcceleration = mGravity.add(mAirForce).multiply(1.0 / WEIGHT);
+		mAcceleration = mGravity.add(mAirForce).multiply(1.0 / mWeight);
 	}
 
 	void calcAirResistance() {
@@ -189,7 +192,7 @@ public class Packet {
 
 	/**
 	 * Основной шаг логической части программы
-	 * dS = 2*RADIUS - расстояние (в метрах) между двумя состояниями снаряда
+	 * dS = 2*mRadius - расстояние (в метрах) между двумя состояниями снаряда
 	 *
 	 * @param keepTrack - включение/отключение очереди точек и timeDeltas
 	 */
@@ -199,7 +202,7 @@ public class Packet {
 			mLastDeltas.add(mTimeDelta);
 			mLastPositions.add(mPosition);
 		}
-		mTimeDelta = 2 * RADIUS / mSpeed.magnitude();
+		mTimeDelta = 2 * mRadius / mSpeed.magnitude();
 		mTime += mTimeDelta;
 		mSpeed = mSpeed.add(mAcceleration.multiply(mTimeDelta));
 		mPosition = mPosition.add(mSpeed.multiply(mTimeDelta));

@@ -11,8 +11,8 @@
 }
 
 .pre_slider_label{
-	-fx-pref-width: 200;
-	-fx-padding: 0 0 0 20;
+	-fx-pref-width: 180;
+	-fx-padding: 5 0 0 10;
 }
 
 .vertical_control_panel{
@@ -23,7 +23,7 @@
 	-fx-padding: 0 0 10 0;
 }
 
-.speed_slider, .sleep_slider, .temp_slider{
+.slider{
 	-fx-pref-width: 220;
 	-fx-show-tick-marks: true;
 	-fx-show-tick-labels: true;
@@ -40,18 +40,27 @@
 	-fx-major-tick-unit: 300;
 }
 
+.radius_slider{
+	-fx-major-tick-unit: 0.2;
+	-fx-minor-tick-count: 3;
+}
+
+.weight_slider{
+	-fx-pref-width: 550;
+	-fx-block-increment: 0.25;
+	-fx-minor-tick-count: 20;
+	-fx-major-tick-unit: 32656;
+}
+
 .sleep_slider{
 	-fx-minor-tick-count: 10;
 	-fx-major-tick-unit: 0.49;
-	-fx-block-increment: 0.1;
+	-fx-block-increment: 0.05;
+	-fx-pref-width: 300;
 }
 
-.sleep_slider .axis .axis-tick-mark,
-.sleep_slider .axis .axis-minor-tick-mark,
-.temp_slider  .axis .axis-minor-tick-mark,
-.temp_slider .axis .axis-tick-mark,
-.speed_slider .axis .axis-tick-mark,
-.speed_slider .axis .axis-minor-tick-mark{
+.slider .axis .axis-tick-mark,
+.slider .axis .axis-minor-tick-mark{
 	-fx-fill: null;
 	-fx-stroke: yellow;
 }
@@ -59,6 +68,7 @@
 .vertical_scale{
 	-fx-padding: -63 -48 -63 -64;
 	-fx-orientation: vertical;
+	-fx-pref-width: 60;
 }
 
 .horizontal_scale{

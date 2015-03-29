@@ -9,14 +9,13 @@ public class WindPicker extends Canvas {
 
 	private GraphicsContext mContext;
 	private Point2D mCenter;
-	private Label xWindSpeedLabel, yWindSpeedLabel;
+	private Label windSpeedLabel;
 	private Point2D mValue;  // Чтобы не возникал соблазн баловаться с ветром :)
 	
-	public WindPicker(int length, Label xWindSpeedLabel, Label yWindSpeedLabel,
+	public WindPicker(int length, Label windSpeedLabel,
 			GraphicsContext context, Point2D initialValue) {
 		super(length, length);
-		this.xWindSpeedLabel = xWindSpeedLabel;
-		this.yWindSpeedLabel = yWindSpeedLabel;
+		this.windSpeedLabel = windSpeedLabel;
 
 		mValue = initialValue;
 		mContext = getGraphicsContext2D();
@@ -45,8 +44,8 @@ public class WindPicker extends Canvas {
 	}
 	
 	public void refreshText(){
-		xWindSpeedLabel.setText(String.format("WindSpeedX = %.0f м/с", mValue.getX()));
-		yWindSpeedLabel.setText(String.format("WindSpeedY = %.0f м/с", mValue.getY()));
+		windSpeedLabel.setText(String.format("WindSpeedX = %.0f м/с\nWindSpeedY = %.0f м/с",
+				mValue.getX(), mValue.getY()));
 	}
 
 	public Point2D getValue() {

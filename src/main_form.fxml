@@ -2,33 +2,35 @@
 <?import javafx.scene.layout.*?>
 <GridPane xmlns:fx="http://javafx.com/fxml" fx:controller="MainForm" fx:id="root" alignment="CENTER">
 	
-	<HBox alignment="CENTER" styleClass="horizontal_control_panel"
-		  GridPane.columnIndex="1" GridPane.columnSpan="2">
-		<Slider fx:id="speedSlider" min="100" max="1000" value="655" styleClass="speed_slider"/>
-		<Label fx:id="selectedSpeed" styleClass="pre_slider_label"/>
-		<Slider fx:id="sleepSlider" min="0.001" max="2" value="0.1" styleClass="sleep_slider"/>
-		<Label fx:id="selectedSleep" styleClass="pre_slider_label"/>
-		<Slider fx:id="temperatureSlider" min="-50" max="50" value="15" styleClass="temp_slider"/>
-		<Label fx:id="selectedTemperature" styleClass="pre_slider_label"/>
-	</HBox>
+	<VBox alignment="CENTER" GridPane.columnIndex="1" GridPane.columnSpan="2">
+		<HBox styleClass="horizontal_control_panel">
+			<Slider fx:id="speedSlider" min="100" max="1000" value="655" styleClass="speed_slider"/>
+			<Label fx:id="selectedSpeed" styleClass="pre_slider_label"/>
+			<Slider fx:id="radiusSlider" min="0.05" max="1" value="1" styleClass="radius_slider"/>
+			<Label fx:id="selectedRadius" styleClass="pre_slider_label"/>
+			<Slider fx:id="temperatureSlider" min="-50" max="50" value="15" styleClass="temp_slider"/>
+			<Label fx:id="selectedTemperature" styleClass="pre_slider_label"/>
+		</HBox>
+		<HBox styleClass="horizontal_control_panel">
+			<Slider fx:id="weightSlider" min="1" max="32656" value="32656" styleClass="weight_slider"/>
+			<Label fx:id="selectedWeight" styleClass="pre_slider_label"/>
+			<Slider fx:id="sleepSlider" min="0.001" max="2" value="0.1" styleClass="sleep_slider"/>
+			<Label fx:id="selectedSleep" style="-fx-padding: 5 0 0 10;"/>
+		</HBox>
+	</VBox>
 
-	<VBox prefWidth="220" alignment="CENTER" styleClass="vertical_control_panel"
-		GridPane.rowIndex="0" GridPane.rowSpan="3">
-
-		<CheckBox text="Показать ход решения" fx:id="bisectionBox" selected="true" prefWidth="200"/>
+	<VBox  alignment="TOP_CENTER" GridPane.rowSpan="3" prefWidth="220" styleClass="vertical_control_panel">
+		<GridPane fx:id="windSpeedBox" alignment="CENTER"/>
+		<Label fx:id="windSpeedLabel" />
+		<CheckBox text="Показать ход решения" fx:id="bisectionBox" selected="true" prefWidth="220"
+				style="-fx-padding: 10;"/>
 		<HBox>
 			<Label fx:id="nameLabel"/>
 			<Label fx:id="infoLabel"/>
 		</HBox>
-		
 		<Button text="Refill" onAction="#repaintBackground"/>
 		<Button text="Stop" onAction="#stopTrying"/>
 		<Button fx:id="refresher" text="Reset" onAction="#restart"/>
-
-		<GridPane fx:id="windSpeedBox" alignment="CENTER">
-			<Label fx:id="xWindSpeedLabel" GridPane.rowIndex="1"/>
-			<Label fx:id="yWindSpeedLabel" GridPane.rowIndex="2"/>
-		</GridPane>
 	</VBox>
 
 	<Slider fx:id="horizontalScale" styleClass="horizontal_scale" GridPane.columnIndex="1"

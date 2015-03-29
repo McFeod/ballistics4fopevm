@@ -2,10 +2,13 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -25,9 +28,10 @@ public class MainForm extends Application implements Initializable {
 	@FXML private GridPane root;
 	private static MainView mainView;
 	private static Canvas packetView;
-	@FXML private Slider verticalScale, horizontalScale, temperatureSlider, speedSlider, sleepSlider;
-	@FXML private Label infoLabel, nameLabel, xWindSpeedLabel, yWindSpeedLabel, selectedSpeed,
-						selectedTemperature, selectedSleep;
+	@FXML private Slider verticalScale, horizontalScale, temperatureSlider, speedSlider,
+						sleepSlider, weightSlider, radiusSlider;
+	@FXML private Label infoLabel, nameLabel, windSpeedLabel, selectedSpeed,
+						selectedTemperature, selectedSleep, selectedWeight, selectedRadius;
 	@FXML private Button refresher;
 	@FXML private CheckBox bisectionBox;
 	@FXML private GridPane windSpeedBox;
@@ -98,32 +102,34 @@ public class MainForm extends Application implements Initializable {
 							.multiply(mainView.getScale()));
 			mainView.setAngleBisectionEnabled(bisectionBox.isSelected());
 			mainView.drawTarget();
-			new VisualizationThread().start(mainView, new Node[]{refresher, mWindPicker, bisectionBox});
+			new VisualizationThread().start(mainView, new Node[]{refresher, mWindPicker,
+					bisectionBox, weightSlider, radiusSlider, temperatureSlider});
 			lockControls();
 		});
 
-		speedSlider.valueProperty().addListener((observable, oldV, newV) -> {
-			mainView.setPacket(new Packet(newV.doubleValue(), temperatureSlider.getValue()));
-			buildScales();
-		});
+		SliderListener listener = new SliderListener();
+		speedSlider.valueProperty().addListener(listener);
+		weightSlider.valueProperty().addListener(listener);
+		radiusSlider.valueProperty().addListener(listener);
+		temperatureSlider.valueProperty().addListener(listener);
 		sleepSlider.valueProperty().addListener((observable, oldV, newV) -> {
 			mainView.setSleepFactor(newV.doubleValue());
 		});
-		temperatureSlider.valueProperty().addListener((observable, oldT, newT) -> {
-			mainView.setPacket(new Packet(speedSlider.getValue(), newT.doubleValue()));
-		});
+
 		selectedSpeed.textProperty().bind(speedSlider.valueProperty().asString("Speed: %.2f"));
 		selectedSleep.textProperty().bind(sleepSlider.valueProperty().asString("Sleep: %.3f"));
 		selectedTemperature.textProperty().bind(
 				temperatureSlider.valueProperty().asString("%.2f °C, at the ground"));
+		selectedWeight.textProperty().bind(weightSlider.valueProperty().asString("Weight: %.3f"));
+		selectedRadius.textProperty().bind(radiusSlider.valueProperty().asString("Radius: %.3f"));
 		//to avoid mismatch between default slider value & default speed
-		mainView.setPacket(new Packet(speedSlider.getValue(), temperatureSlider.getValue()));
+		updateSettings();
 		//causes NullPointer in the old places
 		buildScales();
 		
 		Canvas canvas = new Canvas(WIND_PICKER_SIZE, WIND_PICKER_SIZE);
 		windSpeedBox.add(canvas, 0, 0);
-		mWindPicker = new WindPicker(WIND_PICKER_SIZE, xWindSpeedLabel, yWindSpeedLabel,
+		mWindPicker = new WindPicker(WIND_PICKER_SIZE, windSpeedLabel,
 				canvas.getGraphicsContext2D(), mainView.getPacket().getWindSpeed());
 		windSpeedBox.add(mWindPicker, 0, 0);
 		refresher.setDisable(true);
@@ -137,6 +143,9 @@ public class MainForm extends Application implements Initializable {
 		bisectionBox.setDisable(true);
 		mWindPicker.setDisable(true);
 		packetView.setDisable(true);
+		weightSlider.setDisable(true);
+		radiusSlider.setDisable(true);
+		temperatureSlider.setDisable(true);
 	}
 
 	public static void main(String[] args) {
@@ -158,7 +167,7 @@ public class MainForm extends Application implements Initializable {
 		speedSlider.setDisable(false);
 		VisualizationThread.targetReached = false;
 		packetView.setDisable(false);
-		mainView.setPacket(new Packet(speedSlider.getValue(), temperatureSlider.getValue()));
+		updateSettings();
 		mainView.getPacket().setWindSpeed(mWindPicker.getValue());
 		mainView.setSleepFactor(sleepSlider.getValue());
 	}
@@ -179,5 +188,22 @@ public class MainForm extends Application implements Initializable {
 	public void stopTrying(){
 		if (VisualizationThread.isRunning)
 			VisualizationThread.targetReached = true;
+	}
+
+	private void updateSettings(){
+		mainView.setPacket(new Packet(
+				speedSlider.getValue(),
+				radiusSlider.getValue(),
+				weightSlider.getValue(),
+				temperatureSlider.getValue()
+		));
+	}
+
+	private class SliderListener implements ChangeListener{
+		@Override
+		public void changed(ObservableValue observableValue, Object old, Object next) {
+			updateSettings();
+			buildScales();
+		}
 	}
 }
