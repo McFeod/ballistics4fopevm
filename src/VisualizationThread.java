@@ -21,7 +21,7 @@ class VisualizationThread extends Thread {
 
 	private MainView mView;
 	private Packet mPacket;
-	private Button mRefresher;
+	private Runnable callback;
 
 	private Queue<Point2D> mPath = new ArrayDeque<Point2D>();
 	private double mTimeBuffer = 0.0;
@@ -49,10 +49,7 @@ class VisualizationThread extends Thread {
 			mPacket.reset(marksman.getAngle());
 			singleFly(true);
 		}
-		Platform.runLater(() -> {  // перевод фокуса на кнопку - пашет не всегда O_o
-			mRefresher.setDisable(false);
-			mRefresher.requestFocus();
-		});
+		Platform.runLater(callback);
 		isRunning = false;
 	}
 
@@ -82,10 +79,10 @@ class VisualizationThread extends Thread {
 		mPath.add(mPacket.getPosition());
 	}
 
-	public void start(MainView view, Button refresher){
+	public void start(MainView view, Runnable callback){
 		mView = view;
 		mPacket = view.getPacket();
-		mRefresher = refresher;
+		this.callback = callback;
 
 		setDaemon(true); // lazy & dangerous(for IO) way to stop a thread when closing app
 		start();

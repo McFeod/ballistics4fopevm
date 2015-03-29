@@ -97,7 +97,11 @@ public class MainForm extends Application implements Initializable {
 							.multiply(mainView.getScale()));
 			VisualizationThread.showOnlySolution = bisectionBox.isSelected();
 			mainView.drawTarget();
-			new VisualizationThread().start(mainView, refresher);
+
+			new VisualizationThread().start(mainView, ()->{ // перевод фокуса на кнопку - пашет не всегда O_o
+				refresher.setDisable(false);
+				refresher.requestFocus();
+			});
 			packetView.setDisable(true);
 		});
 

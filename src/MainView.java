@@ -4,8 +4,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.paint.Color;
-
-import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.Random;
 
