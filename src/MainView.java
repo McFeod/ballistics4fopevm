@@ -82,9 +82,11 @@ class MainView extends Canvas implements Runnable {
 	 * @param radius
 	 */
 	private void drawCircle(GraphicsContext context, Point2D position, Color color, double radius) {
-		context.setFill(color);
-		context.fillOval((position.getX()) / scale - radius / 2,
-				getHeight() - (position.getY()) / scale - radius / 2, radius, radius);
+		try {
+			context.setFill(color);
+			context.fillOval((position.getX()) / scale - radius / 2,
+					getHeight() - (position.getY()) / scale - radius / 2, radius, radius);
+		} catch (NullPointerException e){System.out.print("caught");} // как это получить?
 	}
 
 	/**

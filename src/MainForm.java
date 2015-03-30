@@ -94,7 +94,6 @@ public class MainForm extends Application implements Initializable {
 		nameLabel.setText("SpeedX\nSpeedY\nSpeed\nX\nY\nTime\nGravity\nAero Force\nAcceleration");
 
 		packetView.setOnMouseClicked((MouseEvent event) -> {
-			speedSlider.setDisable(true);
 			mainView.getPacket().setTarget(
 					new Point2D(event.getX(),
 							mainView.getHeight() - event.getY())
@@ -102,7 +101,7 @@ public class MainForm extends Application implements Initializable {
 			mainView.setAngleBisectionEnabled(bisectionBox.isSelected());
 			mainView.drawTarget();
 			new VisualizationThread().start(mainView, new Node[]{refresher, mWindPicker,
-					bisectionBox, densitySlider, radiusSlider, temperatureSlider});
+					bisectionBox, densitySlider, radiusSlider, temperatureSlider, speedSlider});
 			lockControls();
 		});
 
@@ -138,6 +137,7 @@ public class MainForm extends Application implements Initializable {
 	 * Чтобы юзер не шалил
 	 */
 	private void lockControls(){
+		speedSlider.setDisable(true);
 		refresher.setDisable(true);
 		bisectionBox.setDisable(true);
 		mWindPicker.setDisable(true);
@@ -163,7 +163,6 @@ public class MainForm extends Application implements Initializable {
 		repaintBackground();
 		horizontalScale.setValue(0.0);
 		verticalScale.setValue(0.0);
-		speedSlider.setDisable(false);
 		VisualizationThread.targetReached = false;
 		packetView.setDisable(false);
 		updateSettings();

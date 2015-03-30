@@ -92,7 +92,7 @@ class VisualizationThread extends Thread {
 		mLockedControls = controls;
 		mChoices = new ArrayDeque<>();
 		mCurrentChoice = new AngleChoice(0.0, Math.PI/2,
-				Math.atan(mPacket.getSpeed().getY()/mPacket.getSpeed().getX())
+				Math.atan(mPacket.getSpeed().getY()/(Math.abs(mPacket.getSpeed().getX())+1e-5))
 				,true, DEGREE/mView.getScale());
 		setDaemon(true); // lazy & dangerous(for IO) way to stop a thread when closing app
 		start();

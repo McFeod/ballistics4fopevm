@@ -146,7 +146,7 @@ public class Packet {
 	 * @return true - если нужно уменьшать угол
 	 */
 	public boolean helpToChoose() {
-		return (Math.abs(mSpeed.getY() / (mSpeed.getX() + 1e-5)) > 1);
+		return (Math.abs(mSpeed.getY()) / Math.abs(mSpeed.getX() + 1e-5)) > 1;
 	}
 
 	public boolean inTheAir() {
@@ -214,7 +214,7 @@ public class Packet {
 			mLastDeltas.add(mTimeDelta);
 			mLastPositions.add(mPosition);
 		}
-		mTimeDelta = 2 * mRadius / mSpeed.magnitude();
+		mTimeDelta = 2 * mRadius / Math.abs(mSpeed.magnitude()+ 1e-5);
 		mTime += mTimeDelta;
 		mSpeed = mSpeed.add(mAcceleration.multiply(mTimeDelta));
 		mPosition = mPosition.add(mSpeed.multiply(mTimeDelta));
