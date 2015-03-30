@@ -91,7 +91,7 @@ public class MainForm extends Application implements Initializable {
 		mainView.setRefreshableObjects(infoLabel, horizontalScale, verticalScale);
 		root.add(mainView, 1, 1);
 		root.add(packetView, 1, 1);
-		nameLabel.setText("SpeedX\nSpeedY\nSpeed\nX\nY\nTime\nGravity\nAero Force\nAcceleration");
+		nameLabel.setText("Скорость\nX\nY\nВремя\nСила\nтяжести\nАэродинам.\nсила\nУскорение");
 
 		packetView.setOnMouseClicked((MouseEvent event) -> {
 			mainView.getPacket().setTarget(
@@ -101,7 +101,7 @@ public class MainForm extends Application implements Initializable {
 			mainView.setAngleBisectionEnabled(bisectionBox.isSelected());
 			mainView.drawTarget();
 			new VisualizationThread().start(mainView, new Node[]{refresher, mWindPicker,
-					bisectionBox, densitySlider, radiusSlider, temperatureSlider, speedSlider},
+							bisectionBox, densitySlider, radiusSlider, temperatureSlider, speedSlider},
 					new Node[]{refiller, stopButton});
 			lockControls();
 		});
@@ -115,12 +115,12 @@ public class MainForm extends Application implements Initializable {
 			mainView.setSleepFactor(newV.doubleValue());
 		});
 
-		selectedSpeed.textProperty().bind(speedSlider.valueProperty().asString("Speed: %.2f"));
-		selectedSleep.textProperty().bind(sleepSlider.valueProperty().asString("Sleep: %.3f"));
+		selectedSpeed.textProperty().bind(speedSlider.valueProperty().asString("Начальная\nскорость: %.2f"));
+		selectedSleep.textProperty().bind(sleepSlider.valueProperty().asString("Соотношение времени: %.3f"));
 		selectedTemperature.textProperty().bind(
-				temperatureSlider.valueProperty().asString("%.2f °C, at the ground"));
-		selectedDensity.textProperty().bind(densitySlider.valueProperty().asString("Density: %.1f"));
-		selectedRadius.textProperty().bind(radiusSlider.valueProperty().asString("Radius: %.3f"));
+				temperatureSlider.valueProperty().asString("%.2f °C, в точке старта"));
+		selectedDensity.textProperty().bind(densitySlider.valueProperty().asString("Плотность\nснаряда: %.1f"));
+		selectedRadius.textProperty().bind(radiusSlider.valueProperty().asString("Радиус\nснаряда: %.3f"));
 		//to avoid mismatch between default slider value & default speed
 		updateSettings();
 		//causes NullPointer in the old places
@@ -176,7 +176,6 @@ public class MainForm extends Application implements Initializable {
 	@Override
 	public void start(Stage primaryStage) throws Exception{
 		root = FXMLLoader.load(getClass().getResource("main_form.fxml"));
-		primaryStage.setTitle("Кликни мышкой на поле");
 		Scene scene = new Scene(root);
 		primaryStage.setScene(scene);
 		scene.getStylesheets().add("main_form.css");

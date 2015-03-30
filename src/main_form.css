@@ -10,7 +10,7 @@
 
 .pre_slider_label{
 	-fx-pref-width: 180;
-	-fx-padding: 5 0 0 10;
+	-fx-padding: -5 0 0 15;
 }
 
 .vertical_control_panel{

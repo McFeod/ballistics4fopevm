@@ -44,8 +44,8 @@ public class WindPicker extends Canvas {
 	}
 	
 	public void refreshText(){
-		windSpeedLabel.setText(String.format("WindSpeedX = %.0f м/с\nWindSpeedY = %.0f м/с",
-				mValue.getX(), mValue.getY()));
+		windSpeedLabel.setText(String.format("Скорость ветра: %.2f м/с",
+				mValue.magnitude()));
 	}
 
 	public Point2D getValue() {
