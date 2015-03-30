@@ -93,7 +93,7 @@ class VisualizationThread extends Thread {
 		}
 		String msg = "";
 		if (targetReached){
-			double buffer = Math.toDegrees(Math.atan(mCurrentChoice.getAngle()));
+			double buffer = Math.toDegrees(mCurrentChoice.getAngle());
 			byte deg = (byte) buffer;
 			buffer-= deg; buffer*=60;
 			byte min = (byte) buffer;
