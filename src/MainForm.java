@@ -31,7 +31,7 @@ public class MainForm extends Application implements Initializable {
 						sleepSlider, densitySlider, radiusSlider;
 	@FXML private Label infoLabel, nameLabel, windSpeedLabel, selectedSpeed,
 						selectedTemperature, selectedSleep, selectedDensity, selectedRadius;
-	@FXML private Button refresher;
+	@FXML private Button refresher, refiller, stopButton;
 	@FXML private CheckBox bisectionBox;
 	@FXML private GridPane windSpeedBox;
 	private static WindPicker mWindPicker;
@@ -101,7 +101,8 @@ public class MainForm extends Application implements Initializable {
 			mainView.setAngleBisectionEnabled(bisectionBox.isSelected());
 			mainView.drawTarget();
 			new VisualizationThread().start(mainView, new Node[]{refresher, mWindPicker,
-					bisectionBox, densitySlider, radiusSlider, temperatureSlider, speedSlider});
+					bisectionBox, densitySlider, radiusSlider, temperatureSlider, speedSlider},
+					new Node[]{refiller, stopButton});
 			lockControls();
 		});
 
@@ -130,21 +131,22 @@ public class MainForm extends Application implements Initializable {
 		mWindPicker = new WindPicker(WIND_PICKER_SIZE, windSpeedLabel,
 				canvas.getGraphicsContext2D(), mainView.getPacket().getWindSpeed());
 		windSpeedBox.add(mWindPicker, 0, 0);
-		refresher.setDisable(true);
 	}
 
 	/**
 	 * Чтобы юзер не шалил
 	 */
 	private void lockControls(){
-		speedSlider.setDisable(true);
-		refresher.setDisable(true);
-		bisectionBox.setDisable(true);
-		mWindPicker.setDisable(true);
-		packetView.setDisable(true);
-		densitySlider.setDisable(true);
-		radiusSlider.setDisable(true);
-		temperatureSlider.setDisable(true);
+		speedSlider         .setDisable(true);
+		refresher           .setDisable(true);
+		bisectionBox        .setDisable(true);
+		mWindPicker         .setDisable(true);
+		packetView          .setDisable(true);
+		densitySlider       .setDisable(true);
+		radiusSlider        .setDisable(true);
+		temperatureSlider   .setDisable(true);
+		refiller            .setDisable(false);
+		stopButton          .setDisable(false);
 	}
 
 	public static void main(String[] args) {
@@ -153,16 +155,17 @@ public class MainForm extends Application implements Initializable {
 
 	@FXML
 	void repaintBackground(){
-		mainView.fillBackground();
+		mainView.fillBackground(true);
 	}
 
 	/**
 	 * Сброс всего и вся
 	 */
 	public void restart(){
-		repaintBackground();
+		mainView.fillBackground(false);
 		horizontalScale.setValue(0.0);
 		verticalScale.setValue(0.0);
+		VisualizationThread.mustDie = false;
 		VisualizationThread.targetReached = false;
 		packetView.setDisable(false);
 		updateSettings();
@@ -184,8 +187,7 @@ public class MainForm extends Application implements Initializable {
 	 * "На следующей остановите!"
 	 */
 	public void stopTrying(){
-		if (VisualizationThread.isRunning)
-			VisualizationThread.targetReached = true;
+		VisualizationThread.mustDie = true;
 	}
 
 	private void updateSettings(){

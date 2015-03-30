@@ -28,9 +28,9 @@
 			<Label fx:id="nameLabel"/>
 			<Label fx:id="infoLabel"/>
 		</HBox>
-		<Button text="Refill" onAction="#repaintBackground"/>
-		<Button text="Stop" onAction="#stopTrying"/>
-		<Button fx:id="refresher" text="Reset" onAction="#restart"/>
+		<Button fx:id="refiller" text="Refill" onAction="#repaintBackground" disable="true"/>
+		<Button fx:id="stopButton" text="Stop" onAction="#stopTrying" disable="true"/>
+		<Button fx:id="refresher" text="Reset" onAction="#restart" disable="true"/>
 	</VBox>
 
 	<Slider fx:id="horizontalScale" styleClass="horizontal_scale" GridPane.columnIndex="1"

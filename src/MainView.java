@@ -37,7 +37,7 @@ class MainView extends Canvas implements Runnable {
 		super(sizeX, sizeY);
 		mTopContext = canvas.getGraphicsContext2D();
 		mBottomContext = getGraphicsContext2D();
-		fillBackground();
+		fillBackground(false);
 		mTailBuffer = new ArrayDeque<>();
 	}
 
@@ -52,13 +52,11 @@ class MainView extends Canvas implements Runnable {
 	/**
 	 * Убираем следы от снаряда
 	 */
-	public void fillBackground() {
+	public void fillBackground(boolean withTarget) {
 		mBottomContext.setFill(BACKGROUND);
 		mBottomContext.fillRect(0, 0, getWidth(), getHeight());
 		mTopContext.clearRect(0, 0, getWidth(), getHeight());
-		if (VisualizationThread.isRunning) {
-			drawTarget();
-		}
+		if (withTarget) drawTarget();
 	}
 
 	public Packet getPacket() {

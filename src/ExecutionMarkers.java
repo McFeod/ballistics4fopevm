@@ -29,6 +29,7 @@ class ExecutionMarkers {
 
 		if (dx <= eps / 2) {
 			if (dy <= eps) {
+				VisualizationThread.mustDie = true;
 				VisualizationThread.targetReached = true;
 				return true;  // цель достигнута
 			}

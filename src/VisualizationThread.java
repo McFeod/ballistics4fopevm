@@ -1,6 +1,7 @@
 import javafx.application.Platform;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
@@ -10,18 +11,18 @@ import java.util.Queue;
  */
 class VisualizationThread extends Thread {
 	// #4
+	public static boolean mustDie = false;
 	public static boolean targetReached = false;
-	public static boolean isRunning = false;
 	private final double DEGREE = Math.PI/180;
 	private MainView mView;
 	private Packet mPacket;
 	private Node[] mLockedControls;
+	private Node[] mUnlockedControls;
 	private AngleChoice mCurrentChoice;
 	private Queue<AngleChoice> mChoices;
 
 	@Override
 	public void run() {
-		isRunning = true;
 		mPacket.setupMarkers(MainView.PACKET_GAGE * mView.getScale() * 0.7); //#1
 
 		while (mCurrentChoice.isMatter()){
@@ -49,18 +50,14 @@ class VisualizationThread extends Thread {
 		}
 
 		if (!mView.isAngleBisectionEnabled()){
+			mustDie = false;
 			targetReached = false;
 			mView.reset(mCurrentChoice.getAngle()); // найденный заранее угол
 			singleFly(true);  // повторяем последний полёт
 		}
 
-		Platform.runLater(() -> {  // перевод фокуса на кнопку - пашет не всегда O_o
-			for(Node node: mLockedControls){
-				node.setDisable(false);
-			}
-			mLockedControls[0].requestFocus();
-		});
-		isRunning = false;
+		Platform.runLater(() -> showResults());
+
 	}
 
 	/**
@@ -79,17 +76,43 @@ class VisualizationThread extends Thread {
 			}else{
 				mPacket.update(false);  // без отрисовки
 			}
-			if (targetReached){
-				return true;  // прекрщаем считать: попали
+			if (mustDie){
+				return true;  // прекрщаем считать
 			}
 		}
 		return false;
 	}
 
-	public void start(MainView view, Node[] controls){
+	private void showResults() {
+		for(Node node: mLockedControls){
+			node.setDisable(false);
+		}
+		mLockedControls[0].requestFocus();
+		for(Node node: mUnlockedControls){
+			node.setDisable(true);
+		}
+		String msg = "";
+		if (targetReached){
+			double buffer = Math.toDegrees(Math.atan(mCurrentChoice.getAngle()));
+			byte deg = (byte) buffer;
+			buffer-= deg; buffer*=60;
+			byte min = (byte) buffer;
+			buffer-= min; buffer*=60;
+			byte sec = (byte) Math.round(buffer);
+			msg = String.format("при начальном угле α = %dº %d' %d\"",
+					deg, min, sec);
+		}
+		Alert alert = new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK);
+		alert.setHeaderText(String.format("Цель %sдостигнута", targetReached?"":"не "));
+		alert.setTitle("Результат запуска");
+		alert.showAndWait();
+	}
+
+	public void start(MainView view, Node[] locked, Node[] unlocked){
 		mView = view;
 		mPacket = view.getPacket();
-		mLockedControls = controls;
+		mLockedControls = locked;
+		mUnlockedControls = unlocked;
 		mChoices = new ArrayDeque<>();
 		mCurrentChoice = new AngleChoice(0.0, Math.PI/2,
 				Math.atan(mPacket.getSpeed().getY()/(Math.abs(mPacket.getSpeed().getX())+1e-5))
