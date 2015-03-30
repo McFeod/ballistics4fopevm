@@ -10,7 +10,7 @@ public class Packet {
 	//характеристика среды
 	final double G = 9.80665;
 	//характеристика шара
-	private double mRadius;// = 1.0; //радиус шара в метрах
+	private double mRadius; //радиус шара в метрах
 	private double S; //площадь сечения шара
 	private double mDensity; //плотность шара
 	private double mWeight;
@@ -27,7 +27,7 @@ public class Packet {
 	 * Наименьший прямоугольник, в который может быть вписана траектория полёта
 	 * Вычисляется для нужд масштабирования
 	 */
-	private final Point2D flightRectangle;
+	//private final Point2D flightRectangle;
 	protected Point2D mAcceleration;
 	protected Point2D mAirForce;
 	protected Point2D mGravity;
@@ -39,7 +39,7 @@ public class Packet {
 	private Point2D mTarget;
 	private ExecutionMarkers mMarkers;
 
-	public Packet(Double speed, Double radius, Double density, Double temperature) {
+	public Packet(Double speed, Double radius, Double density, Double temperature, Point2D wind) {
 		mRadius = radius;
 		mDensity = density;
 		S = mRadius * mRadius * Math.PI;
@@ -50,18 +50,11 @@ public class Packet {
 		mPosition = new Point2D(0.0, 0.0);
 		mAcceleration = new Point2D(0.0, 0.0);
 		mAirForce = new Point2D(0.0, 0.0);
-		mWindSpeed = new Point2D(-20.0, 0.0);
+		mWindSpeed = wind;
 		mGravity = new Point2D(0.0, -mWeight * G);
 		mTime = 0.0;
 		mLastDeltas = new ArrayDeque<>();
 		mLastPositions = new ArrayDeque<>();
-
-		//TODO уточнить формулы: при наличии сил сопротивления подгонка под экран не работает
-		double extraFactor = 1;
-		double ascentTime = mStartSpeed / Math.sqrt(2) / G; //mSpeed.getY() / G;
-		double maxHeightInVacuum = G * Math.pow(ascentTime, 2) / 2;
-		double distanceInVacuum = mStartSpeed / Math.sqrt(2) * ascentTime * 2 * extraFactor;//mSpeed.getX() * ascentTime * 2;
-		flightRectangle = new Point2D(distanceInVacuum, maxHeightInVacuum);
 	}
 
 	void calcAcceleration() {
@@ -78,8 +71,16 @@ public class Packet {
 
 	}
 
-	public Point2D getFlightRectangle() {
-		return flightRectangle;
+	public Double calcMaxDistance() { //попробуем обойтись без копирования снаряда. Вроде, ничего не сломалось...
+		setTarget(new Point2D(-5, -5));
+		setupMarkers(10.0);
+		while (inTheAir()) update(false);
+		double distance = getPosition().getX();
+		resetTime();
+		resetSpeed(50 / 180 * Math.PI);
+		resetMarkers();
+		while (inTheAir()) update(false);
+		return Math.max(distance, getPosition().getX());
 	}
 
 	/**
@@ -183,7 +184,7 @@ public class Packet {
 	 * @return примерно 2 на дозвуковых, 1 на сверхзвуке, что-то между в переходном состоянии
 	 */
 	Double calcExponent(){
-		return 1.5-Math.atan((mSpeed.magnitude()-340)/34)/Math.PI;
+		return 2.0;   //1.5-Math.atan((mSpeed.magnitude()-340)/34)/Math.PI;
 	}
 
 
@@ -214,7 +215,7 @@ public class Packet {
 			mLastDeltas.add(mTimeDelta);
 			mLastPositions.add(mPosition);
 		}
-		mTimeDelta = 2 * mRadius / Math.abs(mSpeed.magnitude()+ 1e-5);
+		mTimeDelta = 2 * mRadius / Math.abs(mSpeed.magnitude() + 1e-5);
 		mTime += mTimeDelta;
 		mSpeed = mSpeed.add(mAcceleration.multiply(mTimeDelta));
 		mPosition = mPosition.add(mSpeed.multiply(mTimeDelta));
@@ -232,4 +233,5 @@ public class Packet {
 	public Point2D getAcceleration() {
 		return mAcceleration;
 	}
+
 }

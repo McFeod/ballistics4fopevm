@@ -39,7 +39,7 @@
 }
 
 .radius_slider{
-	-fx-major-tick-unit: 0.2;
+	-fx-major-tick-unit: 0.1;
 	-fx-minor-tick-count: 3;
 }
 

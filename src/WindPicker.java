@@ -12,10 +12,10 @@ public class WindPicker extends Canvas {
 	private Label windSpeedLabel;
 	private Point2D mValue;  // Чтобы не возникал соблазн баловаться с ветром :)
 	
-	public WindPicker(int length, Label windSpeedLabel,
+	public WindPicker(int length, MainForm root, // не хотелось возиться с observer
 			GraphicsContext context, Point2D initialValue) {
 		super(length, length);
-		this.windSpeedLabel = windSpeedLabel;
+		this.windSpeedLabel = root.windSpeedLabel;
 
 		mValue = initialValue;
 		mContext = getGraphicsContext2D();
@@ -34,6 +34,8 @@ public class WindPicker extends Canvas {
 					(mCenter.getY() - mouseEvent.getY()));
 			refreshText();
 			drawLine();
+			root.updateSettings();
+			root.buildScales();
 		});
 	}
 	

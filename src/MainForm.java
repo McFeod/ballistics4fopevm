@@ -29,8 +29,9 @@ public class MainForm extends Application implements Initializable {
 	private static Canvas packetView;
 	@FXML private Slider verticalScale, horizontalScale, temperatureSlider, speedSlider,
 						sleepSlider, densitySlider, radiusSlider;
-	@FXML private Label infoLabel, nameLabel, windSpeedLabel, selectedSpeed,
-						selectedTemperature, selectedSleep, selectedDensity, selectedRadius;
+	@FXML private Label infoLabel, nameLabel, selectedTemperature, selectedSpeed,
+						selectedSleep, selectedDensity, selectedRadius;
+	@FXML protected Label windSpeedLabel;
 	@FXML private Button refresher, refiller, stopButton;
 	@FXML private CheckBox bisectionBox;
 	@FXML private GridPane windSpeedBox;
@@ -69,7 +70,7 @@ public class MainForm extends Application implements Initializable {
 	 * Из start() и initialize() нельзя получить width и height() элементов,
 	 * т.к. они ещё не созданы. Даже из слушателя на WindowEvent.OnShown нельзя.
 	 * */
-	private void buildScales(){
+	protected void buildScales(){
 		buildScale(horizontalScale, mainView.getWidth(), 50);
 		buildScale(verticalScale, mainView.getHeight(), 50);
 	}
@@ -84,7 +85,7 @@ public class MainForm extends Application implements Initializable {
 
 	@FXML @Override
 	public void initialize(URL location, ResourceBundle resources) {
-		double canvasWidth = Screen.getPrimary().getVisualBounds().getWidth() - 280;
+		double canvasWidth = Screen.getPrimary().getVisualBounds().getWidth() - 285;
 		double canvasHeight = canvasWidth/2;
 		packetView = new Canvas(canvasWidth, canvasHeight);
 		mainView = new MainView(packetView, canvasWidth, canvasHeight);
@@ -92,6 +93,11 @@ public class MainForm extends Application implements Initializable {
 		root.add(mainView, 1, 1);
 		root.add(packetView, 1, 1);
 		nameLabel.setText("Скорость\nX\nY\nВремя\nСила\nтяжести\nАэродинам.\nсила\nУскорение");
+		Canvas canvas = new Canvas(WIND_PICKER_SIZE, WIND_PICKER_SIZE);
+		windSpeedBox.add(canvas, 0, 0);
+		mWindPicker = new WindPicker(WIND_PICKER_SIZE, MainForm.this,
+				canvas.getGraphicsContext2D(), new Point2D(-20.0, 0.0));
+		windSpeedBox.add(mWindPicker, 0, 0);
 
 		packetView.setOnMouseClicked((MouseEvent event) -> {
 			mainView.getPacket().setTarget(
@@ -111,6 +117,7 @@ public class MainForm extends Application implements Initializable {
 		densitySlider.valueProperty().addListener(listener);
 		radiusSlider.valueProperty().addListener(listener);
 		temperatureSlider.valueProperty().addListener(listener);
+
 		sleepSlider.valueProperty().addListener((observable, oldV, newV) -> {
 			mainView.setSleepFactor(newV.doubleValue());
 		});
@@ -122,15 +129,11 @@ public class MainForm extends Application implements Initializable {
 		selectedDensity.textProperty().bind(densitySlider.valueProperty().asString("Плотность\nснаряда: %.1f"));
 		selectedRadius.textProperty().bind(radiusSlider.valueProperty().asString("Радиус\nснаряда: %.3f"));
 		//to avoid mismatch between default slider value & default speed
+		
+
 		updateSettings();
 		//causes NullPointer in the old places
 		buildScales();
-		
-		Canvas canvas = new Canvas(WIND_PICKER_SIZE, WIND_PICKER_SIZE);
-		windSpeedBox.add(canvas, 0, 0);
-		mWindPicker = new WindPicker(WIND_PICKER_SIZE, windSpeedLabel,
-				canvas.getGraphicsContext2D(), mainView.getPacket().getWindSpeed());
-		windSpeedBox.add(mWindPicker, 0, 0);
 	}
 
 	/**
@@ -189,12 +192,13 @@ public class MainForm extends Application implements Initializable {
 		VisualizationThread.mustDie = true;
 	}
 
-	private void updateSettings(){
+	protected void updateSettings(){
 		mainView.setPacket(new Packet(
 				speedSlider.getValue(),
 				radiusSlider.getValue(),
 				densitySlider.getValue(),
-				temperatureSlider.getValue()
+				temperatureSlider.getValue(),
+				mWindPicker.getValue()
 		));
 	}
 

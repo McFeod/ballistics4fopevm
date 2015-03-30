@@ -6,7 +6,7 @@
 		<HBox styleClass="horizontal_control_panel">
 			<Slider fx:id="speedSlider" min="100" max="1000" value="655" styleClass="speed_slider"/>
 			<Label fx:id="selectedSpeed" styleClass="pre_slider_label"/>
-			<Slider fx:id="radiusSlider" min="0.05" max="1" value="1" styleClass="radius_slider"/>
+			<Slider fx:id="radiusSlider" min="0.05" max="0.3" value="0.1" styleClass="radius_slider"/>
 			<Label fx:id="selectedRadius" styleClass="pre_slider_label"/>
 			<Slider fx:id="temperatureSlider" min="-50" max="50" value="15" styleClass="temp_slider"/>
 			<Label fx:id="selectedTemperature" styleClass="pre_slider_label"/>
@@ -19,10 +19,10 @@
 		</HBox>
 	</VBox>
 
-	<VBox  alignment="TOP_CENTER" GridPane.rowSpan="3" prefWidth="220" styleClass="vertical_control_panel">
+	<VBox  alignment="TOP_CENTER" GridPane.rowSpan="3" prefWidth="225" styleClass="vertical_control_panel">
 		<GridPane fx:id="windSpeedBox" alignment="CENTER"/>
 		<Label fx:id="windSpeedLabel" />
-		<CheckBox text="Показать ход решения" fx:id="bisectionBox" selected="true" prefWidth="220"
+		<CheckBox text="Показать ход решения" fx:id="bisectionBox" selected="true" prefWidth="225"
 				style="-fx-padding: 10;"/>
 		<HBox>
 			<Label fx:id="nameLabel" textAlignment="CENTER"/>

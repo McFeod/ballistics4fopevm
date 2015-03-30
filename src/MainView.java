@@ -6,6 +6,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayDeque;
+import java.util.DoubleSummaryStatistics;
 import java.util.Queue;
 import java.util.Random;
 
@@ -177,8 +178,7 @@ class MainView extends Canvas implements Runnable {
 	public void setPacket(Packet packet) {
 		// #4
 		this.mPacket = packet;
-		Point2D drawingArea = mPacket.getFlightRectangle();
-		scale = Math.max(drawingArea.getX() / getWidth(), drawingArea.getY() / getHeight());
+		scale = mPacket.calcMaxDistance() / getWidth() * 1.1; //по высоте запас всё равно слишком мал
 	}
 
 	public void setRefreshableObjects(Label infoLabel,
