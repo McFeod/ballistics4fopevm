@@ -28,14 +28,16 @@ class MainView extends Canvas implements Runnable {
 	private Point2D mCurrentPoint = new Point2D(0.0, 0.0);
 	private double mSleepFactor = 0.1, mTimeBuffer = 0.0;
 	private Queue<Point2D> mTailBuffer; // хранение неотрисованного следа
+	private OutputServer mServer;
 
 	/**
 	 * @param canvas - Холст для шарика
 	 * @param sizeX
 	 * @param sizeY
 	 */
-	public MainView(Canvas canvas, double sizeX, double sizeY) {
+	public MainView(Canvas canvas, double sizeX, double sizeY, OutputServer server) {
 		super(sizeX, sizeY);
+		mServer = server;
 		mTopContext = canvas.getGraphicsContext2D();
 		mBottomContext = getGraphicsContext2D();
 		fillBackground(false);
@@ -138,6 +140,8 @@ class MainView extends Canvas implements Runnable {
 						mPacket.getAirForce().magnitude(),
 						mPacket.getAcceleration().magnitude())
 		);
+		mServer.send(mPacket.getSpeed().getX(), mPacket.getSpeed().getY(), mPacket.getPosition().getX(),
+				mPacket.getPosition().getY(), mPacket.getTime());
 		vSlider.setValue(mCurrentPoint.getY());
 		hSlider.setValue(mCurrentPoint.getX());
 	}

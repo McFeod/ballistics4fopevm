@@ -1,0 +1,112 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical"
+	tools:context="com.example.client.MainActivity"
+	android:background="#202020" >
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal" >
+		
+		<TextView
+			android:id="@+id/IP"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/ip"
+			android:textColor="#ffffff" />
+
+		<EditText
+			android:id="@+id/IP_edit"
+			android:layout_width="150dp"
+			android:layout_height="wrap_content"
+			android:text="@string/default_ip"
+			android:background="#ffffff"
+			android:hint="@string/ip_hint" />
+
+		<Button
+			android:id="@+id/IP_button"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/connect"
+			android:textColor="#ffffff"
+			android:layout_marginRight="20dp" />
+		
+		<Button
+			android:id="@+id/start_button"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/start"
+			android:textColor="#ffffff" />
+		
+		<Button
+			android:id="@+id/stop_button"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/stop"
+			android:textColor="#ffffff" />
+		
+		<Button
+			android:id="@+id/reset_button"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/reset"
+			android:textColor="#ffffff" />
+
+	</LinearLayout>
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal" >
+
+		<FrameLayout
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content" >
+			
+			<ImageView
+				android:id="@+id/bottom_image_view"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:src="@drawable/abc_ab_bottom_solid_dark_holo" />
+
+			<ImageView
+				android:id="@+id/top_image_view"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:src="@drawable/abc_ab_bottom_solid_dark_holo" />
+
+		</FrameLayout>
+
+		<include layout="@layout/seek_bars" />
+		<include layout="@layout/info" />
+
+	</LinearLayout>
+
+	<SeekBar
+		android:id="@+id/sleep_seek_bar"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:max="1999"
+		android:progress="100"
+		android:layout_marginTop="10dp" />
+
+	<TextView
+		android:id="@+id/sleep_text_view"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Соотношение времени: 0.1"
+		android:textStyle="bold"
+		android:textColor="#ffffff" />
+
+	<TextView
+		android:id="@+id/connected_text"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/disconnected"
+		android:textColor="#ff0000"
+		android:layout_marginTop="10dp" />
+
+</LinearLayout>

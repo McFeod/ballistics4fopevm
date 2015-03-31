@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="wrap_content"
+	android:layout_height="match_parent"
+	android:orientation="vertical"
+	android:layout_marginLeft="10dp"
+	android:layout_marginRight="10dp" >
+
+	<SeekBar
+		android:id="@+id/speed_seek_bar"
+		android:layout_width="150dp"
+		android:layout_height="wrap_content"
+		android:max="900"
+		android:progress="500" />
+
+	<TextView
+		android:id="@+id/speed_text_view"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Начальная скорость: 600 м/с"
+		android:textStyle="bold"
+		android:textColor="#ffffff"
+		android:textSize="10sp" />
+
+
+	<SeekBar
+		android:id="@+id/density_seek_bar"
+		android:layout_width="150dp"
+		android:layout_height="wrap_content"
+		android:max="9000"
+		android:progress="3800" />
+
+	<TextView
+		android:id="@+id/density_text_view"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Плотность снаряда: 7800 кг/м^3"
+		android:textStyle="bold"
+		android:textColor="#ffffff"
+		android:textSize="10sp" />
+
+
+	<SeekBar
+		android:id="@+id/radius_seek_bar"
+		android:layout_width="150dp"
+		android:layout_height="wrap_content"
+		android:max="25"
+		android:progress="25" />
+
+	<TextView
+		android:id="@+id/radius_text_view"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Радиус снаряда: 0.3 м"
+		android:textStyle="bold"
+		android:textColor="#ffffff"
+		android:textSize="10sp" />
+
+</LinearLayout>

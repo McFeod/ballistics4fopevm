@@ -30,12 +30,7 @@ public class WindPicker extends Canvas {
 		drawLine();
 		refreshText();
 		this.setOnMouseClicked(mouseEvent -> {
-			mValue = new Point2D((mouseEvent.getX() - mCenter.getX()),
-					(mCenter.getY() - mouseEvent.getY()));
-			refreshText();
-			drawLine();
-			root.updateSettings();
-			root.buildScales();
+			refreshAll(mouseEvent.getX() - mCenter.getX(), mCenter.getY() - mouseEvent.getY());
 		});
 	}
 	
@@ -56,5 +51,11 @@ public class WindPicker extends Canvas {
 
 	public void setValue(Point2D value) {
 		mValue = value;
+	}
+	
+	public void refreshAll(double x, double y){
+		mValue = new Point2D(x, y);
+		refreshText();
+		drawLine();
 	}
 }

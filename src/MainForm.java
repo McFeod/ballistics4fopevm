@@ -36,6 +36,7 @@ public class MainForm extends Application implements Initializable {
 	@FXML private CheckBox bisectionBox;
 	@FXML private GridPane windSpeedBox;
 	private static WindPicker mWindPicker;
+	private OutputServer mOutputServer;
 
 	/**
 	 * Страдания со шкалами
@@ -85,10 +86,12 @@ public class MainForm extends Application implements Initializable {
 
 	@FXML @Override
 	public void initialize(URL location, ResourceBundle resources) {
+		mOutputServer = new OutputServer();
+		mOutputServer.start();
 		double canvasWidth = Screen.getPrimary().getVisualBounds().getWidth() - 285;
 		double canvasHeight = canvasWidth/2;
 		packetView = new Canvas(canvasWidth, canvasHeight);
-		mainView = new MainView(packetView, canvasWidth, canvasHeight);
+		mainView = new MainView(packetView, canvasWidth, canvasHeight, mOutputServer);
 		mainView.setRefreshableObjects(infoLabel, horizontalScale, verticalScale);
 		root.add(mainView, 1, 1);
 		root.add(packetView, 1, 1);
@@ -100,16 +103,7 @@ public class MainForm extends Application implements Initializable {
 		windSpeedBox.add(mWindPicker, 0, 0);
 
 		packetView.setOnMouseClicked((MouseEvent event) -> {
-			mainView.getPacket().setTarget(
-					new Point2D(event.getX(),
-							mainView.getHeight() - event.getY())
-							.multiply(mainView.getScale()));
-			mainView.setAngleBisectionEnabled(bisectionBox.isSelected());
-			mainView.drawTarget();
-			new VisualizationThread().start(mainView, new Node[]{refresher, mWindPicker,
-							bisectionBox, densitySlider, radiusSlider, temperatureSlider, speedSlider},
-					new Node[]{refiller, stopButton});
-			lockControls();
+			start(event.getX(), mainView.getHeight() - event.getY());
 		});
 
 		SliderListener listener = new SliderListener();
@@ -134,6 +128,9 @@ public class MainForm extends Application implements Initializable {
 		updateSettings();
 		//causes NullPointer in the old places
 		buildScales();
+
+		new InputServer(this, mainView, stopButton, refresher, mWindPicker, sleepSlider, speedSlider, radiusSlider,
+				densitySlider).start();
 	}
 
 	/**
@@ -208,5 +205,15 @@ public class MainForm extends Application implements Initializable {
 			updateSettings();
 			buildScales();
 		}
+	}
+	
+	public void start(double x, double y){
+		mainView.getPacket().setTarget(new Point2D(x, y).multiply(mainView.getScale()));
+		mainView.setAngleBisectionEnabled(bisectionBox.isSelected());
+		mainView.drawTarget();
+		new VisualizationThread().start(mainView, new Node[]{refresher, mWindPicker,
+						bisectionBox, densitySlider, radiusSlider, temperatureSlider, speedSlider},
+				new Node[]{refiller, stopButton});
+		lockControls();
 	}
 }

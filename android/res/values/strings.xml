@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<string name="app_name">Remote control</string>
+	<string name="action_settings">Settings</string>
+	<string name="speed_x">Скорость X: %.2f м/с</string>
+	<string name="speed_y">Скорость Y: %.2f м/с</string>
+	<string name="x">X: %.2f м</string>
+	<string name="y">Y: %.2f м</string>
+	<string name="time">Время: %.2f с</string>
+	<string name="wind_speed_x">Скорость ветра X: %d м/с</string>
+	<string name="wind_speed_y">Скорость ветра Y: %d м/с</string>
+	<string name="density">Плотность снаряда: %d кг/м^3</string>
+	<string name="radius">Радиус снаряда: %.2f м</string>
+	<string name="start_speed">Начальная скорость: %d м/с</string>
+	<string name="sleep">Соотношение времени: %.3f</string>
+	<string name="temp">Температура: %d °C</string>
+	<string name="start">Старт</string>
+	<string name="stop">Стоп</string>
+	<string name="reset">Сброс</string>
+	<string name="connect">Connect</string>
+	<string name="connected">Connected</string>
+	<string name="disconnected">Disconnected</string>
+	<string name="ip">IP</string>
+	<string name="default_ip">192.168.0.1</string>
+	<string name="ip_hint">Введите IP</string>
+
+</resources>
